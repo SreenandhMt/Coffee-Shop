@@ -1,4 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +10,8 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/app_colors.dart';
 import 'forgot_password/email_conform_page.dart';
@@ -19,66 +24,72 @@ class ProfileDetailsPage extends StatefulWidget {
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
+  GlobalKey<FormState> _key = GlobalKey<FormState>();
+  TextEditingController fullNameController = TextEditingController(), phoneNumberController = TextEditingController(),birthDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // final size = MediaQuery.sizeOf(context);
-    return Scaffold(
-      appBar:
-          AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor,surfaceTintColor: Theme.of(context).scaffoldBackgroundColor),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 10,right: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //top
-              const AuthHadingTexts(
-                title: "Complete Your Profile 👤",
-                subtitle:
-                    "Add the finishing touches to your profile. Lets make your coffee experience more social!",
-              ),
-              //center
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
+    return Form(
+      key: _key,
+      child: Scaffold(
+        appBar:
+            AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor,surfaceTintColor: Theme.of(context).scaffoldBackgroundColor),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 10,right: 10),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //top
+                const AuthHadingTexts(
+                  title: "Complete Your Profile 👤",
+                  subtitle:
+                      "Add the finishing touches to your profile. Lets make your coffee experience more social!",
+                ),
+                //center
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey.shade300,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(padding: EdgeInsets.all(3),decoration: BoxDecoration(color: AppColors.primaryColor,borderRadius: BorderRadius.circular(4)),child: Icon(Icons.edit,color: AppColors.themeColor(context),)),
-                            )
-                          ],
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.grey.shade300,
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(padding: EdgeInsets.all(3),decoration: BoxDecoration(color: AppColors.primaryColor,borderRadius: BorderRadius.circular(4)),child: Icon(Icons.edit,color: AppColors.themeColor(context),)),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  InputWithText(
-                    controller: TextEditingController(),
-                    hintText: "Full Name",
-                    obscureText: false,
-                  ),
-                  const PhoneNumberInputBox(),
-                  DateInputBox(
-                    controller: TextEditingController(),
-                    hintText: "Date of Birth"
-                  ),
-                ],
-              ),
-              //button
-              AuthButton(
-                text: "Finish",
-                onPressed: () {
-                  // if (context.canPop()) context.pop();
-                  context.go("/signupSuccess");
-                },
-              ),
-            ],
+                      ],
+                    ),
+                    InputWithText(
+                      controller: fullNameController,
+                      hintText: "Full Name",
+                      obscureText: false,
+                    ),
+                    PhoneNumberInputBox(controller: phoneNumberController),
+                    DateInputBox(
+                      controller: birthDateController,
+                      hintText: "Date of Birth"
+                    ),
+                  ],
+                ),
+                //button
+                AuthButton(
+                  text: "Finish",
+                  onPressed: () {
+                    if(!_key.currentState!.validate()||phoneNumberController.text.isEmpty||phoneNumberController.text.length!=10) return;
+                    context.read<AuthViewModel>().createProfile(fullNameController.text, fullNameController.text, birthDateController.text);
+
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -87,7 +98,9 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 }
 
 class PhoneNumberInputBox extends StatefulWidget {
-  const PhoneNumberInputBox({super.key});
+  const PhoneNumberInputBox({super.key, required this.controller, this.validator});
+  final TextEditingController controller;
+  final FutureOr<String?> Function(PhoneNumber?)? validator;
 
   @override
   State<PhoneNumberInputBox> createState() => _PhoneNumberInputBoxState();
@@ -110,9 +123,23 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
             padding: const EdgeInsets.all(5),
             child: IntlPhoneField(
               showDropdownIcon: true,
+              validator: widget.validator??(value){
+                log(value.toString());
+                if(value==null||value.number.isEmpty)
+                {
+                  return "Enter Your Phone Number";
+                }
+                if(value.number.length != 10)
+                {
+                  return "Invalid Phone Number";
+                }
+                return null;
+              },
               initialCountryCode: "IN",
+              controller: widget.controller,
               disableLengthCheck: true,
               showCountryFlag: true,
+              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.themeColor(context)),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.secondaryColor(context),
@@ -120,6 +147,9 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10)
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),

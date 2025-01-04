@@ -1,38 +1,50 @@
 import 'dart:developer';
 
+import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:flutter/material.dart';
 
-import '../models/coffee_model.dart';
+import '../../home/models/coffee_model.dart';
 
-class HomeViewModel extends ChangeNotifier {
-  bool _loading = false;
-  List<CoffeeModel> _popularCoffees = [];
-  List<ShopModel> _nearbyShops = [];
+class CoffeeShopViewModel extends ChangeNotifier {
+  bool _isLoading = false;
+  List<CoffeeModel>? _coffeeModel;
+  ShopModel? _shopModel;
+  final List<OrderDetailsModel> _selectedCoffeeIds = [];
+  double _totalPrice = 0.0;
 
-  bool get loading => _loading;
-  List<CoffeeModel> get popularCoffees => _popularCoffees;
-  List<ShopModel> get nearbyShops => _nearbyShops;
+  bool get isLoading => _isLoading;
+  List<CoffeeModel>? get coffeeModel => _coffeeModel;
+  ShopModel? get shopModel => _shopModel;
+  List<OrderDetailsModel> get selectedCoffeeIds => _selectedCoffeeIds;
+  double get totalPrice => _totalPrice;
 
-  setLoading(bool loading) {
-    _loading = loading;
+  void setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  setPopularCoffees(List<CoffeeModel> coffees) {
-    _popularCoffees = coffees;
+  void setCoffeeModel(List<CoffeeModel> value) {
+    _coffeeModel = value;
   }
 
-  setNearbyShops(List<ShopModel> shops) {
-    _nearbyShops = shops;
+  void setShopModel(ShopModel value) {
+    _shopModel = value;
   }
 
-  homeInitFunction() {
-    getPopularCoffee();
-    getNearbyShops();
+  void addProductID(OrderDetailsModel orderModel) {
+    _selectedCoffeeIds.add(orderModel);
+    _totalPrice += orderModel.totalPrice;
+    notifyListeners();
   }
 
-  getNearbyShops() {
+  void clearValues() {
+    _coffeeModel = null;
+    _shopModel = null;
+    _selectedCoffeeIds.clear();
+  }
+
+  void getShopDetails(String shopId) {
     final images = [
       "https://media.istockphoto.com/id/1428594094/photo/empty-coffee-shop-interior-with-wooden-tables-coffee-maker-pastries-and-pendant-lights.jpg?s=612x612&w=0&k=20&c=dMqeYCJDs3BeBP_jv93qHRISDt-54895SPoVc6_oJt4=",
       "https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -41,7 +53,6 @@ class HomeViewModel extends ChangeNotifier {
       "https://b.zmtcdn.com/data/collections/e7e6c3774795c754eac6c2bbeb0ba57a_1709896412.png?fit=around|562.5:360&crop=562.5:360;*,*",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEBGzOS0ADSN2MRZHythXzbaj8s5oHNKzWAzwf4FgujpHwtgGjNoKnVxe1VgY-GB49BuI&usqp=CAU"
     ];
-    setLoading(true);
     final nearbyShopsList = [
       {
         "name": "Caffely Astoria Aromas",
@@ -86,18 +97,7 @@ class HomeViewModel extends ChangeNotifier {
         "id": "666",
       }
     ];
-    final List<ShopModel> shops = [];
-    for (var shop in nearbyShopsList) {
-      shops.add(ShopModel.fromJson(shop));
-    }
-    setNearbyShops(shops);
-    log(shops.toString());
-    setLoading(false);
-  }
-
-  getPopularCoffee() {
-    setLoading(true);
-    final popularCoffeeList = [
+    final allCoffees = [
       {
         "name": "Classic Brew",
         "price": "3.50",
@@ -135,11 +135,16 @@ class HomeViewModel extends ChangeNotifier {
         "id": "666",
       }
     ];
-    final List<CoffeeModel> popularCoffees = [];
-    for (var coffee in popularCoffeeList) {
-      popularCoffees.add(CoffeeModel.fromJson(coffee));
+    clearValues();
+    setLoading(true);
+    for (var element in nearbyShopsList) {
+      if (element["id"] == shopId) {
+        setShopModel(ShopModel.fromJson(element));
+      }
     }
-    setPopularCoffees(popularCoffees);
+    final coffeeModels =
+        allCoffees.map((e) => CoffeeModel.fromJson(e)).toList();
+    setCoffeeModel(coffeeModels);
     setLoading(false);
   }
 }

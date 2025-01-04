@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:coffee_app/core/fonts.dart';
-import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +17,8 @@ class _EmailConformPageState extends State<EmailConformPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+      appBar:
+          AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -27,13 +26,22 @@ class _EmailConformPageState extends State<EmailConformPage> {
           children: [
             Column(
               children: [
-                AuthHadingTexts(title: "Reset your Password🔑", subtitle: "Please enter your email and we will send an OTP code in the next step to reset your password"),
-            InputWithText(controller: emailController, hintText: "Email", obscureText: false,icon: Icons.email_rounded),
+                const AuthHadingTexts(
+                    title: "Reset your Password🔑",
+                    subtitle:
+                        "Please enter your email and we will send an OTP code in the next step to reset your password"),
+                InputWithText(
+                    controller: emailController,
+                    hintText: "Email",
+                    obscureText: false,
+                    icon: Icons.email_rounded),
               ],
             ),
-            AuthButton(text: "Continue",onPressed: (){
-              context.push("/welcome/signin/resetPassword-step-2");
-            })
+            AuthButton(
+                text: "Continue",
+                onPressed: () {
+                  context.push("/welcome/signin/resetPassword-step-2");
+                })
           ],
         ),
       ),
@@ -60,18 +68,19 @@ class _AuthButtonState extends State<AuthButton> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        fixedSize: Size(MediaQuery.sizeOf(context).width*0.9, 60),
-                      ),
-                      onPressed: widget.onPressed,
-                      child: Text(widget.text,style: TextStyle(color: Colors.white, fontSize: 17)),
-                    ),
-                  ],
-                ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              fixedSize: Size(MediaQuery.sizeOf(context).width * 0.9, 60),
+            ),
+            onPressed: widget.onPressed,
+            child: Text(widget.text,
+                style: const TextStyle(color: Colors.white, fontSize: 17)),
+          ),
+        ],
+      ),
     );
   }
 }

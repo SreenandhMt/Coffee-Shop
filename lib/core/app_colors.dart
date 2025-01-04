@@ -5,7 +5,10 @@ class AppColors {
   static Color themeColor(context){
     return Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black;
   }
+  static Color backgroundColor(context){
+    return Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black;
+  }
   static Color secondaryColor(context){
-    return Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade200;
+    return Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.grey.shade300;
   }
 }

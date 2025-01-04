@@ -1,3 +1,5 @@
+import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
+import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +10,7 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
+import 'package:provider/provider.dart';
 
 final emailController = TextEditingController();
 
@@ -73,8 +76,7 @@ class SigninPageState extends State<SigninPage> {
                     fixedSize: Size(size.width*0.9, 60),
                   ),
                   onPressed: () {
-                    
-                    showDialog(context: context, builder: (context) => signinSuccessDialog(context));
+                    context.read<AuthViewModel>().signin("", "");
                   },
                   child: const Text("Sign in",style: TextStyle(color: Colors.white, fontSize: 17)),
                 ),
@@ -87,14 +89,6 @@ class SigninPageState extends State<SigninPage> {
     );
   }
 
-  Widget signinSuccessDialog(BuildContext context)
-  {
-    return DialogBox(autoFunction: () {
-      if (context.canPop()) context.pop();
-      if (context.canPop()) context.pop();
-        context.go("/");
-    },icon: Icons.person,title: "Sign in Successful!",subtitle: "Please wait... \n Your will be directed to the home page.");
-  }
 }
 
 class DialogBox extends StatefulWidget {
@@ -150,12 +144,15 @@ class InputWithText extends StatefulWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    this.icon, required this.obscureText,
+    this.icon,
+    required this.obscureText,
+    this.validator,
   });
   final TextEditingController controller;
   final String hintText;
   final IconData? icon;
   final bool obscureText;
+  final String? Function(String?)? validator;
 
   @override
   State<InputWithText> createState() => InputWithTextState();
@@ -183,6 +180,12 @@ class InputWithTextState extends State<InputWithText> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: TextFormField(
+              validator: widget.validator??(value){
+                if(value!.isEmpty)
+                {
+                  return "Enter ${widget.hintText}";
+                }
+              },
               controller: widget.controller,
               onChanged: (value) {
                 setState(() {});
@@ -234,10 +237,11 @@ class DateInputBox extends StatefulWidget {
   const DateInputBox({
     super.key,
     required this.controller,
-    required this.hintText,
+    required this.hintText, this.validator,
   });
   final TextEditingController controller;
   final String hintText;
+  final String? Function(String?)? validator;
 
   @override
   State<DateInputBox> createState() => DateInputBoxState();
@@ -264,6 +268,12 @@ class DateInputBoxState extends State<DateInputBox> {
             padding: const EdgeInsets.all(5),
             child: TextFormField(
               controller: widget.controller,
+              validator: widget.validator??(value){
+                if(value!.isEmpty)
+                {
+                  return "Enter ${widget.hintText}";
+                }
+              },
               onChanged: (value) {
                 setState(() {});
               },

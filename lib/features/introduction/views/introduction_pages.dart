@@ -1,7 +1,8 @@
-import 'package:coffee_app/core/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import 'package:coffee_app/core/app_colors.dart';
 
 PageController controller = PageController();
 final List<Map<String, String>> contents = [
@@ -77,7 +78,7 @@ class IntroWidgetState extends State<IntroWidget> {
           ),
         ),
         const Spacer(),
-        const SmoothIndicator(),
+        SmoothIndicator(controller: controller,count: 3),
         const Spacer(),
         if(widget.index != 2)
         Row(
@@ -143,7 +144,13 @@ class IntroWidgetState extends State<IntroWidget> {
 }
 
 class SmoothIndicator extends StatefulWidget {
-  const SmoothIndicator({super.key});
+  const SmoothIndicator({
+    Key? key,
+    required this.controller,
+    required this.count,
+  }) : super(key: key);
+  final PageController controller;
+  final int count;
 
   @override
   State<SmoothIndicator> createState() => SmoothIndicatorState();
@@ -153,8 +160,8 @@ class SmoothIndicatorState extends State<SmoothIndicator> {
   @override
   Widget build(BuildContext context) {
     return SmoothPageIndicator(
-          controller: controller,
-          count: 3,
+          controller: widget.controller,
+          count: widget.count,
           axisDirection: Axis.horizontal,
           effect: ExpandingDotsEffect(
               dotHeight: 10,
