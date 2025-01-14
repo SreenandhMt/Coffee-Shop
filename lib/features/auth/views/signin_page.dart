@@ -1,16 +1,16 @@
-import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
-import 'package:provider/provider.dart';
+import 'package:coffee_app/route/navigation_utils.dart';
 
 final emailController = TextEditingController();
 
@@ -29,28 +29,60 @@ class SigninPageState extends State<SigninPage> {
       appBar:
           AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor),
       body: Padding(
-        padding: const EdgeInsets.only(left: 10,right: 10,top: 5),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const AuthHadingTexts(title: "Welcome back 👋", subtitle: "Please enter your email & password to sign in"),
-            InputWithText(controller: emailController,hintText: "Email",icon: Icons.email,obscureText: false),
+            const AuthHadingTexts(
+                title: "Welcome back 👋",
+                subtitle: "Please enter your email & password to sign in"),
+            InputWithText(
+                controller: emailController,
+                hintText: "Email",
+                icon: Icons.email,
+                obscureText: false),
             height5,
-            InputWithText(controller: TextEditingController(),hintText: "Password",icon: Icons.lock,obscureText: true),
+            InputWithText(
+                controller: TextEditingController(),
+                hintText: "Password",
+                icon: Icons.lock,
+                obscureText: true),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  CupertinoCheckbox(value: false, onChanged: (value) {},inactiveColor: AppColors.primaryColor,activeColor: AppColors.primaryColor),
+                  CupertinoCheckbox(
+                      value: false,
+                      onChanged: (value) {},
+                      activeColor: AppColors.primaryColor,
+                      fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return CupertinoColors.white.withOpacity(0.5);
+                        }
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColors.primaryColor;
+                        }
+                        return AppColors.primaryColor;
+                      })),
                   width5,
-                  const Text("Remember me",style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                  const Text("Remember me",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                   const Spacer(),
-                  InkWell(onTap: () => context.push("/welcome/signin/resetPassword-step-1"),child: const Text("Forget password?",style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16,color: AppColors.primaryColor))),
+                  InkWell(
+                      onTap: () =>
+                          context.push("/welcome/signin/resetPassword-step-1"),
+                      child: const Text("Forget password?",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: AppColors.primaryColor))),
                 ],
               ),
             ),
             const Padding(
-              padding: EdgeInsets.only(left: 20,right: 20),
+              padding: EdgeInsets.only(left: 20, right: 20),
               child: Divider(thickness: 0.1),
             ),
             height10,
@@ -58,12 +90,22 @@ class SigninPageState extends State<SigninPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text("Don't have an account?",style: TextStyle(fontSize: 15),),
+                const Text(
+                  "Don't have an account?",
+                  style: TextStyle(fontSize: 15),
+                ),
                 width5,
-                InkWell(onTap: () {
-                  if (context.canPop()) context.pop();
-                  context.push("/welcome/signup");
-                },child: const Text("Sign up",style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w700),))
+                InkWell(
+                    onTap: () {
+                      if (context.canPop()) context.pop();
+                      context.push("/welcome/signup");
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w700),
+                    ))
               ],
             ),
             const Spacer(),
@@ -73,12 +115,13 @@ class SigninPageState extends State<SigninPage> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
-                    fixedSize: Size(size.width*0.9, 60),
+                    fixedSize: Size(size.width * 0.9, 60),
                   ),
                   onPressed: () {
                     context.read<AuthViewModel>().signin("", "");
                   },
-                  child: const Text("Sign in",style: TextStyle(color: Colors.white, fontSize: 17)),
+                  child: const Text("Sign in",
+                      style: TextStyle(color: Colors.white, fontSize: 17)),
                 ),
               ],
             ),
@@ -88,21 +131,22 @@ class SigninPageState extends State<SigninPage> {
       ),
     );
   }
-
 }
 
 class DialogBox extends StatefulWidget {
   const DialogBox({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
     this.autoFunction,
-  }) : super(key: key);
+    this.child,
+  });
   final IconData icon;
   final String title;
   final String subtitle;
   final Function()? autoFunction;
+  final Widget? child;
 
   @override
   State<DialogBox> createState() => _DialogBoxState();
@@ -111,12 +155,12 @@ class DialogBox extends StatefulWidget {
 class _DialogBoxState extends State<DialogBox> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2),widget.autoFunction);
+    Future.delayed(const Duration(seconds: 2), widget.autoFunction);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    
     return Dialog(
       shape: OutlineInputBorder(borderRadius: BorderRadius.circular(28)),
       child: Container(
@@ -125,13 +169,48 @@ class _DialogBoxState extends State<DialogBox> {
           mainAxisSize: MainAxisSize.min,
           children: [
             height20,
-            CircleAvatar(radius: 60,backgroundColor: AppColors.primaryColor,child: Icon(widget.icon,size: 60,),),
+            CircleAvatar(
+              radius: 60,
+              backgroundColor: AppColors.primaryColor,
+              child: Icon(
+                widget.icon,
+                size: 60,
+              ),
+            ),
             height30,
-            Text(widget.title,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: AppColors.primaryColor),),
-            height20,
-            Text(widget.subtitle,textAlign: TextAlign.center,style: subtitleFont(fontSize: 16),),
-            height35,
-            const SizedBox(width: 70,height: 70,child: LoadingIndicator(indicatorType: Indicator.ballRotateChase,colors: [AppColors.primaryColor],)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                widget.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: AppColors.primaryColor),
+              ),
+            ),
+            height25,
+            Padding(
+              padding: const EdgeInsets.symmetric(),
+              child: Text(
+                widget.subtitle,
+                textAlign: TextAlign.center,
+                style: subtitleFont(fontSize: 16),
+              ),
+            ),
+            if (widget.child != null) ...[
+              height20,
+              widget.child!
+            ] else ...[
+              height35,
+              const SizedBox(
+                  width: 70,
+                  height: 70,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballRotateChase,
+                    colors: [AppColors.primaryColor],
+                  )),
+            ]
           ],
         ),
       ),
@@ -165,6 +244,7 @@ class InputWithTextState extends State<InputWithText> {
     _isObscured = widget.obscureText;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -180,39 +260,48 @@ class InputWithTextState extends State<InputWithText> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: TextFormField(
-              validator: widget.validator??(value){
-                if(value!.isEmpty)
-                {
-                  return "Enter ${widget.hintText}";
-                }
-              },
+              validator: widget.validator ??
+                  (value) {
+                    if (value!.isEmpty) {
+                      return "Enter ${widget.hintText}";
+                    }
+                    return null;
+                  },
               controller: widget.controller,
               onChanged: (value) {
                 setState(() {});
               },
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.themeColor(context)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.themeColor(context)),
               obscureText: _isObscured,
-
               decoration: InputDecoration(
                 filled: true,
                 //text
                 hintText: widget.hintText,
-                suffixIcon:!widget.obscureText?null:IconButton(
-                  icon: Icon(
-                    _isObscured
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                        color: widget.controller.text.isNotEmpty?AppColors.themeColor(context):Colors.grey.shade500,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isObscured = !_isObscured;
-                    });
-                  },
-                ),
+                suffixIcon: !widget.obscureText
+                    ? null
+                    : IconButton(
+                        icon: Icon(
+                          _isObscured ? Icons.visibility_off : Icons.visibility,
+                          color: widget.controller.text.isNotEmpty
+                              ? AppColors.themeColor(context)
+                              : Colors.grey.shade500,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isObscured = !_isObscured;
+                          });
+                        },
+                      ),
                 //icon
-                prefixIcon:widget.icon==null?null:
-                    Icon(widget.icon, color: widget.controller.text.isNotEmpty?AppColors.themeColor(context):Colors.grey.shade500, size: 20),
+                prefixIcon: widget.icon == null
+                    ? null
+                    : Icon(widget.icon,
+                        color: widget.controller.text.isNotEmpty
+                            ? AppColors.themeColor(context)
+                            : Colors.grey.shade500,
+                        size: 20),
                 //style
                 hintStyle: TextStyle(
                     color: Colors.grey.shade500, fontWeight: FontWeight.w600),
@@ -232,12 +321,12 @@ class InputWithTextState extends State<InputWithText> {
   }
 }
 
-
 class DateInputBox extends StatefulWidget {
   const DateInputBox({
     super.key,
     required this.controller,
-    required this.hintText, this.validator,
+    required this.hintText,
+    this.validator,
   });
   final TextEditingController controller;
   final String hintText;
@@ -252,6 +341,7 @@ class DateInputBoxState extends State<DateInputBox> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -268,16 +358,19 @@ class DateInputBoxState extends State<DateInputBox> {
             padding: const EdgeInsets.all(5),
             child: TextFormField(
               controller: widget.controller,
-              validator: widget.validator??(value){
-                if(value!.isEmpty)
-                {
-                  return "Enter ${widget.hintText}";
-                }
-              },
+              validator: widget.validator ??
+                  (value) {
+                    if (value!.isEmpty) {
+                      return "Enter ${widget.hintText}";
+                    }
+                    return null;
+                  },
               onChanged: (value) {
                 setState(() {});
               },
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.themeColor(context)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.themeColor(context)),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
                 DateInputFormatter(),
@@ -286,14 +379,23 @@ class DateInputBoxState extends State<DateInputBox> {
                 filled: true,
                 //text
                 hintText: "00/00/0000",
-                suffixIcon:IconButton(
-                  icon: Icon(Icons.calendar_month_rounded,
-                        color: widget.controller.text.isNotEmpty?AppColors.themeColor(context):Colors.grey.shade500,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.calendar_month_rounded,
+                    color: widget.controller.text.isNotEmpty
+                        ? AppColors.themeColor(context)
+                        : Colors.grey.shade500,
                   ),
                   onPressed: () {
-                    showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime.now()).then((value) {
-                      if (value!=null) {
-                        widget.controller.text = "${value.day}/${value.month}/${value.year}";
+                    showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now())
+                        .then((value) {
+                      if (value != null) {
+                        widget.controller.text =
+                            "${value.day}/${value.month}/${value.year}";
                       }
                     });
                   },

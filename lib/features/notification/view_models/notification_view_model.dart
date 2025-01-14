@@ -65,7 +65,7 @@ class NotificationViewModel extends ChangeNotifier {
         "time": "07:06 PM",
         "isRead": true,
         "isInfo": true,
-        "infoIcon": "0xf47d"
+        "infoIcon": "0xf0057"
       },
       {
         "title": "Christmas & New Year Offer!",
@@ -79,41 +79,47 @@ class NotificationViewModel extends ChangeNotifier {
       },
     ];
 
-    final notifications = notificationJson.map((e) => NotificationModel.formJson(e)).toList();
+    final notifications =
+        notificationJson.map((e) => NotificationModel.formJson(e)).toList();
     final groupNotifications = groupNotificationsByDate(notifications);
     setNotifications(groupNotifications);
     log(notifications.toString());
-    
+
     setLoading(false);
   }
 
-  Map<String, List<NotificationModel>> groupNotificationsByDate(List<NotificationModel> notifications) {
-  final today = DateTime.now();
-  final yesterday = today.subtract(Duration(days: 1));
+  Map<String, List<NotificationModel>> groupNotificationsByDate(
+      List<NotificationModel> notifications) {
+    final today = DateTime.now();
+    final yesterday = today.subtract(const Duration(days: 1));
 
-  Map<String, List<NotificationModel>> grouped = {
-    'Today': [],
-    'Yesterday': [],
-  };
+    Map<String, List<NotificationModel>> grouped = {
+      'Today': [],
+      'Yesterday': [],
+    };
 
-  for (var notification in notifications) {
-    final date = DateTime.parse(notification.date);
+    for (var notification in notifications) {
+      final date = DateTime.parse(notification.date);
 
-    if (date.year == today.year && date.month == today.month && date.day == today.day) {
-      grouped['Today']!.add(notification);
-    } else if (date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day) {
-      grouped['Yesterday']!.add(notification);
-    } else {
-      final formattedDate = DateFormat('MMM dd, yyyy').format(date);
-      if (!grouped.containsKey(formattedDate)) {
-        grouped[formattedDate] = [];
+      if (date.year == today.year &&
+          date.month == today.month &&
+          date.day == today.day) {
+        grouped['Today']!.add(notification);
+      } else if (date.year == yesterday.year &&
+          date.month == yesterday.month &&
+          date.day == yesterday.day) {
+        grouped['Yesterday']!.add(notification);
+      } else {
+        final formattedDate = DateFormat('MMM dd, yyyy').format(date);
+        if (!grouped.containsKey(formattedDate)) {
+          grouped[formattedDate] = [];
+        }
+        grouped[formattedDate]!.add(notification);
       }
-      grouped[formattedDate]!.add(notification);
     }
+
+    grouped.removeWhere((key, value) => value.isEmpty);
+
+    return grouped;
   }
-
-  grouped.removeWhere((key, value) => value.isEmpty);
-
-  return grouped;
-}
 }

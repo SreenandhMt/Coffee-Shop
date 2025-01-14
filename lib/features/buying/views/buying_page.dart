@@ -265,7 +265,7 @@ class _BuyingPageState extends State<BuyingPage> {
                           "totalPrice": buyingViewModel.totalPrice,
                         }, buyingViewModel.coffeeModel!);
                         context
-                            .read<CoffeeShopViewModel>()
+                            .read<CoffeeShopDetailsViewModel>()
                             .addProductID(orderModel);
                         context.pop();
                         if (!widget.shopPageOpened!) {

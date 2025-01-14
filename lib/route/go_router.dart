@@ -2,7 +2,21 @@ import 'package:coffee_app/features/checkout/views/checkout_page.dart';
 import 'package:coffee_app/features/checkout/views/choose_address.dart';
 import 'package:coffee_app/features/checkout/views/choose_delivery.dart';
 import 'package:coffee_app/features/checkout/views/choose_payament.dart';
+import 'package:coffee_app/features/checkout/views/driver_profile.dart';
+import 'package:coffee_app/features/checkout/views/searching_driver.dart';
+import 'package:coffee_app/features/coffee_shops/views/coffee_shops_page.dart';
+import 'package:coffee_app/features/orders/views/cancel_order_page.dart';
+import 'package:coffee_app/features/orders/views/orders_page.dart';
+import 'package:coffee_app/features/orders/views/point_reward_page.dart';
+import 'package:coffee_app/features/orders/views/rating_driver_page.dart';
+import 'package:coffee_app/features/orders/views/rating_shop_page.dart';
+import 'package:coffee_app/features/orders/views/tip_page.dart';
+import 'package:coffee_app/features/orders/views/check_mood_page.dart';
+import 'package:coffee_app/features/orders/views/video_call_page.dart';
+import 'package:coffee_app/features/orders/views/voice_call_page.dart';
+import 'package:flutter/material.dart';
 
+import '../features/orders/views/chat_driver_page.dart';
 import '/features/auth/views/forgot_password/create_password_page.dart';
 import '/features/auth/views/forgot_password/email_conform_page.dart';
 import '/features/auth/views/forgot_password/otp_conform_page.dart';
@@ -39,53 +53,113 @@ class AppRouter {
           name: NavigationPath.splashScreen.name,
           builder: (context, state) => const SplashScreen(),
         ),
-        GoRoute(
-            name: NavigationPath.home.name,
-            path: NavigationPath.home.path,
-            builder: (context, state) => const HomePage(),
-            routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) => Scaffold(
+            body: navigationShell,
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: navigationShell.currentIndex,
+              onTap: (index) => navigationShell.goBranch(index),
+              selectedItemColor: Colors.green,
+              unselectedItemColor: Colors.grey,
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.home),
+                  label: "Home",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.shopping_cart),
+                  label: "Shop",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.doc_text),
+                  label: "Orders",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.account_balance_wallet_outlined),
+                  label: "Wallet",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(CupertinoIcons.person),
+                  label: "Account",
+                ),
+              ],
+            ),
+          ),
+          branches: [
+            StatefulShellBranch(routes: [
               GoRoute(
-                path: "/signupSuccess",
-                builder: (context, state) => const SignupSuccessPage(),
-              ),
-              GoRoute(
-                path: "/notification",
-                builder: (context, state) => const NotificationPage(),
-              ),
-              GoRoute(
-                path: "/nearby-shops",
-                builder: (context, state) => const NearbyShopsPage(),
-              ),
-              GoRoute(
-                path: "/popular-menu",
-                builder: (context, state) => const PopularMenuPage(),
-              ),
-              GoRoute(
-                path: "/offer-details",
-                builder: (context, state) => const OfferDetailsPage(),
-              ),
-              GoRoute(
-                  path: "/shop-details/:shopid",
-                  builder: (context, state) {
-                    return CoffeeShopDetailsPage(
-                      shopId: state.pathParameters["shopid"]!,
-                    );
-                  },
+                  name: NavigationPath.home.name,
+                  path: NavigationPath.home.path,
+                  builder: (context, state) => const HomePage(),
                   routes: [
                     GoRoute(
-                      path: "/about",
-                      builder: (context, state) => const AboutShopPage(),
+                      path: "/signupSuccess/:title/:subtitle/:button",
+                      builder: (context, state) => SignupSuccessPage(
+                        title: state.pathParameters["title"],
+                        subtitle: state.pathParameters["subtitle"],
+                        buttonText: state.pathParameters["button"],
+                      ),
                     ),
                     GoRoute(
-                      path: "/review-rating",
-                      builder: (context, state) => const RatingAndReviews(),
+                      path: "/notification",
+                      builder: (context, state) => const NotificationPage(),
                     ),
                     GoRoute(
-                      path: "/offers",
-                      builder: (context, state) => const OffersPage(),
+                      path: "/nearby-shops",
+                      builder: (context, state) => const NearbyShopsPage(),
                     ),
+                    GoRoute(
+                      path: "/popular-menu",
+                      builder: (context, state) => const PopularMenuPage(),
+                    ),
+                    GoRoute(
+                      path: "/offer-details",
+                      builder: (context, state) => const OfferDetailsPage(),
+                    ),
+                    GoRoute(
+                        path: "/shop-details/:shopid",
+                        builder: (context, state) {
+                          return CoffeeShopDetailsPage(
+                            shopId: state.pathParameters["shopid"]!,
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            path: "/about",
+                            builder: (context, state) => const AboutShopPage(),
+                          ),
+                          GoRoute(
+                            path: "/review-rating",
+                            builder: (context, state) =>
+                                const RatingAndReviews(),
+                          ),
+                          GoRoute(
+                            path: "/offers",
+                            builder: (context, state) => const OffersPage(),
+                          ),
+                        ]),
                   ]),
             ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: "/shops",
+                builder: (context, state) {
+                  return const CoffeeShopsPage();
+                },
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: "/orders",
+                builder: (context, state) {
+                  return const OrdersPage();
+                },
+              ),
+            ])
+          ],
+        ),
         GoRoute(
           path: "/buying-page/:id/:route",
           builder: (context, state) {
@@ -117,8 +191,57 @@ class AppRouter {
               builder: (context, state) =>
                   const OffersPage(isVouchersPage: true),
             ),
+            GoRoute(
+              path: "/success",
+              builder: (context, state) => const SearchingDriverPage(),
+            ),
+            GoRoute(
+              path: "/driver-profile",
+              builder: (context, state) => const DriverProfilePage(),
+            ),
           ],
         ),
+        GoRoute(
+            path: "/orders",
+            builder: (context, state) => const SizedBox(),
+            routes: [
+              GoRoute(
+                path: "/chat-driver",
+                builder: (context, state) => const ChatDriverPage(),
+              ),
+              GoRoute(
+                path: "/video-call",
+                builder: (context, state) => const VideoCallPage(),
+              ),
+              GoRoute(
+                path: "/voice-call",
+                builder: (context, state) => const VoiceCallPage(),
+              ),
+              GoRoute(
+                path: "/reward-point",
+                builder: (context, state) => const PointRewardPage(),
+              ),
+              GoRoute(
+                path: "/check-mood",
+                builder: (context, state) => const CheckUserMoodPage(),
+              ),
+              GoRoute(
+                path: "/rating-driver",
+                builder: (context, state) => const RatingPage(),
+              ),
+              GoRoute(
+                path: "/tip-driver",
+                builder: (context, state) => const TipDriver(),
+              ),
+              GoRoute(
+                path: "/rating-shop",
+                builder: (context, state) => const RatingShopPage(),
+              ),
+              GoRoute(
+                path: "/cancel",
+                builder: (context, state) => const CancelOrderPage(),
+              ),
+            ]),
         GoRoute(
           name: NavigationPath.intro.name,
           path: NavigationPath.intro.path,

@@ -24,12 +24,14 @@ class CoffeeShopDetailsPage extends StatefulWidget {
 }
 
 class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
+  late CoffeeShopDetailsViewModel myAppState;
   PageController controller = PageController();
   final list = ["Coffee", "Baked", "Sandwich", "Cakes", "Cookies"];
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
-        context.read<CoffeeShopViewModel>().getShopDetails(widget.shopId));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => context
+        .read<CoffeeShopDetailsViewModel>()
+        .getShopDetails(widget.shopId));
     super.initState();
   }
 
@@ -39,7 +41,7 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ));
-    final viewModel = context.watch<CoffeeShopViewModel>();
+    final viewModel = context.watch<CoffeeShopDetailsViewModel>();
     final backgroundColor = Colors.grey.withOpacity(0.8);
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -317,7 +319,7 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
   }
 
   _coffeeList() {
-    final viewModel = context.watch<CoffeeShopViewModel>();
+    final viewModel = context.watch<CoffeeShopDetailsViewModel>();
     return GridView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
@@ -349,5 +351,20 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
         );
       },
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Save a reference to the provider here
+    myAppState =
+        Provider.of<CoffeeShopDetailsViewModel>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    // Use the saved reference instead of context
+    myAppState.clearValues();
+    super.dispose();
   }
 }

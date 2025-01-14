@@ -44,6 +44,7 @@ dependencies:
   provider: ^6.1.2
   intl: ^0.20.1
   adoptive_calendar: ^0.2.0
+  action_slider: ^0.7.0
 
 dev_dependencies:
   flutter_test:

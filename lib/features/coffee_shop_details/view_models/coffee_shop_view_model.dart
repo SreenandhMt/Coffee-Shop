@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../home/models/coffee_model.dart';
 
-class CoffeeShopViewModel extends ChangeNotifier {
+class CoffeeShopDetailsViewModel extends ChangeNotifier {
   bool _isLoading = false;
   List<CoffeeModel>? _coffeeModel;
   ShopModel? _shopModel;
@@ -135,7 +135,6 @@ class CoffeeShopViewModel extends ChangeNotifier {
         "id": "666",
       }
     ];
-    clearValues();
     setLoading(true);
     for (var element in nearbyShopsList) {
       if (element["id"] == shopId) {

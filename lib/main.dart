@@ -2,6 +2,7 @@ import 'package:coffee_app/core/theme.dart';
 import 'package:coffee_app/features/buying/view_models/buying_view_model.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:coffee_app/features/coffee_shop_details/view_models/coffee_shop_view_model.dart';
+import 'package:coffee_app/features/coffee_shops/view_models/coffee_shops_view_model.dart';
 import 'package:coffee_app/features/home/view_models/home_view_model.dart';
 import 'package:coffee_app/features/notification/view_models/notification_view_model.dart';
 import 'package:coffee_app/route/go_router.dart';
@@ -25,8 +26,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => NotificationViewModel()),
         ChangeNotifierProvider(create: (context) => BuyingViewModel()),
-        ChangeNotifierProvider(create: (context) => CoffeeShopViewModel()),
+        ChangeNotifierProvider(
+            create: (context) => CoffeeShopDetailsViewModel()),
         ChangeNotifierProvider(create: (context) => CheckoutViewModel()),
+        ChangeNotifierProvider(create: (context) => CoffeeShopsViewModel()),
       ],
       child: MaterialApp.router(
         title: 'Coffee App',

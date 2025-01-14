@@ -1,4 +1,5 @@
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,7 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class OffersPage extends StatefulWidget {
   const OffersPage({
@@ -187,6 +189,7 @@ class _OffersPageState extends State<OffersPage> {
             AuthButton(
                 text: "OK",
                 onPressed: () {
+                  context.read<CheckoutViewModel>().addPromos("XM4LWP3");
                   context.pop();
                 })
           ]
