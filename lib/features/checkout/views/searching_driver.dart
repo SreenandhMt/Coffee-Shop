@@ -5,6 +5,7 @@ import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class SearchingDriverPage extends StatefulWidget {
   const SearchingDriverPage({super.key});
@@ -13,9 +14,15 @@ class SearchingDriverPage extends StatefulWidget {
   State<SearchingDriverPage> createState() => _SearchingDriverPageState();
 }
 
-class _SearchingDriverPageState extends State<SearchingDriverPage> {
+class _SearchingDriverPageState extends State<SearchingDriverPage>
+    with AnimationMixin {
+  late Animation<double> size;
+
   @override
   void initState() {
+    size = Tween<double>(begin: 100.0, end: 190.0).animate(controller);
+    controller.play();
+    controller.loop();
     Future.delayed(const Duration(seconds: 5), () {
       if (!mounted) return;
       context.pop();
@@ -48,16 +55,16 @@ class _SearchingDriverPageState extends State<SearchingDriverPage> {
           const Text("This may take a few seconds..."),
           const Expanded(child: SizedBox()),
           CircleAvatar(
-            radius: 150,
+            radius: size.value,
             backgroundColor: AppColors.primaryColor.withOpacity(0.2),
             child: CircleAvatar(
-              radius: 120,
+              radius: 100,
               backgroundColor: AppColors.primaryColor.withOpacity(0.3),
               child: CircleAvatar(
-                radius: 80,
-                backgroundColor: AppColors.primaryColor.withOpacity(0.5),
-                child: CircleAvatar(
-                    radius: 50, backgroundColor: AppColors.themeColor(context)),
+                radius: 60,
+                backgroundColor: AppColors.secondaryColor(context),
+                backgroundImage: const NetworkImage(
+                    "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"),
               ),
             ),
           ),
@@ -81,10 +88,10 @@ class _SearchingDriverPageState extends State<SearchingDriverPage> {
                   ),
                 ),
                 action: (controller) async {
-                  controller.loading(); //starts loading animation
+                  controller.success();
                   await Future.delayed(const Duration(seconds: 1));
-                  controller.success(); //starts success animation
-                  if (!mounted) context.pop();
+                  if (!mounted) return;
+                  context.pop();
                 },
               ),
             ],

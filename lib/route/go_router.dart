@@ -1,21 +1,42 @@
-import 'package:coffee_app/features/checkout/views/checkout_page.dart';
-import 'package:coffee_app/features/checkout/views/choose_address.dart';
-import 'package:coffee_app/features/checkout/views/choose_delivery.dart';
-import 'package:coffee_app/features/checkout/views/choose_payament.dart';
-import 'package:coffee_app/features/checkout/views/driver_profile.dart';
-import 'package:coffee_app/features/checkout/views/searching_driver.dart';
-import 'package:coffee_app/features/coffee_shops/views/coffee_shops_page.dart';
-import 'package:coffee_app/features/orders/views/cancel_order_page.dart';
-import 'package:coffee_app/features/orders/views/orders_page.dart';
-import 'package:coffee_app/features/orders/views/point_reward_page.dart';
-import 'package:coffee_app/features/orders/views/rating_driver_page.dart';
-import 'package:coffee_app/features/orders/views/rating_shop_page.dart';
-import 'package:coffee_app/features/orders/views/tip_page.dart';
-import 'package:coffee_app/features/orders/views/check_mood_page.dart';
-import 'package:coffee_app/features/orders/views/video_call_page.dart';
-import 'package:coffee_app/features/orders/views/voice_call_page.dart';
+import 'package:coffee_app/features/account/views/about_caffely_page.dart';
+import 'package:coffee_app/features/account/views/help_center.dart';
+
+import '/features/account/views/account_page.dart';
+import '../features/payment/views/add_payment_method_page.dart';
+import '/features/account/views/caffely_rewards.dart';
+import '/features/account/views/favorite_coffee_page.dart';
+import '../features/address/views/fill_address_details_page.dart';
+import '/features/account/views/language_settings_page.dart';
+import '../features/address/views/manage_address_page.dart';
+import '../features/payment/views/manage_payments_page.dart';
+import '../features/address/views/new_address_page.dart';
+import '/features/account/views/notification_settings_page.dart';
+import '/features/account/views/personal_info_page.dart';
+import '/features/account/views/security_settings_page.dart';
+import '/features/checkout/views/checkout_page.dart';
+import '../features/address/views/choose_address.dart';
+import '/features/checkout/views/choose_delivery.dart';
+import '../features/payment/views/choose_payment.dart';
+import '/features/checkout/views/driver_profile.dart';
+import '/features/checkout/views/searching_driver.dart';
+import '/features/coffee_shop_details/views/vouchers_page.dart';
+import '/features/coffee_shops/views/coffee_shops_page.dart';
+import '/features/orders/views/cancel_order_page.dart';
+import '/features/orders/views/order_details.dart';
+import '/features/orders/views/orders_page.dart';
+import '/features/orders/views/point_reward_page.dart';
+import '/features/orders/views/rating_driver_page.dart';
+import '/features/orders/views/rating_shop_page.dart';
+import '/features/orders/views/tip_page.dart';
+import '/features/orders/views/check_mood_page.dart';
+import '/features/orders/views/video_call_page.dart';
+import '/features/orders/views/voice_call_page.dart';
+import '/features/wallet/views/top_up_page.dart';
+import '/features/wallet/views/transaction_history.dart';
+import '/features/wallet/views/wallet_page.dart';
 import 'package:flutter/material.dart';
 
+import '../features/account/views/caffely_points_page.dart';
 import '../features/orders/views/chat_driver_page.dart';
 import '/features/auth/views/forgot_password/create_password_page.dart';
 import '/features/auth/views/forgot_password/email_conform_page.dart';
@@ -46,7 +67,7 @@ class AppRouter {
   static final navigationKey = GlobalKey<NavigatorState>();
   static final router = GoRouter(
       navigatorKey: navigationKey,
-      initialLocation: NavigationPath.home.path,
+      initialLocation: NavigationPath.splashScreen.path,
       routes: [
         GoRoute(
           path: NavigationPath.splashScreen.path,
@@ -135,10 +156,6 @@ class AppRouter {
                             builder: (context, state) =>
                                 const RatingAndReviews(),
                           ),
-                          GoRoute(
-                            path: "/offers",
-                            builder: (context, state) => const OffersPage(),
-                          ),
                         ]),
                   ]),
             ]),
@@ -157,8 +174,72 @@ class AppRouter {
                   return const OrdersPage();
                 },
               ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: "/wallet",
+                builder: (context, state) {
+                  return const WalletPage();
+                },
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: "/account",
+                builder: (context, state) {
+                  return const AccountPage();
+                },
+              ),
             ])
           ],
+        ),
+        GoRoute(
+            path: "/top-up",
+            builder: (context, state) {
+              return const TopUpPage();
+            },
+            routes: [
+              GoRoute(
+                path: "/choose-payment",
+                builder: (context, state) => const ChoosePaymentPage(
+                  isTopUpPage: true,
+                ),
+              ),
+            ]),
+        GoRoute(
+          path: "/transaction-history",
+          builder: (context, state) => const TransactionHistory(),
+        ),
+        GoRoute(
+          path: "/OrderDetails/:ispickup",
+          builder: (context, state) {
+            final page = bool.parse(state.pathParameters["ispickup"]!);
+            return OrderDetailsPage(isPickUp: page);
+          },
+        ),
+        GoRoute(
+          path: "/help-center",
+          builder: (context, state) => const HelpCenterPage(),
+        ),
+        GoRoute(
+          path: "/about-us",
+          builder: (context, state) => const AboutCaffelyPage(),
+        ),
+        GoRoute(
+          path: "/offers",
+          builder: (context, state) => const OffersPage(),
+        ),
+        GoRoute(
+          path: "/caffely-reward",
+          builder: (context, state) => const CaffelyRewardsPage(),
+        ),
+        GoRoute(
+          path: "/favorite-coffee",
+          builder: (context, state) => const FavoriteCoffeePage(),
+        ),
+        GoRoute(
+          path: "/points",
+          builder: (context, state) => const CaffelyPointsPage(),
         ),
         GoRoute(
           path: "/buying-page/:id/:route",
@@ -168,6 +249,50 @@ class AppRouter {
                 shopPageOpened: bool.tryParse(state.pathParameters["route"]!));
           },
         ),
+        GoRoute(
+          path: "/personal-info",
+          builder: (context, state) => const PersonalInfoPage(),
+        ),
+        GoRoute(
+          path: "/notification-settings",
+          builder: (context, state) => const NotificationSettingsPage(),
+        ),
+        GoRoute(
+          path: "/security-settings",
+          builder: (context, state) => const SecuritySettingsPage(),
+        ),
+        GoRoute(
+          path: "/language-settings",
+          builder: (context, state) => const LanguageSettingsPage(),
+        ),
+        GoRoute(
+          path: "/vouchers-discount",
+          builder: (context, state) => const VouchersAndDiscountPage(),
+        ),
+        GoRoute(
+            path: "/manage-payments",
+            builder: (context, state) => const ManagePaymentsPage(),
+            routes: [
+              GoRoute(
+                path: "/add-payment",
+                builder: (context, state) => const AddPaymentMethodPage(),
+              ),
+            ]),
+        GoRoute(
+            path: "/manage-address",
+            builder: (context, state) => const ManageAddressPage(),
+            routes: [
+              GoRoute(
+                  path: "/add-address",
+                  builder: (context, state) {
+                    return const AddNewAddressPage();
+                  }),
+              GoRoute(
+                  path: "/fill-address",
+                  builder: (context, state) {
+                    return const FillUpAddressDetailsPage();
+                  }),
+            ]),
         GoRoute(
           path: "/check-out",
           builder: (context, state) {
@@ -189,7 +314,7 @@ class AppRouter {
             GoRoute(
               path: "/vouchers",
               builder: (context, state) =>
-                  const OffersPage(isVouchersPage: true),
+                  const VouchersAndDiscountPage(isBuyingPage: true),
             ),
             GoRoute(
               path: "/success",

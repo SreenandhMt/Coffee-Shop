@@ -3,8 +3,6 @@ import 'dart:developer';
 
 import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
@@ -24,18 +22,21 @@ class ProfileDetailsPage extends StatefulWidget {
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
-  GlobalKey<FormState> _key = GlobalKey<FormState>();
-  TextEditingController fullNameController = TextEditingController(), phoneNumberController = TextEditingController(),birthDateController = TextEditingController();
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  TextEditingController fullNameController = TextEditingController(),
+      phoneNumberController = TextEditingController(),
+      birthDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // final size = MediaQuery.sizeOf(context);
     return Form(
       key: _key,
       child: Scaffold(
-        appBar:
-            AppBar(backgroundColor: Theme.of(context).scaffoldBackgroundColor,surfaceTintColor: Theme.of(context).scaffoldBackgroundColor),
+        appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            surfaceTintColor: Theme.of(context).scaffoldBackgroundColor),
         body: Padding(
-          padding: const EdgeInsets.only(left: 10,right: 10),
+          padding: const EdgeInsets.only(left: 10, right: 10),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,8 +48,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                       "Add the finishing touches to your profile. Lets make your coffee experience more social!",
                 ),
                 //center
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -60,7 +61,15 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                             children: [
                               Align(
                                 alignment: Alignment.bottomRight,
-                                child: Container(padding: EdgeInsets.all(3),decoration: BoxDecoration(color: AppColors.primaryColor,borderRadius: BorderRadius.circular(4)),child: Icon(Icons.edit,color: AppColors.themeColor(context),)),
+                                child: Container(
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        borderRadius: BorderRadius.circular(4)),
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: AppColors.themeColor(context),
+                                    )),
                               )
                             ],
                           ),
@@ -74,18 +83,23 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                     ),
                     PhoneNumberInputBox(controller: phoneNumberController),
                     DateInputBox(
-                      controller: birthDateController,
-                      hintText: "Date of Birth"
-                    ),
+                        controller: birthDateController,
+                        hintText: "Date of Birth"),
                   ],
                 ),
                 //button
                 AuthButton(
                   text: "Finish",
                   onPressed: () {
-                    if(!_key.currentState!.validate()||phoneNumberController.text.isEmpty||phoneNumberController.text.length!=10) return;
-                    context.read<AuthViewModel>().createProfile(fullNameController.text, fullNameController.text, birthDateController.text);
-
+                    if (!_key.currentState!.validate() ||
+                        phoneNumberController.text.isEmpty ||
+                        phoneNumberController.text.length != 10) return;
+                    context.read<AuthViewModel>().createProfile(
+                        fullNameController.text,
+                        phoneNumberController.text,
+                        birthDateController.text,
+                        context,
+                        mounted);
                   },
                 ),
               ],
@@ -98,7 +112,8 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
 }
 
 class PhoneNumberInputBox extends StatefulWidget {
-  const PhoneNumberInputBox({super.key, required this.controller, this.validator});
+  const PhoneNumberInputBox(
+      {super.key, required this.controller, this.validator});
   final TextEditingController controller;
   final FutureOr<String?> Function(PhoneNumber?)? validator;
 
@@ -123,34 +138,34 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
             padding: const EdgeInsets.all(5),
             child: IntlPhoneField(
               showDropdownIcon: true,
-              validator: widget.validator??(value){
-                log(value.toString());
-                if(value==null||value.number.isEmpty)
-                {
-                  return "Enter Your Phone Number";
-                }
-                if(value.number.length != 10)
-                {
-                  return "Invalid Phone Number";
-                }
-                return null;
-              },
+              validator: widget.validator ??
+                  (value) {
+                    log(value.toString());
+                    if (value == null || value.number.isEmpty) {
+                      return "Enter Your Phone Number";
+                    }
+                    if (value.number.length != 10) {
+                      return "Invalid Phone Number";
+                    }
+                    return null;
+                  },
               initialCountryCode: "IN",
               controller: widget.controller,
               disableLengthCheck: true,
               showCountryFlag: true,
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.themeColor(context)),
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.themeColor(context)),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: AppColors.secondaryColor(context),
+                fillColor: AppColors.secondaryColor(context).withOpacity(0.3),
                 hintText: "Phone number",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10)
-                ),
+                errorBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,

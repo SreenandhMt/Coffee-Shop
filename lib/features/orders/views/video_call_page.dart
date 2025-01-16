@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/app_colors.dart';
-import '../../../core/size.dart';
 
 class VideoCallPage extends StatefulWidget {
   const VideoCallPage({super.key});

@@ -161,7 +161,7 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                                         icon: Icons.check_box_rounded,
                                         title: "Order Successfully Cancelled",
                                         subtitle:
-                                            "90% of the dunds have been returned to your account.",
+                                            "90% of the bunds have been returned to your account.",
                                         child: Column(
                                           children: [
                                             height15,

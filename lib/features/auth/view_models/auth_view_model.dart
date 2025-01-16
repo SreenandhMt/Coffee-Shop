@@ -1,5 +1,4 @@
 import 'package:coffee_app/route/go_router.dart';
-import 'package:coffee_app/route/navigation_path.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -21,15 +20,21 @@ class AuthViewModel extends ChangeNotifier {
     _otp = otp;
   }
 
-  signin(String email, String password) async {
+  signin(
+      String email, String password, BuildContext context, bool mounted) async {
     setLoading(true);
     await Future.delayed(const Duration(seconds: 2)); //TODO: add signin service
+    if (!mounted) {
+      setLoading(false);
+      return;
+    }
     showDialog(
-        context: AppRouter.navigationKey.currentContext!,
+        context: context,
         barrierDismissible: false,
         builder: (context) => DialogBox(
             autoFunction: () {
-              ContextLessNavigationUtils.replaceHomePage();
+              if (!mounted) return;
+              NavigationUtils.replaceHomePage(context);
             },
             icon: Icons.person,
             title: "Sign in Successful!",
@@ -44,11 +49,16 @@ class AuthViewModel extends ChangeNotifier {
     setLoading(false);
   }
 
-  createProfile(String name, String phoneNumber, String birthDate) async {
+  createProfile(String name, String phoneNumber, String birthDate,
+      BuildContext context, bool mounted) async {
     setLoading(true);
     await Future.delayed(
         const Duration(seconds: 2)); //TODO: add create profile service
-    ContextLessNavigationUtils.showHomeSuccessPage();
+    if (!mounted) {
+      setLoading(false);
+      return;
+    }
+    NavigationUtils.showAuthSuccessPage(context);
     setLoading(false);
   }
 
@@ -68,12 +78,16 @@ class AuthViewModel extends ChangeNotifier {
     setLoading(false);
   }
 
-  createNewPassword(String email, String password) async {
+  createNewPassword(
+      String email, String password, BuildContext context, bool mounted) async {
     setLoading(true);
     await Future.delayed(
         const Duration(seconds: 2)); //TODO: add create new password service
-    await signin(
-        email, password); //TODO: also add signin using this email and password
+    if (!mounted) {
+      setLoading(false);
+      return;
+    }
+    await signin(email, password, context, mounted);
     setLoading(false);
   }
 

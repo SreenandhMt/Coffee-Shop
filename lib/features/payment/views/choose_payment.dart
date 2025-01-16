@@ -1,3 +1,4 @@
+import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,11 @@ import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dar
 import 'package:coffee_app/route/navigation_utils.dart';
 
 class ChoosePaymentPage extends StatefulWidget {
-  const ChoosePaymentPage({super.key});
+  const ChoosePaymentPage({
+    super.key,
+    this.isTopUpPage = false,
+  });
+  final bool isTopUpPage;
 
   @override
   State<ChoosePaymentPage> createState() => ChoosePaymentPageState();
@@ -33,12 +38,24 @@ class ChoosePaymentPageState extends State<ChoosePaymentPage> {
     ".... .... .... .... 5567"
   ];
 
+  final topUpMethods = [
+    "PayPal",
+    "Google Pay",
+    "Apple Pay",
+    ".... .... .... .... 4676",
+    ".... .... .... .... 5567"
+  ];
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<CheckoutViewModel>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Payment Method', style: appBarTitleFont),
+        title: Text(
+            widget.isTopUpPage
+                ? "Choose Top Up Method"
+                : 'Choose Payment Method',
+            style: appBarTitleFont),
         actions: const [
           Icon(Icons.add),
           width10,
@@ -46,20 +63,65 @@ class ChoosePaymentPageState extends State<ChoosePaymentPage> {
       ),
       body: Column(
         children: [
-          ...List.generate(
-            paymentMethods.length,
-            (index) => PaymentWidget(
-                paymentMethod: paymentMethods[index],
-                selected: viewModel.paymentMethod == paymentMethods[index]),
-          ),
-          AuthButton(
-            text: "OK",
-            onPressed: () {
-              if (context.canPop()) context.pop();
-              if (context.canPop()) context.pop();
-              NavigationUtils.checkoutPage(context);
-            },
-          )
+          if (widget.isTopUpPage)
+            ...List.generate(
+              topUpMethods.length,
+              (index) => PaymentWidget(
+                  paymentMethod: topUpMethods[index],
+                  selected: viewModel.paymentMethod == topUpMethods[index]),
+            )
+          else
+            ...List.generate(
+              paymentMethods.length,
+              (index) => PaymentWidget(
+                  paymentMethod: paymentMethods[index],
+                  selected: viewModel.paymentMethod == paymentMethods[index]),
+            ),
+          const Spacer(),
+          if (widget.isTopUpPage)
+            AuthButton(
+              text: "Conform Top Up - \$100.00",
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => DialogBox(
+                    icon: Icons.check_box_rounded,
+                    title: "Top Up Successful!",
+                    subtitle:
+                        "The amount of \$100 hs been added to your wallet",
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryColor,
+                              fixedSize: const Size(double.infinity, 60),
+                            ),
+                            onPressed: () {
+                              if (context.canPop()) context.pop();
+                              if (context.canPop()) context.pop();
+                              if (context.canPop()) context.pop();
+                            },
+                            child: const Text("OK",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 17)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
+          else
+            AuthButton(
+              text: "OK",
+              onPressed: () {
+                if (context.canPop()) context.pop();
+                if (context.canPop()) context.pop();
+                NavigationUtils.checkoutPage(context);
+              },
+            )
         ],
       ),
     );

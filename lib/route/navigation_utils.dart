@@ -1,18 +1,15 @@
-import 'package:coffee_app/route/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'navigation_path.dart';
 
-class ContextLessNavigationUtils {
-  static replaceHomePage() => AppRouter.router.go(NavigationPath.home.path);
-  static showHomeSuccessPage() => AppRouter.router.go(
-      "/signupSuccess/You're All Set!/Your coffee adventure begins!/Start Exploring");
-}
-
 class NavigationUtils {
+  static replaceHomePage(BuildContext context) =>
+      context.go(NavigationPath.home.path);
   static notificationPage(BuildContext context) =>
       context.push("/notification");
+  static showAuthSuccessPage(BuildContext context) => context.go(
+      "/signupSuccess/You're All Set!/Your coffee adventure begins!/Start Exploring");
 
   static nearbyShopsPage(BuildContext context) => context.push("/nearby-shops");
 
@@ -34,8 +31,11 @@ class NavigationUtils {
   static reviewAndRatingPage(BuildContext context, {required String shopId}) =>
       context.push("/shop-details/$shopId/review-rating");
 
-  static offersPage(BuildContext context, {required String shopId}) =>
-      context.push("/shop-details/$shopId/offers");
+  static offersPage(BuildContext context) => context.push("/offers");
+  static vouchersPage(BuildContext context) =>
+      context.push("/check-out/vouchers");
+  static vouchersAndDiscountPage(BuildContext context) =>
+      context.push("/vouchers-discount");
 
   static checkoutPage(BuildContext context) => context.push("/check-out");
 
@@ -44,6 +44,8 @@ class NavigationUtils {
 
   static choosePaymentPage(BuildContext context) =>
       context.push("/check-out/choose-payment");
+  static chooseTopUpPaymentPage(BuildContext context) =>
+      context.push("/top-up/choose-payment");
 
   static chooseDeliveryPage(BuildContext context) =>
       context.push("/check-out/choose-delivery");
@@ -73,4 +75,42 @@ class NavigationUtils {
       "/signupSuccess/Thank you for your feedback/see you on the next order!/OK");
   static cancelOrderPage(BuildContext context) =>
       context.push("/orders/cancel");
+  static orderDetailsPagePickup(BuildContext context) =>
+      context.push("/orderDetails/true");
+  static orderDetailsPageDelivery(BuildContext context) =>
+      context.push("/orderDetails/false");
+  static topUpPage(BuildContext context) => context.push("/top-up");
+  static transactionHistoryPage(BuildContext context) =>
+      context.push("/transaction-history");
+  static caffelyPointsPage(BuildContext context) => context.push("/points");
+  static navigateRewardPage(BuildContext context) =>
+      context.push("/caffely-reward");
+  static navigateFavoriteCoffeePage(BuildContext context) =>
+      context.push("/favorite-coffee");
+
+  static navigateManageAddressPage(BuildContext context) =>
+      context.push("/manage-address");
+  static addNewAddressPage(BuildContext context) =>
+      context.push("/manage-address/add-address");
+  static fillUpAddressPage(BuildContext context) =>
+      context.push("/manage-address/fill-address");
+  static managePaymentsPage(BuildContext context) =>
+      context.push("/manage-payments");
+
+  static addNewPaymentMethodPage(BuildContext context) =>
+      context.push("/manage-payments/add-payment");
+
+  static personalInfoPage(BuildContext context) =>
+      context.push("/personal-info");
+
+  static notificationSettingPage(BuildContext context) =>
+      context.push("/notification-settings");
+
+  static securitySettingsPage(BuildContext context) =>
+      context.push("/security-settings");
+  static languageSettingPage(BuildContext context) =>
+      context.push("/language-settings");
+
+  static helpCenterPage(BuildContext context) => context.push("/help-center");
+  static aboutCaffelyPage(BuildContext context) => context.push("/about-us");
 }

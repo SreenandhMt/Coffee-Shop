@@ -3,10 +3,8 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl_phone_field/countries.dart';
 import 'package:provider/provider.dart';
 
 class ChooseAddressPage extends StatefulWidget {

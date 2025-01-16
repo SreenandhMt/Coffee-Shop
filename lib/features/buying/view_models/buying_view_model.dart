@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:coffee_app/features/coffee_shop_details/view_models/coffee_shop_view_model.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
 import 'package:flutter/material.dart';
 

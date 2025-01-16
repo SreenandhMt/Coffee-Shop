@@ -1,30 +1,36 @@
-import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
-import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:coffee_app/core/app_colors.dart';
-import 'package:coffee_app/core/fonts.dart';
-import 'package:coffee_app/core/size.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class OffersPage extends StatefulWidget {
-  const OffersPage({
+import 'package:coffee_app/core/fonts.dart';
+
+import '../../../core/app_colors.dart';
+import '../../../core/size.dart';
+import '../../auth/views/forgot_password/email_conform_page.dart';
+import '../../checkout/view_models/checkout_view_model.dart';
+
+class VouchersAndDiscountPage extends StatefulWidget {
+  const VouchersAndDiscountPage({
     super.key,
+    this.isBuyingPage = false,
   });
+  final bool isBuyingPage;
 
   @override
-  State<OffersPage> createState() => _OffersPageState();
+  State<VouchersAndDiscountPage> createState() =>
+      _VouchersAndDiscountPageState();
 }
 
-class _OffersPageState extends State<OffersPage> {
+class _VouchersAndDiscountPageState extends State<VouchersAndDiscountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Spacial Offers', style: appBarTitleFont),
+        title: Text(
+            widget.isBuyingPage ? "Vouchers Available" : "Vouchers & Discount",
+            style: appBarTitleFont),
         actions: const [Icon(Icons.search, size: 30)],
       ),
       body: Column(
@@ -97,7 +103,7 @@ class _OffersPageState extends State<OffersPage> {
                                   backgroundColor: WidgetStatePropertyAll(
                                       AppColors.primaryColor)),
                               child: const Text(
-                                "Claim",
+                                "Use",
                                 style: TextStyle(color: Colors.white),
                               ))
                         ],
@@ -170,7 +176,7 @@ class _OffersPageState extends State<OffersPage> {
                                   backgroundColor: WidgetStatePropertyAll(
                                       AppColors.secondaryColor(context))),
                               child: const Text(
-                                "Claimed",
+                                "Used",
                                 style: TextStyle(color: Colors.white),
                               ))
                         ],
@@ -181,6 +187,14 @@ class _OffersPageState extends State<OffersPage> {
               ],
             ),
           ),
+          if (widget.isBuyingPage) ...[
+            AuthButton(
+                text: "OK",
+                onPressed: () {
+                  context.read<CheckoutViewModel>().addPromos("XM4LWP3");
+                  context.pop();
+                })
+          ]
         ],
       ),
     );

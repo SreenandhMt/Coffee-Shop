@@ -10,7 +10,6 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
 
 final emailController = TextEditingController();
 
@@ -58,7 +57,7 @@ class SigninPageState extends State<SigninPage> {
                       fillColor: WidgetStateProperty.resolveWith<Color>(
                           (Set<WidgetState> states) {
                         if (states.contains(WidgetState.disabled)) {
-                          return CupertinoColors.white.withOpacity(0.5);
+                          return CupertinoColors.white.withOpacity(0.4);
                         }
                         if (states.contains(WidgetState.selected)) {
                           return AppColors.primaryColor;
@@ -118,7 +117,9 @@ class SigninPageState extends State<SigninPage> {
                     fixedSize: Size(size.width * 0.9, 60),
                   ),
                   onPressed: () {
-                    context.read<AuthViewModel>().signin("", "");
+                    context
+                        .read<AuthViewModel>()
+                        .signin("", "", context, mounted);
                   },
                   child: const Text("Sign in",
                       style: TextStyle(color: Colors.white, fontSize: 17)),
@@ -305,7 +306,7 @@ class InputWithTextState extends State<InputWithText> {
                 //style
                 hintStyle: TextStyle(
                     color: Colors.grey.shade500, fontWeight: FontWeight.w600),
-                fillColor: AppColors.secondaryColor(context),
+                fillColor: AppColors.secondaryColor(context).withOpacity(0.4),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10)),
@@ -403,7 +404,7 @@ class DateInputBoxState extends State<DateInputBox> {
                 //style
                 hintStyle: TextStyle(
                     color: Colors.grey.shade500, fontWeight: FontWeight.w600),
-                fillColor: AppColors.secondaryColor(context),
+                fillColor: AppColors.secondaryColor(context).withOpacity(0.4),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(10)),

@@ -20,26 +20,46 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Spacer(flex: 2,),
-          Image.asset("assets/logo.png",height: 200),
+          const Spacer(
+            flex: 2,
+          ),
+          Image.asset("assets/logo.png", height: 200),
           height10,
           const Text("let's dive in into your account"),
           height30,
-          const ContinueButton(name: "Google",imageLink: "https://w7.pngwing.com/pngs/326/85/png-transparent-google-logo-google-text-trademark-logo-thumbnail.png"),
-          const ContinueButton(imageLink: "https://i.pinimg.com/736x/5b/83/69/5b83693bae2828e7c357855f276520b0.jpg", name: "Apple"),
-          const ContinueButton(imageLink: "https://i.pinimg.com/originals/d9/52/c0/d952c0b9fcd5292a4eaae2ae00fc3d47.png", name: "Facebook"),
-          const ContinueButton(imageLink: "https://w7.pngwing.com/pngs/742/514/png-transparent-logo-youtube-twitter-bird-blue-logo-computer-wallpaper-thumbnail.png", name: "Twitter"),
+          const ContinueButton(
+              name: "Google", imageLink: "assets/google-logo.png"),
+          const ContinueButton(
+              imageLink: "assets/apple-logo.png", name: "Apple"),
+          const ContinueButton(
+              imageLink: "assets/facebook-logo.png", name: "Facebook"),
+          const ContinueButton(
+              imageLink: "assets/twitter-logo.png", name: "Twitter"),
           const Spacer(),
-          ElevatedButton(onPressed: (){
-            context.push("/welcome/signin");
-          },style: ButtonStyle(fixedSize: WidgetStatePropertyAll(Size(size.width*0.95, 66)),shadowColor: WidgetStateColor.transparent,backgroundColor: const WidgetStatePropertyAll(AppColors.primaryColor)), child: const Text("Sign in with password",style: TextStyle(color: Colors.white,fontSize: 18),)),
+          ElevatedButton(
+              onPressed: () {
+                context.push("/welcome/signin");
+              },
+              style: ButtonStyle(
+                  fixedSize:
+                      WidgetStatePropertyAll(Size(size.width * 0.95, 66)),
+                  shadowColor: WidgetStateColor.transparent,
+                  backgroundColor:
+                      const WidgetStatePropertyAll(AppColors.primaryColor)),
+              child: const Text(
+                "Sign in with password",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              )),
           const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("Don't have account?"),
               width5,
-              Text("Sign up",style: GoogleFonts.josefinSans(color: AppColors.primaryColor),)
+              Text(
+                "Sign up",
+                style: GoogleFonts.josefinSans(color: AppColors.primaryColor),
+              )
             ],
           ),
           const Spacer(),
@@ -70,23 +90,27 @@ class _ContinueButtonState extends State<ContinueButton> {
     return InkWell(
       onTap: widget.onTap,
       child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.only(left: 10,right: 10,bottom: 5,top: 10),
-              height: 60,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(50),border: Border.all(width: 0.2,color: AppColors.secondaryColor(context))),
-              child: Row(
-                children: [
-                  width20,
-                  Image.network(
-                      widget.imageLink,
-                      height: 30,width: 30),
-                      const Spacer(),
-                      Text("Continue with ${widget.name}",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w700),),
-                      const Spacer(),
-                      width30,
-                ],
-              ),
+        width: double.infinity,
+        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
+        height: 60,
+        decoration: BoxDecoration(
+            color: AppColors.secondaryColor(context),
+            borderRadius: BorderRadius.circular(50),
+            border: Border.all(width: 0.2, color: Colors.grey)),
+        child: Row(
+          children: [
+            width20,
+            Image.asset(widget.imageLink, height: 30, width: 30),
+            const Spacer(),
+            Text(
+              "Continue with ${widget.name}",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
+            const Spacer(),
+            width30,
+          ],
+        ),
+      ),
     );
   }
 }

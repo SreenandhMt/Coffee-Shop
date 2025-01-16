@@ -182,8 +182,7 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
                                   fontSize: 19, fontWeight: FontWeight.w800)),
                           const Spacer(),
                           InkWell(
-                              onTap: () => NavigationUtils.offersPage(context,
-                                  shopId: widget.shopId),
+                              onTap: () => NavigationUtils.offersPage(context),
                               child:
                                   const Icon(Icons.arrow_forward_ios_rounded)),
                           width10
@@ -212,7 +211,10 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
                               alignment: Alignment.center,
                               child: Text(
                                 list[index],
-                                style: const TextStyle(fontSize: 15),
+                                style: TextStyle(
+                                    color: index == 0 ? Colors.white : null,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600),
                               )),
                         )),
                     height5,
@@ -222,60 +224,63 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
                 if (viewModel.selectedCoffeeIds.isNotEmpty)
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: Container(
-                      height: 80,
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 20),
-                      decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        children: [
-                          width10,
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                      child: InkWell(
+                        onTap: () {
+                          if (viewModel.selectedCoffeeIds.isNotEmpty) {
+                            context
+                                .read<CheckoutViewModel>()
+                                .setOrderModels(viewModel.selectedCoffeeIds);
+                            NavigationUtils.checkoutPage(context);
+                          }
+                        },
+                        child: Container(
+                          height: 80,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
                             children: [
-                              height5,
-                              Text(
-                                "Total ${viewModel.selectedCoffeeIds.length} item(s)",
-                                style: const TextStyle(color: Colors.white),
+                              width10,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  height5,
+                                  Text(
+                                    "Total ${viewModel.selectedCoffeeIds.length} item(s)",
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    "\$${viewModel.totalPrice}",
+                                    style: const TextStyle(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white),
+                                  ),
+                                  const Spacer()
+                                ],
                               ),
+                              const Spacer(),
                               Text(
-                                "\$${viewModel.totalPrice}",
-                                style: const TextStyle(
-                                    fontSize: 19,
+                                "Checkout",
+                                style: subtitleFont(
+                                    fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white),
                               ),
-                              const Spacer()
-                            ],
-                          ),
-                          const Spacer(),
-                          Text(
-                            "Checkout",
-                            style: subtitleFont(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                if (viewModel.selectedCoffeeIds.isNotEmpty) {
-                                  context
-                                      .read<CheckoutViewModel>()
-                                      .setOrderModels(
-                                          viewModel.selectedCoffeeIds);
-                                  NavigationUtils.checkoutPage(context);
-                                }
-                              },
-                              icon: const Icon(
+                              width10,
+                              const Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 color: Colors.white,
-                              )),
-                          width10
-                        ],
+                              ),
+                              width15
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
