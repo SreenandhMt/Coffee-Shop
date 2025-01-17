@@ -4,17 +4,17 @@ import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-class ChooseAddressPage extends StatefulWidget {
+class ChooseAddressPage extends ConsumerStatefulWidget {
   const ChooseAddressPage({super.key});
 
   @override
-  State<ChooseAddressPage> createState() => _ChooseAddressPageState();
+  ConsumerState<ChooseAddressPage> createState() => _ChooseAddressPageState();
 }
 
-class _ChooseAddressPageState extends State<ChooseAddressPage> {
+class _ChooseAddressPageState extends ConsumerState<ChooseAddressPage> {
   final List<Map<String, dynamic>> address = [
     {
       "title": "Home",
@@ -70,8 +70,8 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
                     }
                     address[index]["select"] = true;
                   });
-                  context
-                      .read<CheckoutViewModel>()
+                  ref
+                      .read(checkoutViewModelProvider.notifier)
                       .selectAddress(address[index]);
                 },
                 child: Column(
@@ -137,8 +137,10 @@ class _ChooseAddressPageState extends State<ChooseAddressPage> {
           AuthButton(
             text: "OK",
             onPressed: () {
-              if (context.read<CheckoutViewModel>().selectedAddress == null) {
-                context.read<CheckoutViewModel>().selectAddress(address[0]);
+              if (ref.read(checkoutViewModelProvider).selectedAddress == null) {
+                ref
+                    .read(checkoutViewModelProvider.notifier)
+                    .selectAddress(address[0]);
               }
               context.pop();
             },

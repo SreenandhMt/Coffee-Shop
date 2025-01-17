@@ -1,38 +1,60 @@
 import 'dart:developer';
 
-import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import 'package:coffee_app/features/home/models/shop_model.dart';
 
 import '../models/coffee_model.dart';
 
-class HomeViewModel extends ChangeNotifier {
-  bool _loading = false;
-  List<CoffeeModel> _popularCoffees = [];
-  List<ShopModel> _nearbyShops = [];
+part 'home_view_model.g.dart';
 
-  bool get loading => _loading;
-  List<CoffeeModel> get popularCoffees => _popularCoffees;
-  List<ShopModel> get nearbyShops => _nearbyShops;
+class HomeStateModel {
+  final bool loading;
+  final List<CoffeeModel> popularCoffees;
+  final List<ShopModel> nearbyShops;
 
-  setLoading(bool loading) {
-    _loading = loading;
-    notifyListeners();
+  HomeStateModel({
+    required this.loading,
+    required this.popularCoffees,
+    required this.nearbyShops,
+  });
+
+  factory HomeStateModel.initial() {
+    return HomeStateModel(
+      loading: true,
+      popularCoffees: [],
+      nearbyShops: [],
+    );
   }
 
-  setPopularCoffees(List<CoffeeModel> coffees) {
-    _popularCoffees = coffees;
+  HomeStateModel copyWith({
+    bool? loading,
+    List<CoffeeModel>? popularCoffees,
+    List<ShopModel>? nearbyShops,
+  }) {
+    return HomeStateModel(
+      loading: loading ?? this.loading,
+      popularCoffees: popularCoffees ?? this.popularCoffees,
+      nearbyShops: nearbyShops ?? this.nearbyShops,
+    );
+  }
+}
+
+@riverpod
+class HomeViewModel extends _$HomeViewModel {
+  @override
+  HomeStateModel build() {
+    return HomeStateModel.initial();
   }
 
-  setNearbyShops(List<ShopModel> shops) {
-    _nearbyShops = shops;
-  }
-
-  homeInitFunction() {
-    getPopularCoffee();
+  Future<void> getAllData() async {
     getNearbyShops();
+    getPopularCoffees();
   }
 
-  getNearbyShops() {
+  Future<void> getNearbyShops() async {
+    state = state.copyWith(loading: true);
     final images = [
       "https://media.istockphoto.com/id/1428594094/photo/empty-coffee-shop-interior-with-wooden-tables-coffee-maker-pastries-and-pendant-lights.jpg?s=612x612&w=0&k=20&c=dMqeYCJDs3BeBP_jv93qHRISDt-54895SPoVc6_oJt4=",
       "https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -41,7 +63,6 @@ class HomeViewModel extends ChangeNotifier {
       "https://b.zmtcdn.com/data/collections/e7e6c3774795c754eac6c2bbeb0ba57a_1709896412.png?fit=around|562.5:360&crop=562.5:360;*,*",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEBGzOS0ADSN2MRZHythXzbaj8s5oHNKzWAzwf4FgujpHwtgGjNoKnVxe1VgY-GB49BuI&usqp=CAU"
     ];
-    setLoading(true);
     final nearbyShopsList = [
       {
         "name": "Caffely Astoria Aromas",
@@ -90,13 +111,12 @@ class HomeViewModel extends ChangeNotifier {
     for (var shop in nearbyShopsList) {
       shops.add(ShopModel.fromJson(shop));
     }
-    setNearbyShops(shops);
-    log(shops.toString());
-    setLoading(false);
+
+    state = state.copyWith(nearbyShops: shops, loading: false);
   }
 
-  getPopularCoffee() {
-    setLoading(true);
+  Future<void> getPopularCoffees() async {
+    state = state.copyWith(loading: true);
     final popularCoffeeList = [
       {
         "name": "Classic Brew",
@@ -139,7 +159,47 @@ class HomeViewModel extends ChangeNotifier {
     for (var coffee in popularCoffeeList) {
       popularCoffees.add(CoffeeModel.fromJson(coffee));
     }
-    setPopularCoffees(popularCoffees);
+    state = state.copyWith(popularCoffees: popularCoffees);
+  }
+}
+
+class HomeViewModeld extends ChangeNotifier {
+  bool _loading = false;
+  List<CoffeeModel> _popularCoffees = [];
+  List<ShopModel> _nearbyShops = [];
+
+  bool get loading => _loading;
+  List<CoffeeModel> get popularCoffees => _popularCoffees;
+  List<ShopModel> get nearbyShops => _nearbyShops;
+
+  setLoading(bool loading) {
+    _loading = loading;
+    notifyListeners();
+  }
+
+  setPopularCoffees(List<CoffeeModel> coffees) {
+    _popularCoffees = coffees;
+  }
+
+  setNearbyShops(List<ShopModel> shops) {
+    _nearbyShops = shops;
+  }
+
+  homeInitFunction() {
+    getPopularCoffee();
+    getNearbyShops();
+  }
+
+  getNearbyShops() {
+    // setNearbyShops(shops);
+    // log(shops.toString());
+    setLoading(false);
+  }
+
+  getPopularCoffee() {
+    setLoading(true);
+
+    // setPopularCoffees(popularCoffees);
     setLoading(false);
   }
 }

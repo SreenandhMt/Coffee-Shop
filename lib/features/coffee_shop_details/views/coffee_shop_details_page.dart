@@ -1,8 +1,8 @@
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import '/core/app_colors.dart';
 import '/core/fonts.dart';
@@ -12,7 +12,7 @@ import '/route/navigation_utils.dart';
 import '../../home/views/home_page.dart';
 import '../../introduction/views/introduction_pages.dart';
 
-class CoffeeShopDetailsPage extends StatefulWidget {
+class CoffeeShopDetailsPage extends ConsumerStatefulWidget {
   const CoffeeShopDetailsPage({
     super.key,
     required this.shopId,
@@ -20,17 +20,17 @@ class CoffeeShopDetailsPage extends StatefulWidget {
   final String shopId;
 
   @override
-  State<CoffeeShopDetailsPage> createState() => _CoffeeShopDetailsPageState();
+  ConsumerState<CoffeeShopDetailsPage> createState() =>
+      _CoffeeShopDetailsPageState();
 }
 
-class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
-  late CoffeeShopDetailsViewModel myAppState;
+class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
   PageController controller = PageController();
   final list = ["Coffee", "Baked", "Sandwich", "Cakes", "Cookies"];
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => context
-        .read<CoffeeShopDetailsViewModel>()
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ref
+        .read(shopDetailsViewModelProvider.notifier)
         .getShopDetails(widget.shopId));
     super.initState();
   }
@@ -41,7 +41,7 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ));
-    final viewModel = context.watch<CoffeeShopDetailsViewModel>();
+    final viewModel = ref.watch(shopDetailsViewModelProvider);
     final backgroundColor = Colors.grey.withOpacity(0.8);
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -230,8 +230,8 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
                       child: InkWell(
                         onTap: () {
                           if (viewModel.selectedCoffeeIds.isNotEmpty) {
-                            context
-                                .read<CheckoutViewModel>()
+                            ref
+                                .read(checkoutViewModelProvider.notifier)
                                 .setOrderModels(viewModel.selectedCoffeeIds);
                             NavigationUtils.checkoutPage(context);
                           }
@@ -324,7 +324,7 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
   }
 
   _coffeeList() {
-    final viewModel = context.watch<CoffeeShopDetailsViewModel>();
+    final viewModel = ref.watch(shopDetailsViewModelProvider);
     return GridView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
@@ -359,17 +359,8 @@ class _CoffeeShopDetailsPageState extends State<CoffeeShopDetailsPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Save a reference to the provider here
-    myAppState =
-        Provider.of<CoffeeShopDetailsViewModel>(context, listen: false);
-  }
-
-  @override
   void dispose() {
-    // Use the saved reference instead of context
-    myAppState.clearValues();
+    ref.read(shopDetailsViewModelProvider.notifier).clearValues();
     super.dispose();
   }
 }

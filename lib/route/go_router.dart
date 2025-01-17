@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:coffee_app/features/account/views/about_caffely_page.dart';
 import 'package:coffee_app/features/account/views/help_center.dart';
 
@@ -65,344 +67,349 @@ import '../features/home/views/popular_menu_page.dart';
 
 class AppRouter {
   static final navigationKey = GlobalKey<NavigatorState>();
-  static final router = GoRouter(
-      navigatorKey: navigationKey,
-      initialLocation: NavigationPath.splashScreen.path,
-      routes: [
-        GoRoute(
-          path: NavigationPath.splashScreen.path,
-          name: NavigationPath.splashScreen.name,
-          builder: (context, state) => const SplashScreen(),
-        ),
-        StatefulShellRoute.indexedStack(
-          builder: (context, state, navigationShell) => Scaffold(
-            body: navigationShell,
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: navigationShell.currentIndex,
-              onTap: (index) => navigationShell.goBranch(index),
-              selectedItemColor: Colors.green,
-              unselectedItemColor: Colors.grey,
-              showUnselectedLabels: true,
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.home),
-                  label: "Home",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.shopping_cart),
-                  label: "Shop",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.doc_text),
-                  label: "Orders",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_balance_wallet_outlined),
-                  label: "Wallet",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.person),
-                  label: "Account",
-                ),
-              ],
-            ),
+  static GoRouter routerConfig(bool isAuth) {
+    return GoRouter(
+        navigatorKey: navigationKey,
+        initialLocation: NavigationPath.splashScreen.path,
+        redirect: (context, state) {
+          return null;
+        },
+        routes: [
+          GoRoute(
+            path: NavigationPath.splashScreen.path,
+            name: NavigationPath.splashScreen.name,
+            builder: (context, state) => const SplashScreen(),
           ),
-          branches: [
-            StatefulShellBranch(routes: [
-              GoRoute(
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) => Scaffold(
+              body: navigationShell,
+              bottomNavigationBar: BottomNavigationBar(
+                currentIndex: navigationShell.currentIndex,
+                onTap: (index) => navigationShell.goBranch(index),
+                selectedItemColor: Colors.green,
+                unselectedItemColor: Colors.grey,
+                showUnselectedLabels: true,
+                type: BottomNavigationBarType.fixed,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.home),
+                    label: "Home",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.shopping_cart),
+                    label: "Shop",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.doc_text),
+                    label: "Orders",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.account_balance_wallet_outlined),
+                    label: "Wallet",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(CupertinoIcons.person),
+                    label: "Account",
+                  ),
+                ],
+              ),
+            ),
+            branches: [
+              StatefulShellBranch(routes: [
+                GoRoute(
                   name: NavigationPath.home.name,
                   path: NavigationPath.home.path,
                   builder: (context, state) => const HomePage(),
-                  routes: [
-                    GoRoute(
-                      path: "/signupSuccess/:title/:subtitle/:button",
-                      builder: (context, state) => SignupSuccessPage(
-                        title: state.pathParameters["title"],
-                        subtitle: state.pathParameters["subtitle"],
-                        buttonText: state.pathParameters["button"],
-                      ),
-                    ),
-                    GoRoute(
-                      path: "/notification",
-                      builder: (context, state) => const NotificationPage(),
-                    ),
-                    GoRoute(
-                      path: "/nearby-shops",
-                      builder: (context, state) => const NearbyShopsPage(),
-                    ),
-                    GoRoute(
-                      path: "/popular-menu",
-                      builder: (context, state) => const PopularMenuPage(),
-                    ),
-                    GoRoute(
-                      path: "/offer-details",
-                      builder: (context, state) => const OfferDetailsPage(),
-                    ),
-                    GoRoute(
-                        path: "/shop-details/:shopid",
-                        builder: (context, state) {
-                          return CoffeeShopDetailsPage(
-                            shopId: state.pathParameters["shopid"]!,
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            path: "/about",
-                            builder: (context, state) => const AboutShopPage(),
-                          ),
-                          GoRoute(
-                            path: "/review-rating",
-                            builder: (context, state) =>
-                                const RatingAndReviews(),
-                          ),
-                        ]),
-                  ]),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: "/shops",
-                builder: (context, state) {
-                  return const CoffeeShopsPage();
-                },
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: "/orders",
-                builder: (context, state) {
-                  return const OrdersPage();
-                },
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: "/wallet",
-                builder: (context, state) {
-                  return const WalletPage();
-                },
-              ),
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                path: "/account",
-                builder: (context, state) {
-                  return const AccountPage();
-                },
-              ),
-            ])
-          ],
-        ),
-        GoRoute(
-            path: "/top-up",
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: "/shops",
+                  builder: (context, state) {
+                    return const CoffeeShopsPage();
+                  },
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: "/orders",
+                  builder: (context, state) {
+                    return const OrdersPage();
+                  },
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: "/wallet",
+                  builder: (context, state) {
+                    return const WalletPage();
+                  },
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: "/account",
+                  builder: (context, state) {
+                    return const AccountPage();
+                  },
+                ),
+              ])
+            ],
+          ),
+          GoRoute(
+              path: "/top-up",
+              builder: (context, state) {
+                return const TopUpPage();
+              },
+              routes: [
+                GoRoute(
+                  path: "/choose-payment",
+                  builder: (context, state) => const ChoosePaymentPage(
+                    isTopUpPage: true,
+                  ),
+                ),
+              ]),
+          GoRoute(
+            path: "/transaction-history",
+            builder: (context, state) => const TransactionHistory(),
+          ),
+          GoRoute(
+            path: "/OrderDetails/:isPickup",
             builder: (context, state) {
-              return const TopUpPage();
+              final page = bool.parse(state.pathParameters["isPickup"]!);
+              return OrderDetailsPage(isPickUp: page);
+            },
+          ),
+          GoRoute(
+            path: "/help-center",
+            builder: (context, state) => const HelpCenterPage(),
+          ),
+          GoRoute(
+            path: "/about-us",
+            builder: (context, state) => const AboutCaffelyPage(),
+          ),
+          GoRoute(
+            path: "/offers",
+            builder: (context, state) => const OffersPage(),
+          ),
+          GoRoute(
+            path: "/caffely-reward",
+            builder: (context, state) => const CaffelyRewardsPage(),
+          ),
+          GoRoute(
+            path: "/favorite-coffee",
+            builder: (context, state) => const FavoriteCoffeePage(),
+          ),
+          GoRoute(
+            path: "/points",
+            builder: (context, state) => const CaffelyPointsPage(),
+          ),
+          GoRoute(
+            path: "/buying-page/:id/:route",
+            builder: (context, state) {
+              return BuyingPage(
+                  id: state.pathParameters["id"]!,
+                  shopPageOpened:
+                      bool.tryParse(state.pathParameters["route"]!));
+            },
+          ),
+          GoRoute(
+            path: "/signupSuccess/:title/:subtitle/:button",
+            builder: (context, state) => SignupSuccessPage(
+              title: state.pathParameters["title"],
+              subtitle: state.pathParameters["subtitle"],
+              buttonText: state.pathParameters["button"],
+            ),
+          ),
+          GoRoute(
+            path: "/notification",
+            builder: (context, state) => const NotificationPage(),
+          ),
+          GoRoute(
+            path: "/nearby-shops",
+            builder: (context, state) => const NearbyShopsPage(),
+          ),
+          GoRoute(
+            path: "/popular-menu",
+            builder: (context, state) => const PopularMenuPage(),
+          ),
+          GoRoute(
+            path: "/offer-details",
+            builder: (context, state) => const OfferDetailsPage(),
+          ),
+          GoRoute(
+            path: "/shop-details/:shopid",
+            builder: (context, state) {
+              return CoffeeShopDetailsPage(
+                shopId: state.pathParameters["shopid"]!,
+              );
             },
             routes: [
               GoRoute(
-                path: "/choose-payment",
-                builder: (context, state) => const ChoosePaymentPage(
-                  isTopUpPage: true,
+                path: "/about",
+                builder: (context, state) => const AboutShopPage(),
+              ),
+              GoRoute(
+                path: "/review-rating",
+                builder: (context, state) => const RatingAndReviews(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: "/personal-info",
+            builder: (context, state) => const PersonalInfoPage(),
+          ),
+          GoRoute(
+            path: "/notification-settings",
+            builder: (context, state) => const NotificationSettingsPage(),
+          ),
+          GoRoute(
+            path: "/security-settings",
+            builder: (context, state) => const SecuritySettingsPage(),
+          ),
+          GoRoute(
+            path: "/language-settings",
+            builder: (context, state) => const LanguageSettingsPage(),
+          ),
+          GoRoute(
+            path: "/vouchers-discount",
+            builder: (context, state) => const VouchersAndDiscountPage(),
+          ),
+          GoRoute(
+              path: "/manage-payments",
+              builder: (context, state) => const ManagePaymentsPage(),
+              routes: [
+                GoRoute(
+                  path: "/add-payment",
+                  builder: (context, state) => const AddPaymentMethodPage(),
                 ),
-              ),
-            ]),
-        GoRoute(
-          path: "/transaction-history",
-          builder: (context, state) => const TransactionHistory(),
-        ),
-        GoRoute(
-          path: "/OrderDetails/:ispickup",
-          builder: (context, state) {
-            final page = bool.parse(state.pathParameters["ispickup"]!);
-            return OrderDetailsPage(isPickUp: page);
-          },
-        ),
-        GoRoute(
-          path: "/help-center",
-          builder: (context, state) => const HelpCenterPage(),
-        ),
-        GoRoute(
-          path: "/about-us",
-          builder: (context, state) => const AboutCaffelyPage(),
-        ),
-        GoRoute(
-          path: "/offers",
-          builder: (context, state) => const OffersPage(),
-        ),
-        GoRoute(
-          path: "/caffely-reward",
-          builder: (context, state) => const CaffelyRewardsPage(),
-        ),
-        GoRoute(
-          path: "/favorite-coffee",
-          builder: (context, state) => const FavoriteCoffeePage(),
-        ),
-        GoRoute(
-          path: "/points",
-          builder: (context, state) => const CaffelyPointsPage(),
-        ),
-        GoRoute(
-          path: "/buying-page/:id/:route",
-          builder: (context, state) {
-            return BuyingPage(
-                id: state.pathParameters["id"]!,
-                shopPageOpened: bool.tryParse(state.pathParameters["route"]!));
-          },
-        ),
-        GoRoute(
-          path: "/personal-info",
-          builder: (context, state) => const PersonalInfoPage(),
-        ),
-        GoRoute(
-          path: "/notification-settings",
-          builder: (context, state) => const NotificationSettingsPage(),
-        ),
-        GoRoute(
-          path: "/security-settings",
-          builder: (context, state) => const SecuritySettingsPage(),
-        ),
-        GoRoute(
-          path: "/language-settings",
-          builder: (context, state) => const LanguageSettingsPage(),
-        ),
-        GoRoute(
-          path: "/vouchers-discount",
-          builder: (context, state) => const VouchersAndDiscountPage(),
-        ),
-        GoRoute(
-            path: "/manage-payments",
-            builder: (context, state) => const ManagePaymentsPage(),
+              ]),
+          GoRoute(
+              path: "/manage-address",
+              builder: (context, state) => const ManageAddressPage(),
+              routes: [
+                GoRoute(
+                    path: "/add-address",
+                    builder: (context, state) {
+                      return const AddNewAddressPage();
+                    }),
+                GoRoute(
+                    path: "/fill-address",
+                    builder: (context, state) {
+                      return const FillUpAddressDetailsPage();
+                    }),
+              ]),
+          GoRoute(
+            path: "/check-out",
+            builder: (context, state) {
+              return const CheckoutPage();
+            },
             routes: [
               GoRoute(
-                path: "/add-payment",
-                builder: (context, state) => const AddPaymentMethodPage(),
-              ),
-            ]),
-        GoRoute(
-            path: "/manage-address",
-            builder: (context, state) => const ManageAddressPage(),
-            routes: [
-              GoRoute(
-                  path: "/add-address",
-                  builder: (context, state) {
-                    return const AddNewAddressPage();
-                  }),
-              GoRoute(
-                  path: "/fill-address",
-                  builder: (context, state) {
-                    return const FillUpAddressDetailsPage();
-                  }),
-            ]),
-        GoRoute(
-          path: "/check-out",
-          builder: (context, state) {
-            return const CheckoutPage();
-          },
-          routes: [
-            GoRoute(
-              path: "/choose-address",
-              builder: (context, state) => const ChooseAddressPage(),
-            ),
-            GoRoute(
-              path: "/choose-payment",
-              builder: (context, state) => const ChoosePaymentPage(),
-            ),
-            GoRoute(
-              path: "/choose-delivery",
-              builder: (context, state) => const ChooseDeliveryPage(),
-            ),
-            GoRoute(
-              path: "/vouchers",
-              builder: (context, state) =>
-                  const VouchersAndDiscountPage(isBuyingPage: true),
-            ),
-            GoRoute(
-              path: "/success",
-              builder: (context, state) => const SearchingDriverPage(),
-            ),
-            GoRoute(
-              path: "/driver-profile",
-              builder: (context, state) => const DriverProfilePage(),
-            ),
-          ],
-        ),
-        GoRoute(
-            path: "/orders",
-            builder: (context, state) => const SizedBox(),
-            routes: [
-              GoRoute(
-                path: "/chat-driver",
-                builder: (context, state) => const ChatDriverPage(),
+                path: "/choose-address",
+                builder: (context, state) => const ChooseAddressPage(),
               ),
               GoRoute(
-                path: "/video-call",
-                builder: (context, state) => const VideoCallPage(),
+                path: "/choose-payment",
+                builder: (context, state) => const ChoosePaymentPage(),
               ),
               GoRoute(
-                path: "/voice-call",
-                builder: (context, state) => const VoiceCallPage(),
+                path: "/choose-delivery",
+                builder: (context, state) => const ChooseDeliveryPage(),
               ),
               GoRoute(
-                path: "/reward-point",
-                builder: (context, state) => const PointRewardPage(),
+                path: "/vouchers",
+                builder: (context, state) =>
+                    const VouchersAndDiscountPage(isBuyingPage: true),
               ),
               GoRoute(
-                path: "/check-mood",
-                builder: (context, state) => const CheckUserMoodPage(),
+                path: "/success",
+                builder: (context, state) => const SearchingDriverPage(),
               ),
               GoRoute(
-                path: "/rating-driver",
-                builder: (context, state) => const RatingPage(),
+                path: "/driver-profile",
+                builder: (context, state) => const DriverProfilePage(),
               ),
-              GoRoute(
-                path: "/tip-driver",
-                builder: (context, state) => const TipDriver(),
-              ),
-              GoRoute(
-                path: "/rating-shop",
-                builder: (context, state) => const RatingShopPage(),
-              ),
-              GoRoute(
-                path: "/cancel",
-                builder: (context, state) => const CancelOrderPage(),
-              ),
-            ]),
-        GoRoute(
-          name: NavigationPath.intro.name,
-          path: NavigationPath.intro.path,
-          builder: (context, state) => const IntroductionPage(),
-        ),
-        GoRoute(
-            path: NavigationPath.welcomeScreen.path,
-            name: NavigationPath.welcomeScreen.name,
-            builder: (context, state) => const WelcomeScreen(),
-            routes: [
-              GoRoute(
-                  path: "/signin",
-                  builder: (context, state) => const SigninPage(),
-                  routes: [
-                    GoRoute(
-                      path: "/resetPassword-step-1",
-                      builder: (context, state) => const EmailConformPage(),
-                    ),
-                    GoRoute(
-                      path: "/resetPassword-step-2",
-                      builder: (context, state) => const OTPConformPage(),
-                    ),
-                    GoRoute(
-                      path: "/resetPassword-step-3",
-                      builder: (context, state) => const CreatePasswordPage(),
-                    ),
-                  ]),
-              GoRoute(
-                  path: "/signup",
-                  builder: (context, state) => const SignupPage(),
-                  routes: [
-                    GoRoute(
-                      path: "profileDetails",
-                      builder: (context, state) => const ProfileDetailsPage(),
-                    ),
-                  ]),
-            ])
-      ]);
+            ],
+          ),
+          GoRoute(
+              path: "/orders",
+              builder: (context, state) => const SizedBox(),
+              routes: [
+                GoRoute(
+                  path: "/chat-driver",
+                  builder: (context, state) => const ChatDriverPage(),
+                ),
+                GoRoute(
+                  path: "/video-call",
+                  builder: (context, state) => const VideoCallPage(),
+                ),
+                GoRoute(
+                  path: "/voice-call",
+                  builder: (context, state) => const VoiceCallPage(),
+                ),
+                GoRoute(
+                  path: "/reward-point",
+                  builder: (context, state) => const PointRewardPage(),
+                ),
+                GoRoute(
+                  path: "/check-mood",
+                  builder: (context, state) => const CheckUserMoodPage(),
+                ),
+                GoRoute(
+                  path: "/rating-driver",
+                  builder: (context, state) => const RatingPage(),
+                ),
+                GoRoute(
+                  path: "/tip-driver",
+                  builder: (context, state) => const TipDriver(),
+                ),
+                GoRoute(
+                  path: "/rating-shop",
+                  builder: (context, state) => const RatingShopPage(),
+                ),
+                GoRoute(
+                  path: "/cancel",
+                  builder: (context, state) => const CancelOrderPage(),
+                ),
+              ]),
+          GoRoute(
+            name: NavigationPath.intro.name,
+            path: NavigationPath.intro.path,
+            builder: (context, state) => const IntroductionPage(),
+          ),
+          GoRoute(
+              path: NavigationPath.welcomeScreen.path,
+              name: NavigationPath.welcomeScreen.name,
+              builder: (context, state) => const WelcomeScreen(),
+              routes: [
+                GoRoute(
+                    path: "/signin",
+                    builder: (context, state) => const SigninPage(),
+                    routes: [
+                      GoRoute(
+                        path: "/resetPassword-step-1",
+                        builder: (context, state) => const EmailConformPage(),
+                      ),
+                      GoRoute(
+                        path: "/resetPassword-step-2",
+                        builder: (context, state) => const OTPConformPage(),
+                      ),
+                      GoRoute(
+                        path: "/resetPassword-step-3",
+                        builder: (context, state) => const CreatePasswordPage(),
+                      ),
+                    ]),
+                GoRoute(
+                    path: "/signup",
+                    builder: (context, state) => const SignupPage(),
+                    routes: [
+                      GoRoute(
+                        path: "profileDetails",
+                        builder: (context, state) => const ProfileDetailsPage(),
+                      ),
+                    ]),
+              ])
+        ]);
+  }
 }

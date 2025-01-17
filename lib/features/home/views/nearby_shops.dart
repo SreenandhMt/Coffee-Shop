@@ -1,21 +1,21 @@
 import 'package:coffee_app/features/home/views/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/fonts.dart';
 import '../view_models/home_view_model.dart';
 
-class NearbyShopsPage extends StatefulWidget {
+class NearbyShopsPage extends ConsumerStatefulWidget {
   const NearbyShopsPage({super.key});
 
   @override
-  State<NearbyShopsPage> createState() => _NearbyShopsPageState();
+  ConsumerState<NearbyShopsPage> createState() => _NearbyShopsPageState();
 }
 
-class _NearbyShopsPageState extends State<NearbyShopsPage> {
+class _NearbyShopsPageState extends ConsumerState<NearbyShopsPage> {
   @override
   Widget build(BuildContext context) {
-    final homeViewModel = context.watch<HomeViewModel>();
+    final homeViewModel = ref.watch(homeViewModelProvider);
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(

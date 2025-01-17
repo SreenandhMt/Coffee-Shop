@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "803825756441",
+    "project_id": "flipshopdata",
+    "storage_bucket": "flipshopdata.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803825756441:android:c0770859042f3d06a57d88",
+        "android_client_info": {
+          "package_name": "com.example.coffee_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRPrISLfQ6X-rJwc8wAoH5In-B3H9PDSE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

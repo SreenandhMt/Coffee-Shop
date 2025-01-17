@@ -1,7 +1,7 @@
 import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
@@ -10,7 +10,7 @@ import 'package:coffee_app/features/auth/views/forgot_password/email_conform_pag
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 
-class ChoosePaymentPage extends StatefulWidget {
+class ChoosePaymentPage extends ConsumerStatefulWidget {
   const ChoosePaymentPage({
     super.key,
     this.isTopUpPage = false,
@@ -18,14 +18,15 @@ class ChoosePaymentPage extends StatefulWidget {
   final bool isTopUpPage;
 
   @override
-  State<ChoosePaymentPage> createState() => ChoosePaymentPageState();
+  ConsumerState<ChoosePaymentPage> createState() => ChoosePaymentPageState();
 }
 
-class ChoosePaymentPageState extends State<ChoosePaymentPage> {
+class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
-        context.read<CheckoutViewModel>().setPaymentMethod("Wallet"));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ref
+        .read(checkoutViewModelProvider.notifier)
+        .setPaymentMethod("Wallet"));
     super.initState();
   }
 
@@ -48,7 +49,7 @@ class ChoosePaymentPageState extends State<ChoosePaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<CheckoutViewModel>();
+    final viewModel = ref.watch(checkoutViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -128,7 +129,7 @@ class ChoosePaymentPageState extends State<ChoosePaymentPage> {
   }
 }
 
-class PaymentWidget extends StatefulWidget {
+class PaymentWidget extends ConsumerStatefulWidget {
   const PaymentWidget({
     super.key,
     required this.paymentMethod,
@@ -138,10 +139,10 @@ class PaymentWidget extends StatefulWidget {
   final bool selected;
 
   @override
-  State<PaymentWidget> createState() => _PaymentWidgetState();
+  ConsumerState<PaymentWidget> createState() => _PaymentWidgetState();
 }
 
-class _PaymentWidgetState extends State<PaymentWidget> {
+class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
   final paymentMethods = [
     "Wallet",
     "PayPal",
@@ -162,8 +163,9 @@ class _PaymentWidgetState extends State<PaymentWidget> {
   Widget build(BuildContext context) {
     if (widget.paymentMethod == "Wallet") {
       return InkWell(
-        onTap: () =>
-            context.read<CheckoutViewModel>().setPaymentMethod("Wallet"),
+        onTap: () => ref
+            .read(checkoutViewModelProvider.notifier)
+            .setPaymentMethod("Wallet"),
         child: Container(
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -203,8 +205,8 @@ class _PaymentWidgetState extends State<PaymentWidget> {
       for (int i = 0; i < paymentMethods.length; i++) {
         if (paymentMethods[i] == widget.paymentMethod) {
           return InkWell(
-            onTap: () => context
-                .read<CheckoutViewModel>()
+            onTap: () => ref
+                .read(checkoutViewModelProvider.notifier)
                 .setPaymentMethod(paymentMethods[i]),
             child: Container(
               margin: const EdgeInsets.all(10),

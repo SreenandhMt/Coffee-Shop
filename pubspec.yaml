@@ -47,6 +47,14 @@ dependencies:
   action_slider: ^0.7.0
   simple_animations: ^5.1.0
   icons_plus: ^5.0.0
+  firebase_core: ^3.10.0
+  cloud_firestore: ^5.6.1
+  firebase_auth: ^5.4.0
+  firebase_storage: ^12.4.0
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  shared_preferences: ^2.3.5
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +66,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner:
+  custom_lint:
+  riverpod_generator: ^2.6.4
+  riverpod_lint: ^2.6.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

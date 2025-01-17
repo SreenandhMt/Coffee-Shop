@@ -57,7 +57,7 @@ class _SignupSuccessPageState extends State<SignupSuccessPage> {
                   fixedSize: Size(MediaQuery.sizeOf(context).width * 0.9, 60),
                 ),
                 onPressed: () {
-                  context.pop();
+                  context.go("/");
                 },
                 child: Text(widget.buttonText ?? "Start Exploring",
                     style: const TextStyle(color: Colors.white, fontSize: 17)),

@@ -4,17 +4,17 @@ import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-class ChooseDeliveryPage extends StatefulWidget {
+class ChooseDeliveryPage extends ConsumerStatefulWidget {
   const ChooseDeliveryPage({super.key});
 
   @override
-  State<ChooseDeliveryPage> createState() => _ChooseDeliveryPageState();
+  ConsumerState<ChooseDeliveryPage> createState() => _ChooseDeliveryPageState();
 }
 
-class _ChooseDeliveryPageState extends State<ChooseDeliveryPage> {
+class _ChooseDeliveryPageState extends ConsumerState<ChooseDeliveryPage> {
   List<Map<String, dynamic>> deliveryServices = [
     {
       "name": "DoorDash Drive",
@@ -80,8 +80,8 @@ class _ChooseDeliveryPageState extends State<ChooseDeliveryPage> {
                   }
                   deliveryServices[index]["active"] = true;
                 });
-                context
-                    .read<CheckoutViewModel>()
+                ref
+                    .read(checkoutViewModelProvider.notifier)
                     .selectDeliveryService(deliveryServices[index]);
               },
               child: Container(
@@ -124,9 +124,10 @@ class _ChooseDeliveryPageState extends State<ChooseDeliveryPage> {
           AuthButton(
             text: "OK",
             onPressed: () {
-              if (context.read<CheckoutViewModel>().selectedDelivery == null) {
-                context
-                    .read<CheckoutViewModel>()
+              if (ref.read(checkoutViewModelProvider).selectedDelivery ==
+                  null) {
+                ref
+                    .read(checkoutViewModelProvider.notifier)
                     .selectDeliveryService(deliveryServices[0]);
               }
               context.pop();

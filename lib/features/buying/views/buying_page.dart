@@ -1,7 +1,7 @@
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
@@ -10,7 +10,7 @@ import 'package:coffee_app/features/buying/view_models/buying_view_model.dart';
 import 'package:coffee_app/features/coffee_shop_details/view_models/coffee_shop_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 
-class BuyingPage extends StatefulWidget {
+class BuyingPage extends ConsumerStatefulWidget {
   const BuyingPage({
     super.key,
     required this.id,
@@ -20,22 +20,22 @@ class BuyingPage extends StatefulWidget {
   final bool? shopPageOpened;
 
   @override
-  State<BuyingPage> createState() => _BuyingPageState();
+  ConsumerState<BuyingPage> createState() => _BuyingPageState();
 }
 
-class _BuyingPageState extends State<BuyingPage> {
+class _BuyingPageState extends ConsumerState<BuyingPage> {
   int? selectedIndex;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
-        context.read<BuyingViewModel>().getCoffeeModel(widget.id));
+        ref.read(buyingViewModelProvider.notifier).getCoffeeModel(widget.id));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final buyingViewModel = context.watch<BuyingViewModel>();
+    final buyingViewModel = ref.watch(buyingViewModelProvider);
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size(double.infinity, 100),
@@ -90,7 +90,9 @@ class _BuyingPageState extends State<BuyingPage> {
                     InkWell(
                       onTap: () {
                         if (buyingViewModel.quantity == 1) return;
-                        buyingViewModel.removeQuantity();
+                        ref
+                            .read(buyingViewModelProvider.notifier)
+                            .removeQuantity();
                       },
                       child: Container(
                         width: 45,
@@ -120,7 +122,9 @@ class _BuyingPageState extends State<BuyingPage> {
                     InkWell(
                       onTap: () {
                         if (buyingViewModel.quantity >= 10) return;
-                        buyingViewModel.addQuantity();
+                        ref
+                            .read(buyingViewModelProvider.notifier)
+                            .addQuantity();
                       },
                       child: Container(
                         width: 45,
@@ -143,12 +147,15 @@ class _BuyingPageState extends State<BuyingPage> {
                 ),
                 height20,
                 AvailableTypeWidget(
-                    onTap: (value) => buyingViewModel.selectTypeIndex(value),
+                    onTap: (value) => ref
+                        .read(buyingViewModelProvider.notifier)
+                        .selectTypeIndex(value),
                     selectedIndex: buyingViewModel.selectedTypeIndex),
                 height20,
                 AvailableSizeWidget(
-                    onTap: (value, price, oldPrice) =>
-                        buyingViewModel.selectSizeIndex(value, price, oldPrice),
+                    onTap: (value, price, oldPrice) => ref
+                        .read(buyingViewModelProvider.notifier)
+                        .selectSizeIndex(value, price, oldPrice),
                     selectedIndex: buyingViewModel.selectedSizeIndex),
                 height15,
                 OptionWidget(
@@ -160,8 +167,9 @@ class _BuyingPageState extends State<BuyingPage> {
                       "Almond Mink",
                     ],
                     currentValue: buyingViewModel.selectedMilk,
-                    onTap: (value, price, oldPrice) =>
-                        buyingViewModel.selectMilk(value, price, oldPrice)),
+                    onTap: (value, price, oldPrice) => ref
+                        .read(buyingViewModelProvider.notifier)
+                        .selectMilk(value, price, oldPrice)),
                 height10,
                 OptionWidget(
                   title: "Syrup",
@@ -176,8 +184,9 @@ class _BuyingPageState extends State<BuyingPage> {
                     "Vanilla"
                   ],
                   currentValue: buyingViewModel.selectedSyrup,
-                  onTap: (value, price, oldPrice) =>
-                      buyingViewModel.selectSyrup(value, price, oldPrice),
+                  onTap: (value, price, oldPrice) => ref
+                      .read(buyingViewModelProvider.notifier)
+                      .selectSyrup(value, price, oldPrice),
                 ),
                 height10,
                 OptionWidget(
@@ -192,8 +201,9 @@ class _BuyingPageState extends State<BuyingPage> {
                     "Caramel Sauce"
                   ],
                   currentValue: buyingViewModel.selectedTopping,
-                  onTap: (value, price, oldPrice) =>
-                      buyingViewModel.selectToppings(value, price, oldPrice),
+                  onTap: (value, price, oldPrice) => ref
+                      .read(buyingViewModelProvider.notifier)
+                      .selectToppings(value, price, oldPrice),
                 ),
                 height20,
                 const Text("Notes",
@@ -262,8 +272,8 @@ class _BuyingPageState extends State<BuyingPage> {
                               double.parse(buyingViewModel.coffeeModel!.price),
                           "totalPrice": buyingViewModel.totalPrice,
                         }, buyingViewModel.coffeeModel!);
-                        context
-                            .read<CoffeeShopDetailsViewModel>()
+                        ref
+                            .read(shopDetailsViewModelProvider.notifier)
                             .addProductID(orderModel);
                         context.pop();
                         if (!widget.shopPageOpened!) {

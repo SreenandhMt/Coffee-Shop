@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
@@ -14,19 +14,19 @@ import 'package:coffee_app/route/navigation_utils.dart';
 
 import '../../../core/tabbar.dart';
 
-class CheckoutPage extends StatefulWidget {
+class CheckoutPage extends ConsumerStatefulWidget {
   const CheckoutPage({super.key});
 
   @override
-  State<CheckoutPage> createState() => CheckoutPageState();
+  ConsumerState<CheckoutPage> createState() => CheckoutPageState();
 }
 
-class CheckoutPageState extends State<CheckoutPage> {
+class CheckoutPageState extends ConsumerState<CheckoutPage> {
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final checkoutViewModel = context.watch<CheckoutViewModel>();
+    final checkoutViewModel = ref.watch(checkoutViewModelProvider);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -78,7 +78,7 @@ class CheckoutPageState extends State<CheckoutPage> {
   }
 }
 
-class DeliveryWidgets extends StatefulWidget {
+class DeliveryWidgets extends ConsumerStatefulWidget {
   const DeliveryWidgets({
     super.key,
     this.isOrderDetails = false,
@@ -86,13 +86,13 @@ class DeliveryWidgets extends StatefulWidget {
   final bool isOrderDetails;
 
   @override
-  State<DeliveryWidgets> createState() => _DeliveryWidgetsState();
+  ConsumerState<DeliveryWidgets> createState() => _DeliveryWidgetsState();
 }
 
-class _DeliveryWidgetsState extends State<DeliveryWidgets> {
+class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
   @override
   Widget build(BuildContext context) {
-    final checkoutViewModel = context.watch<CheckoutViewModel>();
+    final checkoutViewModel = ref.watch(checkoutViewModelProvider);
     return Column(
       children: [
         Container(
@@ -189,7 +189,7 @@ class _DeliveryWidgetsState extends State<DeliveryWidgets> {
                   ),
             child: Column(
               children: List.generate(
-                checkoutViewModel.orderModel.length,
+                checkoutViewModel.orderModels.length,
                 (index) {
                   return Column(
                     children: [
@@ -200,7 +200,7 @@ class _DeliveryWidgetsState extends State<DeliveryWidgets> {
                           child: Divider(thickness: 0.1),
                         ),
                       ProductDetailsWidget(
-                          orderModel: checkoutViewModel.orderModel[index]),
+                          orderModel: checkoutViewModel.orderModels[index]),
                     ],
                   );
                 },
@@ -663,7 +663,7 @@ class _DeliveryWidgetsState extends State<DeliveryWidgets> {
   }
 }
 
-class PickupWidgets extends StatefulWidget {
+class PickupWidgets extends ConsumerStatefulWidget {
   const PickupWidgets({
     super.key,
     this.isOrderDetails = false,
@@ -671,13 +671,13 @@ class PickupWidgets extends StatefulWidget {
   final bool isOrderDetails;
 
   @override
-  State<PickupWidgets> createState() => _PickupWidgetsState();
+  ConsumerState<PickupWidgets> createState() => _PickupWidgetsState();
 }
 
-class _PickupWidgetsState extends State<PickupWidgets> {
+class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
   @override
   Widget build(BuildContext context) {
-    final checkoutViewModel = context.watch<CheckoutViewModel>();
+    final checkoutViewModel = ref.watch(checkoutViewModelProvider);
     return Column(
       children: [
         Container(
@@ -763,7 +763,7 @@ class _PickupWidgetsState extends State<PickupWidgets> {
                   ),
             child: Column(
               children: List.generate(
-                checkoutViewModel.orderModel.length,
+                checkoutViewModel.orderModels.length,
                 (index) {
                   return Column(
                     children: [
@@ -774,7 +774,7 @@ class _PickupWidgetsState extends State<PickupWidgets> {
                           child: Divider(thickness: 0.1),
                         ),
                       ProductDetailsWidget(
-                          orderModel: checkoutViewModel.orderModel[index]),
+                          orderModel: checkoutViewModel.orderModels[index]),
                     ],
                   );
                 },
@@ -1429,7 +1429,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
   }
 }
 
-class SelectedPromo extends StatefulWidget {
+class SelectedPromo extends ConsumerStatefulWidget {
   const SelectedPromo({
     super.key,
     required this.code,
@@ -1437,17 +1437,19 @@ class SelectedPromo extends StatefulWidget {
   final String code;
 
   @override
-  State<SelectedPromo> createState() => _SelectedPromoState();
+  ConsumerState<SelectedPromo> createState() => _SelectedPromoState();
 }
 
-class _SelectedPromoState extends State<SelectedPromo> {
+class _SelectedPromoState extends ConsumerState<SelectedPromo> {
   @override
   Widget build(BuildContext context) {
-    final checkoutViewModel = Provider.of<CheckoutViewModel>(context);
+    final checkoutViewModel = ref.watch(checkoutViewModelProvider);
     return Padding(
       padding: const EdgeInsets.all(20),
       child: InkWell(
-        onTap: () => checkoutViewModel.removePromos(widget.code),
+        onTap: () => ref
+            .read(checkoutViewModelProvider.notifier)
+            .removePromos(widget.code),
         child: Row(
           children: [
             width10,
@@ -1491,14 +1493,14 @@ class _SelectedPromoState extends State<SelectedPromo> {
   }
 }
 
-class ChoosePickUpWidget extends StatefulWidget {
+class ChoosePickUpWidget extends ConsumerStatefulWidget {
   const ChoosePickUpWidget({super.key});
 
   @override
-  State<ChoosePickUpWidget> createState() => _ChoosePickUpWidgetState();
+  ConsumerState<ChoosePickUpWidget> createState() => _ChoosePickUpWidgetState();
 }
 
-class _ChoosePickUpWidgetState extends State<ChoosePickUpWidget> {
+class _ChoosePickUpWidgetState extends ConsumerState<ChoosePickUpWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1590,8 +1592,8 @@ class _ChoosePickUpWidgetState extends State<ChoosePickUpWidget> {
         AuthButton(
             text: "Conform",
             onPressed: () {
-              context
-                  .read<CheckoutViewModel>()
+              ref
+                  .read(checkoutViewModelProvider.notifier)
                   .setPickUpTime("Pick up now", "Ready in 15 mins");
               context.pop();
             })
@@ -1600,14 +1602,14 @@ class _ChoosePickUpWidgetState extends State<ChoosePickUpWidget> {
   }
 }
 
-class PickUptimePicker extends StatefulWidget {
+class PickUptimePicker extends ConsumerStatefulWidget {
   const PickUptimePicker({super.key});
 
   @override
-  State<PickUptimePicker> createState() => _PickUptimePickerState();
+  ConsumerState<PickUptimePicker> createState() => _PickUptimePickerState();
 }
 
-class _PickUptimePickerState extends State<PickUptimePicker> {
+class _PickUptimePickerState extends ConsumerState<PickUptimePicker> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1639,8 +1641,8 @@ class _PickUptimePickerState extends State<PickUptimePicker> {
         AuthButton(
             text: "Set Time",
             onPressed: () {
-              context
-                  .read<CheckoutViewModel>()
+              ref
+                  .read(checkoutViewModelProvider.notifier)
                   .setPickUpTime("Pick up at 12:00 PM", "Today, Dec 22 2023");
               context.pop();
             })

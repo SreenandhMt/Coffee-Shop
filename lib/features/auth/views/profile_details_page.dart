@@ -7,21 +7,22 @@ import 'package:flutter/material.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
-import 'package:provider/provider.dart';
 
 import '../../../core/app_colors.dart';
+import '../../../route/navigation_utils.dart';
 import 'forgot_password/email_conform_page.dart';
 
-class ProfileDetailsPage extends StatefulWidget {
+class ProfileDetailsPage extends ConsumerStatefulWidget {
   const ProfileDetailsPage({super.key});
 
   @override
-  State<ProfileDetailsPage> createState() => _ProfileDetailsPageState();
+  ConsumerState<ProfileDetailsPage> createState() => _ProfileDetailsPageState();
 }
 
-class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
+class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   TextEditingController fullNameController = TextEditingController(),
       phoneNumberController = TextEditingController(),
@@ -90,16 +91,30 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
                 //button
                 AuthButton(
                   text: "Finish",
-                  onPressed: () {
+                  onPressed: () async {
+                    //validating
                     if (!_key.currentState!.validate() ||
                         phoneNumberController.text.isEmpty ||
-                        phoneNumberController.text.length != 10) return;
-                    context.read<AuthViewModel>().createProfile(
-                        fullNameController.text,
-                        phoneNumberController.text,
-                        birthDateController.text,
-                        context,
-                        mounted);
+                        phoneNumberController.text.length != 10) {
+                      return;
+                    }
+                    //function calling
+                    await ref
+                        .read(authViewModelProvider.notifier)
+                        .createProfile(
+                            fullNameController.text,
+                            phoneNumberController.text,
+                            birthDateController.text);
+                    //mounted checking
+                    if (!mounted) return;
+
+                    //response user
+                    final authState = ref.read(authViewModelProvider);
+                    authState.fold((left) {
+                      NavigationUtils.showAuthSuccessPage(context);
+                    }, (right) {
+                      log(right);
+                    });
                   },
                 ),
               ],

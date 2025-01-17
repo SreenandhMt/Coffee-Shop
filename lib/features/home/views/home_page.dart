@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
@@ -13,25 +13,25 @@ import 'package:coffee_app/route/navigation_utils.dart';
 
 final _titleFont = subtitleFont(fontSize: 17, fontWeight: FontWeight.w700);
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) => context.read<HomeViewModel>().homeInitFunction());
+        (timeStamp) => ref.read(homeViewModelProvider.notifier).getAllData());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final homeViewModel = context.watch<HomeViewModel>();
+    final homeState = ref.watch(homeViewModelProvider);
     return Scaffold(
       appBar: _appBar(),
       body: ListView(
@@ -69,9 +69,9 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.only(left: 5),
                 scrollDirection: Axis.horizontal,
                 children: List.generate(
-                    homeViewModel.nearbyShops.length,
+                    homeState.nearbyShops.length,
                     (index) => NearbyShopCard(
-                        shopModel: homeViewModel.nearbyShops[index],
+                        shopModel: homeState.nearbyShops[index],
                         width: size.width * 0.37)),
               )),
           _homeScreenCategoryText(
@@ -83,8 +83,8 @@ class _HomePageState extends State<HomePage> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, childAspectRatio: 1 / 1.2),
               itemBuilder: (context, index) =>
-                  CoffeeCard(model: homeViewModel.popularCoffees[index]),
-              itemCount: homeViewModel.popularCoffees.length),
+                  CoffeeCard(model: homeState.popularCoffees[index]),
+              itemCount: homeState.popularCoffees.length),
         ],
       ),
     );

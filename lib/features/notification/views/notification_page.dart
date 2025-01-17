@@ -4,26 +4,26 @@ import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/notification/view_models/notification_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NotificationPage extends StatefulWidget {
+class NotificationPage extends ConsumerStatefulWidget {
   const NotificationPage({super.key});
 
   @override
-  State<NotificationPage> createState() => _NotificationPageState();
+  ConsumerState<NotificationPage> createState() => _NotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
+class _NotificationPageState extends ConsumerState<NotificationPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
-        context.read<NotificationViewModel>().getNotifications());
+        ref.read(notificationViewModelProvider.notifier).getNotifications());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final notificationViewModel = context.watch<NotificationViewModel>();
+    final notificationViewModel = ref.watch(notificationViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -48,7 +48,7 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  Widget _notificationWithDate(NotificationViewModel viewModel, int index) {
+  Widget _notificationWithDate(NotificationStateModel viewModel, int index) {
     if (viewModel.notifications == null) return const SizedBox();
     final group = viewModel.notifications!.keys.toList()[index];
     final notifications = viewModel.notifications![group]!;

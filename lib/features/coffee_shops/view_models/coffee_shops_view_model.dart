@@ -1,29 +1,50 @@
 import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class CoffeeShopsViewModel extends ChangeNotifier {
-  bool _loading = false;
-  List<ShopModel> _coffeeShops = [];
-  final List<ShopModel> _favoriteCoffeeShops = [];
+part 'coffee_shops_view_model.g.dart';
 
-  bool get loading => _loading;
-  List<ShopModel> get coffeeShops => _coffeeShops;
-  List<ShopModel> get favoriteCoffeeShops => _favoriteCoffeeShops;
+class CoffeeShopsStateModel {
+  final bool isLoading;
+  final List<ShopModel> coffeeShops;
+  final List<ShopModel> favoriteCoffeeShops;
 
-  setLoading(bool loading) {
-    _loading = loading;
-    notifyListeners();
+  CoffeeShopsStateModel({
+    required this.isLoading,
+    required this.coffeeShops,
+    required this.favoriteCoffeeShops,
+  });
+
+  factory CoffeeShopsStateModel.initial() {
+    return CoffeeShopsStateModel(
+      isLoading: false,
+      coffeeShops: [],
+      favoriteCoffeeShops: [],
+    );
   }
-
-  setCoffeeShops(List<ShopModel> coffeeShops) {
-    _coffeeShops = coffeeShops;
+  CoffeeShopsStateModel copyWith({
+    bool? isLoading,
+    List<ShopModel>? coffeeShops,
+    List<ShopModel>? favoriteCoffeeShops,
+  }) {
+    return CoffeeShopsStateModel(
+      isLoading: isLoading ?? this.isLoading,
+      coffeeShops: coffeeShops ?? this.coffeeShops,
+      favoriteCoffeeShops: favoriteCoffeeShops ?? this.favoriteCoffeeShops,
+    );
   }
+}
 
-  setFavoriteCoffeeShops(List<ShopModel> favoriteCoffeeShops) {
-    _favoriteCoffeeShops.addAll(favoriteCoffeeShops);
+@riverpod
+class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
+  @override
+  CoffeeShopsStateModel build() {
+    return CoffeeShopsStateModel.initial();
   }
 
   getAllShops() {
+    state = state.copyWith(isLoading: true);
+
     final images = [
       "https://media.istockphoto.com/id/1428594094/photo/empty-coffee-shop-interior-with-wooden-tables-coffee-maker-pastries-and-pendant-lights.jpg?s=612x612&w=0&k=20&c=dMqeYCJDs3BeBP_jv93qHRISDt-54895SPoVc6_oJt4=",
       "https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -32,7 +53,6 @@ class CoffeeShopsViewModel extends ChangeNotifier {
       "https://b.zmtcdn.com/data/collections/e7e6c3774795c754eac6c2bbeb0ba57a_1709896412.png?fit=around|562.5:360&crop=562.5:360;*,*",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEBGzOS0ADSN2MRZHythXzbaj8s5oHNKzWAzwf4FgujpHwtgGjNoKnVxe1VgY-GB49BuI&usqp=CAU"
     ];
-    setLoading(true);
     final nearbyShopsList = [
       {
         "name": "Caffely Astoria Aromas",
@@ -81,9 +101,34 @@ class CoffeeShopsViewModel extends ChangeNotifier {
     for (var shop in nearbyShopsList) {
       shops.add(ShopModel.fromJson(shop));
     }
-    setCoffeeShops(shops);
-    shops.shuffle();
-    setFavoriteCoffeeShops(shops);
-    setLoading(false);
+    List<ShopModel> shuffledShop = shops;
+    shuffledShop.shuffle();
+    state = state.copyWith(
+        coffeeShops: shops,
+        favoriteCoffeeShops: shuffledShop,
+        isLoading: false);
   }
 }
+
+// class CoffeeShopsViewModels extends ChangeNotifier {
+//   bool _loading = false;
+//   List<ShopModel> _coffeeShops = [];
+//   final List<ShopModel> _favoriteCoffeeShops = [];
+
+//   bool get loading => _loading;
+//   List<ShopModel> get coffeeShops => _coffeeShops;
+//   List<ShopModel> get favoriteCoffeeShops => _favoriteCoffeeShops;
+
+//   setLoading(bool loading) {
+//     _loading = loading;
+//     notifyListeners();
+//   }
+
+//   setCoffeeShops(List<ShopModel> coffeeShops) {
+//     _coffeeShops = coffeeShops;
+//   }
+
+//   setFavoriteCoffeeShops(List<ShopModel> favoriteCoffeeShops) {
+//     _favoriteCoffeeShops.addAll(favoriteCoffeeShops);
+//   }
+// }

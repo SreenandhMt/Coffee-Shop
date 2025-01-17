@@ -5,18 +5,18 @@ import 'package:coffee_app/features/coffee_shops/view_models/coffee_shops_view_m
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tabbar.dart';
 
-class CoffeeShopsPage extends StatefulWidget {
+class CoffeeShopsPage extends ConsumerStatefulWidget {
   const CoffeeShopsPage({super.key});
 
   @override
-  State<CoffeeShopsPage> createState() => _CoffeeShopsPageState();
+  ConsumerState<CoffeeShopsPage> createState() => _CoffeeShopsPageState();
 }
 
-class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
+class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
   List<String> resentSearch = [
     "Caffely Central Park",
     "Caffely Times Square",
@@ -31,14 +31,14 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<CoffeeShopsViewModel>().getAllShops();
+      ref.read(coffeeShopsViewModelProvider.notifier).getAllShops();
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<CoffeeShopsViewModel>();
+    final viewModel = ref.watch(coffeeShopsViewModelProvider);
     final size = MediaQuery.sizeOf(context);
     return DefaultTabController(
       length: 2,
@@ -363,7 +363,7 @@ class _CoffeeShopsPageState extends State<CoffeeShopsPage> {
     );
   }
 
-  Widget _buildSearchResult(int index, CoffeeShopsViewModel viewModel, size) {
+  Widget _buildSearchResult(int index, CoffeeShopsStateModel viewModel, size) {
     return Container(
       height: size.width * 0.3,
       margin: const EdgeInsets.only(top: 15, left: 10, right: 10),

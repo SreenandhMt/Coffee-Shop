@@ -6,6 +6,8 @@ import 'navigation_path.dart';
 class NavigationUtils {
   static replaceHomePage(BuildContext context) =>
       context.go(NavigationPath.home.path);
+  static introductionPage(BuildContext context) =>
+      context.go(NavigationPath.intro.path);
   static notificationPage(BuildContext context) =>
       context.push("/notification");
   static showAuthSuccessPage(BuildContext context) => context.go(

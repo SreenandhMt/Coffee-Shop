@@ -1,47 +1,67 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
-import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../home/models/coffee_model.dart';
 
-class CoffeeShopDetailsViewModel extends ChangeNotifier {
-  bool _isLoading = false;
-  List<CoffeeModel>? _coffeeModel;
-  ShopModel? _shopModel;
-  final List<OrderDetailsModel> _selectedCoffeeIds = [];
-  double _totalPrice = 0.0;
+part 'coffee_shop_view_model.g.dart';
 
-  bool get isLoading => _isLoading;
-  List<CoffeeModel>? get coffeeModel => _coffeeModel;
-  ShopModel? get shopModel => _shopModel;
-  List<OrderDetailsModel> get selectedCoffeeIds => _selectedCoffeeIds;
-  double get totalPrice => _totalPrice;
+class ShopStateModel {
+  final bool isLoading;
+  final List<CoffeeModel>? coffeeModel;
+  final ShopModel? shopModel;
+  final List<OrderDetailsModel> selectedCoffeeIds;
+  final double totalPrice;
 
-  void setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
+  ShopStateModel(
+      {required this.isLoading,
+      this.coffeeModel,
+      this.shopModel,
+      required this.selectedCoffeeIds,
+      required this.totalPrice});
+
+  factory ShopStateModel.initial() {
+    return ShopStateModel(
+        isLoading: false, selectedCoffeeIds: [], totalPrice: 0.0);
   }
 
-  void setCoffeeModel(List<CoffeeModel> value) {
-    _coffeeModel = value;
+  ShopStateModel copyWith({
+    bool? isLoading,
+    List<CoffeeModel>? coffeeModel,
+    ShopModel? shopModel,
+    List<OrderDetailsModel>? selectedCoffeeIds,
+    double? totalPrice,
+  }) {
+    return ShopStateModel(
+      isLoading: isLoading ?? this.isLoading,
+      coffeeModel: coffeeModel ?? this.coffeeModel,
+      shopModel: shopModel ?? this.shopModel,
+      selectedCoffeeIds: selectedCoffeeIds ?? this.selectedCoffeeIds,
+      totalPrice: totalPrice ?? this.totalPrice,
+    );
   }
+}
 
-  void setShopModel(ShopModel value) {
-    _shopModel = value;
+@riverpod
+class ShopDetailsViewModel extends _$ShopDetailsViewModel {
+  @override
+  ShopStateModel build() {
+    return ShopStateModel.initial();
   }
 
   void addProductID(OrderDetailsModel orderModel) {
-    _selectedCoffeeIds.add(orderModel);
-    _totalPrice += orderModel.totalPrice;
-    notifyListeners();
+    state = state.copyWith(
+        selectedCoffeeIds: [...state.selectedCoffeeIds, orderModel],
+        totalPrice: (state.totalPrice + orderModel.totalPrice));
   }
 
   void clearValues() {
-    _coffeeModel = null;
-    _shopModel = null;
-    _selectedCoffeeIds.clear();
+    state = ShopStateModel.initial();
   }
 
   void getShopDetails(String shopId) {
@@ -135,15 +155,40 @@ class CoffeeShopDetailsViewModel extends ChangeNotifier {
         "id": "666",
       }
     ];
-    setLoading(true);
     for (var element in nearbyShopsList) {
       if (element["id"] == shopId) {
-        setShopModel(ShopModel.fromJson(element));
+        state = state.copyWith(shopModel: ShopModel.fromJson(element));
       }
     }
     final coffeeModels =
         allCoffees.map((e) => CoffeeModel.fromJson(e)).toList();
-    setCoffeeModel(coffeeModels);
-    setLoading(false);
+    state = state.copyWith(coffeeModel: coffeeModels, isLoading: false);
+  }
+}
+
+class CoffeeShopDetailsViewModelsss extends ChangeNotifier {
+  bool _isLoading = false;
+  List<CoffeeModel>? _coffeeModel;
+  ShopModel? _shopModel;
+  final List<OrderDetailsModel> _selectedCoffeeIds = [];
+  final double _totalPrice = 0.0;
+
+  bool get isLoading => _isLoading;
+  List<CoffeeModel>? get coffeeModel => _coffeeModel;
+  ShopModel? get shopModel => _shopModel;
+  List<OrderDetailsModel> get selectedCoffeeIds => _selectedCoffeeIds;
+  double get totalPrice => _totalPrice;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void setCoffeeModel(List<CoffeeModel> value) {
+    _coffeeModel = value;
+  }
+
+  void setShopModel(ShopModel value) {
+    _shopModel = value;
   }
 }

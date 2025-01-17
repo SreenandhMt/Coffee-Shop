@@ -1,23 +1,22 @@
 import 'package:coffee_app/core/size.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/fonts.dart';
 import '../../home/view_models/home_view_model.dart';
 import '../../home/views/home_page.dart';
 
-class FavoriteCoffeePage extends StatefulWidget {
+class FavoriteCoffeePage extends ConsumerStatefulWidget {
   const FavoriteCoffeePage({super.key});
 
   @override
-  State<FavoriteCoffeePage> createState() => _FavoriteCoffeePageState();
+  ConsumerState<FavoriteCoffeePage> createState() => _FavoriteCoffeePageState();
 }
 
-class _FavoriteCoffeePageState extends State<FavoriteCoffeePage> {
+class _FavoriteCoffeePageState extends ConsumerState<FavoriteCoffeePage> {
   @override
   Widget build(BuildContext context) {
-    final homeViewModel = context.watch<HomeViewModel>();
+    final homeViewModel = ref.watch(homeViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
