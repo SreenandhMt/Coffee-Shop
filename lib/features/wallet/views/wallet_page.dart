@@ -2,6 +2,7 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/app_colors.dart';
+import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
 
@@ -18,10 +19,11 @@ class _WalletPageState extends State<WalletPage> {
     return Scaffold(
       appBar: AppBar(
         leading: Container(
-          width: 30,
-          height: 30,
-          color: AppColors.primaryColor,
-        ),
+            margin: const EdgeInsets.only(left: 20),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage(AppAssets.logo)))),
         centerTitle: true,
         title: Text("Wallet", style: appBarTitleFont),
         actions: const [

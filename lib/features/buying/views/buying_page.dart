@@ -1,3 +1,4 @@
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,7 +71,7 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                         color: AppColors.secondaryColor(context),
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
-                            image: AssetImage(
+                            image: NetworkImage(
                                 buyingViewModel.coffeeModel!.imagePath))),
                   ),
                 ),
@@ -158,53 +159,67 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                         .selectSizeIndex(value, price, oldPrice),
                     selectedIndex: buyingViewModel.selectedSizeIndex),
                 height15,
-                OptionWidget(
-                    title: "Milk",
-                    values: const [
-                      "Whole Milk",
-                      "Skim Mink",
-                      "Soy Mink",
-                      "Almond Mink",
-                    ],
-                    currentValue: buyingViewModel.selectedMilk,
-                    onTap: (value, price, oldPrice) => ref
-                        .read(buyingViewModelProvider.notifier)
-                        .selectMilk(value, price, oldPrice)),
-                height10,
-                OptionWidget(
-                  title: "Syrup",
-                  values: const [
-                    "Aren",
-                    "Caramel",
-                    "Hazelnut",
-                    "Pandan",
-                    "Irish",
-                    "Pecan",
-                    "Manuka Honey",
-                    "Vanilla"
-                  ],
-                  currentValue: buyingViewModel.selectedSyrup,
-                  onTap: (value, price, oldPrice) => ref
-                      .read(buyingViewModelProvider.notifier)
-                      .selectSyrup(value, price, oldPrice),
-                ),
-                height10,
-                OptionWidget(
-                  title: "Topping",
-                  values: const [
-                    "Cinnamon",
-                    "Nutmeg",
-                    "Cocoa Powder",
-                    "Crumble",
-                    "Sea Salt Cream",
-                    "Milo Powder",
-                    "Caramel Sauce"
-                  ],
-                  currentValue: buyingViewModel.selectedTopping,
-                  onTap: (value, price, oldPrice) => ref
-                      .read(buyingViewModelProvider.notifier)
-                      .selectToppings(value, price, oldPrice),
-                ),
+                ...List.generate(
+                    buyingViewModel.coffeeModel!.optionList!.length,
+                    (index) => OptionWidget(
+                        title: buyingViewModel.coffeeModel!.optionList![index]
+                            ["name"],
+                        values: buyingViewModel.coffeeModel!.optionList![index]
+                            ["options"],
+                        currentValue:
+                            buyingViewModel.selectedOption.length > index
+                                ? buyingViewModel.selectedOption[index]
+                                : null,
+                        onTap: (value, price, oldPrice) => ref
+                            .read(buyingViewModelProvider.notifier)
+                            .selectOption(value, index, price, oldPrice))),
+                // OptionWidget(
+                //     title: "Milk",
+                //     values: const [
+                //       "Whole Milk",
+                //       "Skim Mink",
+                //       "Soy Mink",
+                //       "Almond Mink",
+                //     ],
+                //     currentValue: buyingViewModel.selectedMilk,
+                //     onTap: (value, price, oldPrice) => ref
+                //         .read(buyingViewModelProvider.notifier)
+                //         .selectMilk(value, price, oldPrice)),
+                // height10,
+                // OptionWidget(
+                //   title: "Syrup",
+                //   values: const [
+                //     "Aren",
+                //     "Caramel",
+                //     "Hazelnut",
+                //     "Pandan",
+                //     "Irish",
+                //     "Pecan",
+                //     "Manuka Honey",
+                //     "Vanilla"
+                //   ],
+                //   currentValue: buyingViewModel.selectedSyrup,
+                //   onTap: (value, price, oldPrice) => ref
+                //       .read(buyingViewModelProvider.notifier)
+                //       .selectSyrup(value, price, oldPrice),
+                // ),
+                // height10,
+                // OptionWidget(
+                //   title: "Topping",
+                //   values: const [
+                //     "Cinnamon",
+                //     "Nutmeg",
+                //     "Cocoa Powder",
+                //     "Crumble",
+                //     "Sea Salt Cream",
+                //     "Milo Powder",
+                //     "Caramel Sauce"
+                //   ],
+                //   currentValue: buyingViewModel.selectedTopping,
+                //   onTap: (value, price, oldPrice) => ref
+                //       .read(buyingViewModelProvider.notifier)
+                //       .selectToppings(value, price, oldPrice),
+                // ),
                 height20,
                 const Text("Notes",
                     style:
@@ -261,13 +276,10 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                           "type": buyingViewModel.selectedTypeIndex == 0
                               ? "Hot"
                               : "Iced",
-                          "milkName": buyingViewModel.selectedMilk,
-                          "milkPrice": 0.5,
-                          "syrupName": buyingViewModel.selectedSyrup,
-                          "syrupPrice": 0.8,
-                          "toppingName": buyingViewModel.selectedTopping,
-                          "toppingPrice": 0.6,
+                          if (buyingViewModel.selectedOption.isNotEmpty)
+                            "option": buyingViewModel.selectedOption,
                           "notes": "",
+                          "product-id": buyingViewModel.coffeeModel!.id,
                           "basePrice":
                               double.parse(buyingViewModel.coffeeModel!.price),
                           "totalPrice": buyingViewModel.totalPrice,
@@ -278,7 +290,7 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                         context.pop();
                         if (!widget.shopPageOpened!) {
                           NavigationUtils.coffeeShopDetailsPage(context,
-                              shopId: "222");
+                              shopId: buyingViewModel.coffeeModel!.shopId);
                         }
                       },
                       child: const Text("Add to Basket",
@@ -324,51 +336,54 @@ class AvailableSizeWidgetState extends State<AvailableSizeWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(
             sizes.length,
-            (index) => InkWell(
-              onTap: () => widget.onTap(
-                  index,
-                  sizes[index]["price"] == "Free"
-                      ? 0.00
-                      : double.tryParse(sizes[index]["price"]!)!,
-                  widget.selectedIndex == null
-                      ? null
-                      : sizes[widget.selectedIndex!]['price'] == "Free"
-                          ? 0.00
-                          : double.tryParse(
-                              sizes[widget.selectedIndex!]['price']!)),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: index == widget.selectedIndex
-                          ? AppColors.primaryColor
-                          : Colors.grey,
-                      width: index == widget.selectedIndex ? 1.0 : 0.1),
-                  color: index == widget.selectedIndex
-                      ? AppColors.primaryColor.withOpacity(0.2)
-                      : AppColors.secondaryColor(context),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(15 - (index * 5)),
-                      child: Image.asset(
-                        "assets/hot-coffee.png",
-                        width: (40 + ((index) * 10)),
-                        height: (40 + ((index) * 10)),
+            (index) => Padding(
+              padding: const EdgeInsets.only(right: 2),
+              child: InkWell(
+                onTap: () => widget.onTap(
+                    index,
+                    sizes[index]["price"] == "Free"
+                        ? 0.00
+                        : double.tryParse(sizes[index]["price"]!)!,
+                    widget.selectedIndex == null
+                        ? null
+                        : sizes[widget.selectedIndex!]['price'] == "Free"
+                            ? 0.00
+                            : double.tryParse(
+                                sizes[widget.selectedIndex!]['price']!)),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 23),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        color: index == widget.selectedIndex
+                            ? AppColors.primaryColor
+                            : Colors.grey,
+                        width: index == widget.selectedIndex ? 1.0 : 0.1),
+                    color: index == widget.selectedIndex
+                        ? AppColors.primaryColor.withOpacity(0.2)
+                        : AppColors.secondaryColor(context),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(15 - (index * 5)),
+                        child: Image.asset(
+                          AppAssets.hotCoffee(context),
+                          width: (40 + ((index) * 10)),
+                          height: (40 + ((index) * 10)),
+                        ),
                       ),
-                    ),
-                    height5,
-                    Text(sizes[index]["title"] ?? "",
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w700)),
-                    height5,
-                    Text(
-                        "${sizes[index]["price"] == "Free" ? "" : "+ "}${sizes[index]["price"]}",
-                        style: const TextStyle(fontSize: 15))
-                  ],
+                      height5,
+                      Text(sizes[index]["title"] ?? "",
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w700)),
+                      height5,
+                      Text(
+                          "${sizes[index]["price"] == "Free" ? "" : "+ "}${sizes[index]["price"]}",
+                          style: const TextStyle(fontSize: 15))
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -427,7 +442,7 @@ class AavailableStateTypeWidget extends State<AvailableTypeWidget> {
                       children: [
                         if (index == 0)
                           Image.asset(
-                            "assets/hot-coffee.png",
+                            AppAssets.hotCoffee(context),
                             width: 70,
                             height: 70,
                           )
@@ -435,7 +450,7 @@ class AavailableStateTypeWidget extends State<AvailableTypeWidget> {
                           Padding(
                             padding: const EdgeInsets.all(5),
                             child: Image.asset(
-                              "assets/ice-coffee.png",
+                              AppAssets.iceCoffee(context),
                               width: 60,
                               height: 60,
                             ),
@@ -466,9 +481,9 @@ class OptionWidget extends StatefulWidget {
     required this.onTap,
   });
   final String title;
-  final String currentValue;
-  final List<String> values;
-  final Function(String, double, double?) onTap;
+  final Map<String, dynamic>? currentValue;
+  final List<dynamic> values;
+  final Function(Map<String, dynamic>, double, double?) onTap;
 
   @override
   State<OptionWidget> createState() => OoptionWidgetState();
@@ -476,6 +491,16 @@ class OptionWidget extends StatefulWidget {
 
 class OoptionWidgetState extends State<OptionWidget> {
   bool isHide = false;
+  List<Map<String, dynamic>> mapValue = [];
+
+  @override
+  void initState() {
+    for (var element in widget.values) {
+      mapValue.add(element);
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -510,22 +535,28 @@ class OoptionWidgetState extends State<OptionWidget> {
         ),
         if (!isHide)
           ...List.generate(
-            widget.values.length,
+            mapValue.length,
             (index) => Row(
               children: [
                 Text(
-                  widget.values[index],
+                  mapValue[index]["name"],
                   style: const TextStyle(fontSize: 17),
                 ),
                 const Spacer(),
-                const Text("+ \$1.00", style: TextStyle(fontSize: 15)),
+                Text("+ \$${mapValue[index]["price"]}",
+                    style: const TextStyle(fontSize: 15)),
                 Radio(
-                    fillColor:
-                        const WidgetStatePropertyAll(AppColors.primaryColor),
-                    value: widget.values[index],
-                    groupValue: widget.currentValue,
-                    onChanged: (c) => widget.onTap(
-                        c!, 1.00, widget.currentValue.isNotEmpty ? 1.00 : null))
+                  fillColor:
+                      const WidgetStatePropertyAll(AppColors.primaryColor),
+                  value: mapValue[index],
+                  groupValue: widget.currentValue,
+                  onChanged: (c) => widget.onTap(
+                      c!,
+                      double.parse(c["price"]),
+                      widget.currentValue != null
+                          ? double.parse(widget.currentValue!["price"])
+                          : null),
+                ),
               ],
             ),
           ),

@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:coffee_app/features/checkout/services/checkout_service.dart';
+import 'package:coffee_app/features/home/models/offer_model.dart';
 
 part 'checkout_view_model.g.dart';
 
@@ -12,8 +17,10 @@ class CheckoutStateModel {
   final String? paymentMethod;
   final String? pickUpTime;
   final String? pickUpDate;
+  final double totalPrice;
   final Map<String, dynamic>? selectedAddress;
   final Map<String, dynamic>? selectedDelivery;
+  final List<OfferModel>? offers;
 
   CheckoutStateModel({
     required this.isLoading,
@@ -22,13 +29,16 @@ class CheckoutStateModel {
     this.paymentMethod,
     this.pickUpTime,
     this.pickUpDate,
+    required this.totalPrice,
     this.selectedAddress,
     this.selectedDelivery,
+    this.offers,
   });
 
   factory CheckoutStateModel.initial() {
     return CheckoutStateModel(
       isLoading: false,
+      totalPrice: 0.0,
       orderModels: [],
       promos: [],
     );
@@ -41,8 +51,10 @@ class CheckoutStateModel {
     String? paymentMethod,
     String? pickUpTime,
     String? pickUpDate,
+    double? totalPrice,
     Map<String, dynamic>? selectedAddress,
     Map<String, dynamic>? selectedDelivery,
+    List<OfferModel>? offers,
   }) {
     return CheckoutStateModel(
       isLoading: isLoading ?? this.isLoading,
@@ -51,8 +63,10 @@ class CheckoutStateModel {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       pickUpTime: pickUpTime ?? this.pickUpTime,
       pickUpDate: pickUpDate ?? this.pickUpDate,
+      totalPrice: totalPrice ?? this.totalPrice,
       selectedAddress: selectedAddress ?? this.selectedAddress,
       selectedDelivery: selectedDelivery ?? this.selectedDelivery,
+      offers: offers ?? this.offers,
     );
   }
 }
@@ -64,12 +78,34 @@ class CheckoutViewModel extends _$CheckoutViewModel {
     return CheckoutStateModel.initial();
   }
 
-  void setOrderModels(List<OrderDetailsModel> value) {
-    state = state.copyWith(orderModels: value);
+  void setOrderModels(String shopID) async {
+    state = state.copyWith(isLoading: true);
+    getOffers();
+    final response = await CheckoutService.getCheckouts(shopID);
+    response.fold((l) => log(l), (r) {
+      double totalPrice = 0;
+      for (var element in r) {
+        totalPrice += element.totalPrice;
+      }
+      state = state.copyWith(
+          orderModels: r, isLoading: false, totalPrice: totalPrice);
+    });
+  }
+
+  void getOffers() async {
+    final response = await CheckoutService.getVouchers();
+    response.fold((l) => log(l), (r) {
+      state = state.copyWith(offers: r);
+    });
   }
 
   void addPromos(String value) {
-    state = state.copyWith(promos: [...state.promos, value]);
+    if (state.promos.contains(value)) {
+      state = state.copyWith(
+          promos: state.promos.where((e) => e != value).toList());
+    } else {
+      state = state.copyWith(promos: [...state.promos, value]);
+    }
   }
 
   void removePromos(String value) {
@@ -90,36 +126,10 @@ class CheckoutViewModel extends _$CheckoutViewModel {
   }
 
   selectDeliveryService(Map<String, dynamic> delivery) {
-    state.copyWith(selectedDelivery: delivery);
+    state = state.copyWith(selectedDelivery: delivery);
   }
 
   void addOrderModel(OrderDetailsModel value) {
     state = state.copyWith(orderModels: [...state.orderModels, value]);
-  }
-}
-
-class CheckoutViewModelss extends ChangeNotifier {
-  bool _isLoading = false;
-  final List<OrderDetailsModel> _orderModels = [];
-  final List<String> _promos = [];
-  String? _paymentMethod;
-  String? _pickUpTime;
-  String? _pickUpDate;
-  Map<String, dynamic>? _selectedAddress;
-  Map<String, dynamic>? _selectedDelivery;
-  int currentPage = 0;
-
-  bool get isLoading => _isLoading;
-  List<OrderDetailsModel> get orderModel => _orderModels;
-  List<String> get promos => _promos;
-  String? get paymentMethod => _paymentMethod;
-  String? get pickUpTime => _pickUpTime;
-  String? get pickUpDate => _pickUpDate;
-  Map<String, dynamic>? get selectedAddress => _selectedAddress;
-  Map<String, dynamic>? get selectedDelivery => _selectedDelivery;
-
-  void setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
   }
 }

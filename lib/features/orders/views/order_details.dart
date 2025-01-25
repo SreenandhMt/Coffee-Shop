@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:coffee_app/core/fonts.dart';
-import 'package:coffee_app/features/checkout/views/checkout_page.dart';
+
+import '../../../components/checkout/delivery_widget.dart';
+import '../../../components/checkout/pick_up_widget.dart';
 
 class OrderDetailsPage extends StatefulWidget {
   const OrderDetailsPage({
@@ -26,10 +28,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         children: [
           if (widget.isPickUp)
             const PickupWidgets(
+              shopId: "",
               isOrderDetails: true,
             )
           else
             const DeliveryWidgets(
+              shopId: "",
               isOrderDetails: true,
             ),
         ],

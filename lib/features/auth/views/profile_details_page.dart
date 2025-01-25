@@ -23,102 +23,121 @@ class ProfileDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
-  final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  final GlobalKey<FormState> key = GlobalKey<FormState>();
   TextEditingController fullNameController = TextEditingController(),
-      phoneNumberController = TextEditingController(),
+      phoneNumberController = TextEditingController(text: ""),
       birthDateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // final size = MediaQuery.sizeOf(context);
     return Form(
-      key: _key,
+      key: key,
       child: Scaffold(
         appBar: AppBar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             surfaceTintColor: Theme.of(context).scaffoldBackgroundColor),
         body: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //top
-                const AuthHadingTexts(
-                  title: "Complete Your Profile 👤",
-                  subtitle:
-                      "Add the finishing touches to your profile. Lets make your coffee experience more social!",
-                ),
-                //center
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundColor: Colors.grey.shade300,
-                          child: Stack(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //top
+                      const AuthHadingTexts(
+                        title: "Complete Your Profile 👤",
+                        subtitle:
+                            "Add the finishing touches to your profile. Lets make your coffee experience more social!",
+                      ),
+                      //center
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.primaryColor,
-                                        borderRadius: BorderRadius.circular(4)),
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: AppColors.themeColor(context),
-                                    )),
-                              )
+                              CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.grey.shade300,
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Container(
+                                          padding: const EdgeInsets.all(3),
+                                          decoration: BoxDecoration(
+                                              color: AppColors.primaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(4)),
+                                          child: Icon(
+                                            Icons.edit,
+                                            color:
+                                                AppColors.themeColor(context),
+                                          )),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    InputWithText(
-                      controller: fullNameController,
-                      hintText: "Full Name",
-                      obscureText: false,
-                    ),
-                    PhoneNumberInputBox(controller: phoneNumberController),
-                    DateInputBox(
-                        controller: birthDateController,
-                        hintText: "Date of Birth"),
-                  ],
+                          InputWithText(
+                            controller: fullNameController,
+                            hintText: "Full Name",
+                            obscureText: false,
+                          ),
+                          PhoneNumberInputBox(
+                              controller: phoneNumberController,
+                              validator: (value) {
+                                log(value.toString());
+                                if (value == null || value.number.isEmpty) {
+                                  return 'Please enter your mobile number';
+                                }
+                                //TODO: Regular expression for mobile number validation
+                                if (!RegExp(r'^[0-9]{10}$')
+                                    .hasMatch(value.number)) {
+                                  return 'Please enter a valid 10-digit mobile number';
+                                }
+                                return null;
+                              }),
+                          DateInputBox(
+                              controller: birthDateController,
+                              hintText: "Date of Birth"),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                //button
-                AuthButton(
-                  text: "Finish",
-                  onPressed: () async {
-                    //validating
-                    if (!_key.currentState!.validate() ||
-                        phoneNumberController.text.isEmpty ||
-                        phoneNumberController.text.length != 10) {
-                      return;
-                    }
-                    //function calling
-                    await ref
-                        .read(authViewModelProvider.notifier)
-                        .createProfile(
-                            fullNameController.text,
-                            phoneNumberController.text,
-                            birthDateController.text);
-                    //mounted checking
-                    if (!mounted) return;
+              ),
+              AuthButton(
+                text: "Finish",
+                onPressed: () async {
+                  //validating
+                  if (!key.currentState!.validate() ||
+                      phoneNumberController.text.isEmpty ||
+                      phoneNumberController.text.length != 10) {
+                    return;
+                  }
+                  //function calling
+                  await ref.read(authViewModelProvider.notifier).createProfile(
+                      fullNameController.text,
+                      phoneNumberController.text,
+                      birthDateController.text);
+                  //mounted checking
+                  if (!mounted) return;
 
-                    //response user
-                    final authState = ref.read(authViewModelProvider);
-                    authState.fold((left) {
-                      NavigationUtils.showAuthSuccessPage(context);
-                    }, (right) {
-                      log(right);
-                    });
-                  },
-                ),
-              ],
-            ),
+                  //response user
+                  final authState = ref.read(authViewModelProvider);
+                  authState.fold((left) {
+                    NavigationUtils.showAuthSuccessPage(context);
+                  }, (right) {
+                    log(right);
+                  });
+                },
+              ),
+              height15,
+            ],
           ),
         ),
       ),
@@ -130,7 +149,7 @@ class PhoneNumberInputBox extends StatefulWidget {
   const PhoneNumberInputBox(
       {super.key, required this.controller, this.validator});
   final TextEditingController controller;
-  final FutureOr<String?> Function(PhoneNumber?)? validator;
+  final String? Function(PhoneNumber?)? validator;
 
   @override
   State<PhoneNumberInputBox> createState() => _PhoneNumberInputBoxState();
@@ -152,10 +171,10 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: IntlPhoneField(
+              initialValue: "",
               showDropdownIcon: true,
               validator: widget.validator ??
                   (value) {
-                    log(value.toString());
                     if (value == null || value.number.isEmpty) {
                       return "Enter Your Phone Number";
                     }
@@ -179,8 +198,9 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
-                errorBorder:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.red)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,

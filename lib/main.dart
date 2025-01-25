@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
     return ProviderScope(
       child: MaterialApp.router(
         title: 'Coffee App',
-        themeMode: ThemeMode.light,
         debugShowCheckedModeBanner: false,
         darkTheme: AppTheme.darkTheme,
         theme: AppTheme.lightTheme,

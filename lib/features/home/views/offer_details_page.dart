@@ -2,19 +2,17 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/app_colors.dart';
+import '../view_models/home_view_model.dart';
 
-class OfferDetailsPage extends StatefulWidget {
+class OfferDetailsPage extends ConsumerWidget {
   const OfferDetailsPage({super.key});
 
   @override
-  State<OfferDetailsPage> createState() => _OfferDetailsPageState();
-}
-
-class _OfferDetailsPageState extends State<OfferDetailsPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final homeState = ref.watch(homeViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -33,22 +31,22 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                   decoration: BoxDecoration(
                     color: AppColors.secondaryColor(context),
                     borderRadius: BorderRadius.circular(15),
-                    image: const DecorationImage(
-                      image: AssetImage("assets/banner1.png"),
+                    image: DecorationImage(
+                      image: NetworkImage(homeState.selectedBanner!.image),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20, top: 5, bottom: 10),
-                  child: Text("30% OFF - Limited Time Offer!",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 5, bottom: 10),
+                  child: Text(homeState.selectedBanner!.title,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w800)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: Text(
-                    "Wake up and smell the savings! Enjoy a fantastic 30% discount on all our coffee creations.",
+                    homeState.selectedBanner!.description,
                     style:
                         subtitleFont(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
@@ -63,9 +61,9 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SelectableText(
-                        "XM4LWP3",
-                        style: TextStyle(
+                      SelectableText(
+                        homeState.selectedBanner!.code,
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       IconButton(
@@ -100,12 +98,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                               Text(
                                 "Valid unit",
                                 style: subtitleFont(
-                                    fontSize: 14, fontWeight: FontWeight.w400),
+                                    fontSize: 13, fontWeight: FontWeight.w400),
                               ),
                               height5,
-                              const Text(
-                                "Dec 31, 2023",
-                                style: TextStyle(
+                              Text(
+                                homeState.selectedBanner!.validDate,
+                                style: const TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w700),
                               )
                             ],
@@ -130,12 +128,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                               Text(
                                 "Min transaction",
                                 style: subtitleFont(
-                                    fontSize: 14, fontWeight: FontWeight.w400),
+                                    fontSize: 13, fontWeight: FontWeight.w400),
                               ),
                               height5,
-                              const Text(
-                                "\$2.50",
-                                style: TextStyle(
+                              Text(
+                                "\$${homeState.selectedBanner!.minPrice}",
+                                style: const TextStyle(
                                     fontSize: 17, fontWeight: FontWeight.w700),
                               )
                             ],
@@ -151,14 +149,53 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Text(
-                    "1. Promotion period. The Caffely 30% discount\n   promotion is valid form December 20, 2023, to \n   December 31, 2023. All eligible orders must be\n   placed within this period to avail of the discount.\n2. Eliaibilitv: The promotion is open to all customers",
-                    style:
-                        subtitleFont(fontSize: 16, fontWeight: FontWeight.w500),
+                ...List.generate(
+                  homeState.selectedBanner!.termsAndCondition.length,
+                  (index) => Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              "${index + 1}.",
+                              style: subtitleFont(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
+                      width10,
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              homeState
+                                  .selectedBanner!.termsAndCondition[index],
+                              style: subtitleFont(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ),
+                      width10,
+                    ],
                   ),
                 ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 15),
+                //   child: Text(
+                //     "1. Promotion period. The Caffely 30% discount\n   promotion is valid form December 20, 2023, to \n   December 31, 2023. All eligible orders must be\n   placed within this period to avail of the discount.\n2. Eliaibilitv: The promotion is open to all customers",
+                //     style:
+                //         subtitleFont(fontSize: 16, fontWeight: FontWeight.w500),
+                //   ),
+                // ),
                 height10,
               ],
             ),

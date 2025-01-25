@@ -26,12 +26,11 @@ class CoffeeShopDetailsPage extends ConsumerStatefulWidget {
 
 class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
   PageController controller = PageController();
-  final list = ["Coffee", "Baked", "Sandwich", "Cakes", "Cookies"];
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ref
         .read(shopDetailsViewModelProvider.notifier)
-        .getShopDetails(widget.shopId));
+        .getAllData(widget.shopId));
     super.initState();
   }
 
@@ -59,9 +58,9 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                             PageView(
                               controller: controller,
                               children: List.generate(
-                                1,
+                                viewModel.shopModel!.images.length,
                                 (index) => Image.network(
-                                  viewModel.shopModel!.image,
+                                  viewModel.shopModel!.images[index],
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -71,28 +70,30 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                               child: Align(
                                   alignment: Alignment.bottomCenter,
                                   child: SmoothIndicator(
-                                      controller: controller, count: 1)),
+                                      controller: controller,
+                                      count:
+                                          viewModel.shopModel!.images.length)),
                             )
                           ],
                         )),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(viewModel.shopModel!.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: titleFonts(
-                                    fontSize: 25, fontWeight: FontWeight.w700)),
-                          ),
-                          InkWell(
-                              onTap: () => NavigationUtils.coffeeShopAboutPage(
-                                  context,
-                                  shopId: widget.shopId),
-                              child:
-                                  const Icon(Icons.arrow_forward_ios_rounded)),
-                        ],
+                    InkWell(
+                      onTap: () => NavigationUtils.coffeeShopAboutPage(context,
+                          shopId: widget.shopId),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(viewModel.shopModel!.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: titleFonts(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w700)),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded),
+                          ],
+                        ),
                       ),
                     ),
                     const Padding(
@@ -100,34 +101,34 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                           EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                       child: Divider(height: 5, thickness: 0.08),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 15, bottom: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          width10,
-                          const Icon(Icons.star_rate_rounded,
-                              color: Colors.orange, size: 38),
-                          width10,
-                          Text(viewModel.shopModel!.rating,
-                              style: const TextStyle(
-                                  fontSize: 21, fontWeight: FontWeight.bold)),
-                          width10,
-                          const Text("(23k Reviews)",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey)),
-                          const Spacer(),
-                          InkWell(
-                              onTap: () => NavigationUtils.reviewAndRatingPage(
-                                  context,
-                                  shopId: widget.shopId),
-                              child:
-                                  const Icon(Icons.arrow_forward_ios_rounded)),
-                          width10
-                        ],
+                    InkWell(
+                      onTap: () => NavigationUtils.reviewAndRatingPage(context,
+                          shopId: widget.shopId),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 15, bottom: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            width10,
+                            const Icon(Icons.star_rate_rounded,
+                                color: Colors.orange, size: 38),
+                            width10,
+                            Text(viewModel.shopModel!.rating.toString(),
+                                style: const TextStyle(
+                                    fontSize: 21, fontWeight: FontWeight.bold)),
+                            width10,
+                            Text(
+                                "(${viewModel.reviews == null ? 10 : viewModel.reviews!.length} Reviews)",
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey)),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios_rounded),
+                            width10
+                          ],
+                        ),
                       ),
                     ),
                     const Padding(
@@ -167,26 +168,34 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                           EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                       child: Divider(height: 5, thickness: 0.08),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 15, bottom: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          width10,
-                          const Icon(Icons.discount,
-                              color: Colors.green, size: 30),
-                          width10,
-                          const Text("5 promos are available",
-                              style: TextStyle(
-                                  fontSize: 19, fontWeight: FontWeight.w800)),
-                          const Spacer(),
-                          InkWell(
-                              onTap: () => NavigationUtils.offersPage(context),
-                              child:
-                                  const Icon(Icons.arrow_forward_ios_rounded)),
-                          width10
-                        ],
+                    InkWell(
+                      onTap: () => NavigationUtils.offersPage(context),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 15, bottom: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            width10,
+                            Icon(Icons.discount,
+                                color: viewModel.offers == null ||
+                                        viewModel.offers!.isEmpty
+                                    ? Colors.red
+                                    : Colors.green,
+                                size: 20),
+                            width10,
+                            Text(
+                                viewModel.offers == null ||
+                                        viewModel.offers!.isEmpty
+                                    ? "No promos are available"
+                                    : "${viewModel.offers!.length} promos are available",
+                                style: const TextStyle(
+                                    fontSize: 19, fontWeight: FontWeight.w800)),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios_rounded),
+                            width10
+                          ],
+                        ),
                       ),
                     ),
                     height10,
@@ -195,7 +204,7 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                         child: ListView.builder(
                           padding: const EdgeInsets.only(left: 10),
                           scrollDirection: Axis.horizontal,
-                          itemCount: list.length,
+                          itemCount: viewModel.shopModel!.types.length,
                           itemBuilder: (context, index) => Container(
                               margin: const EdgeInsets.only(
                                   top: 5, bottom: 5, left: 3, right: 3),
@@ -210,7 +219,7 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                                   borderRadius: BorderRadius.circular(30)),
                               alignment: Alignment.center,
                               child: Text(
-                                list[index],
+                                viewModel.shopModel!.types[index],
                                 style: TextStyle(
                                     color: index == 0 ? Colors.white : null,
                                     fontSize: 15,
@@ -230,10 +239,8 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                       child: InkWell(
                         onTap: () {
                           if (viewModel.selectedCoffeeIds.isNotEmpty) {
-                            ref
-                                .read(checkoutViewModelProvider.notifier)
-                                .setOrderModels(viewModel.selectedCoffeeIds);
-                            NavigationUtils.checkoutPage(context);
+                            NavigationUtils.checkoutPage(
+                                context, viewModel.shopModel!.id);
                           }
                         },
                         child: Container(
@@ -325,6 +332,7 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
 
   _coffeeList() {
     final viewModel = ref.watch(shopDetailsViewModelProvider);
+    if (viewModel.coffeeModel == null) return const SizedBox();
     return GridView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
@@ -336,23 +344,22 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
         if (viewModel.selectedCoffeeIds.isNotEmpty) {
           for (var id in viewModel.selectedCoffeeIds) {
             if (id.productModel.id == viewModel.coffeeModel![index].id) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: CoffeeCard(
-                  model: viewModel.coffeeModel![index],
-                  isShopPage: true,
-                  selected: true,
-                ),
+              return CoffeeCard(
+                onLongPress: () {
+                  ref
+                      .read(shopDetailsViewModelProvider.notifier)
+                      .removeProductID(id);
+                },
+                model: viewModel.coffeeModel![index],
+                isShopPage: true,
+                selected: true,
               );
             }
           }
         }
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: CoffeeCard(
-            model: viewModel.coffeeModel![index],
-            isShopPage: true,
-          ),
+        return CoffeeCard(
+          model: viewModel.coffeeModel![index],
+          isShopPage: true,
         );
       },
     );
@@ -360,7 +367,6 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
 
   @override
   void dispose() {
-    ref.read(shopDetailsViewModelProvider.notifier).clearValues();
     super.dispose();
   }
 }

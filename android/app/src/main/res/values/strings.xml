@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="app_name">caffely-coffees</string>
+   <string name="facebook_app_id">1621252251809887</string>
+   <string name="fb_login_protocol_scheme">fb1621252251809887</string>
+   <string name="facebook_client_token">45b720f4342c979b0f8071f3bd7cfd63</string>
+</resources>

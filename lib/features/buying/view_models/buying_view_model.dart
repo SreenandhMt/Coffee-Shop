@@ -1,8 +1,11 @@
+import 'dart:developer';
+
+import 'package:coffee_app/features/buying/service/buying_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/home/models/coffee_model.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'buying_view_model.g.dart';
 
@@ -13,7 +16,7 @@ class BuyingStateModel {
   final double totalPrice;
   final int? selectedSizeIndex;
   final int? selectedTypeIndex;
-  final String selectedMilk;
+  final List<Map<String, dynamic>> selectedOption;
   final String selectedSyrup;
   final String selectedTopping;
 
@@ -24,7 +27,7 @@ class BuyingStateModel {
     required this.totalPrice,
     this.selectedSizeIndex,
     this.selectedTypeIndex,
-    required this.selectedMilk,
+    required this.selectedOption,
     required this.selectedSyrup,
     required this.selectedTopping,
   });
@@ -34,7 +37,7 @@ class BuyingStateModel {
       isLoading: false,
       quantity: 1,
       totalPrice: 0,
-      selectedMilk: "",
+      selectedOption: [],
       selectedSyrup: "",
       selectedTopping: "",
     );
@@ -47,7 +50,7 @@ class BuyingStateModel {
     double? totalPrice,
     int? selectedSizeIndex,
     int? selectedTypeIndex,
-    String? selectedMilk,
+    List<Map<String, dynamic>>? selectedOption,
     String? selectedSyrup,
     String? selectedTopping,
   }) {
@@ -58,7 +61,7 @@ class BuyingStateModel {
       totalPrice: totalPrice ?? this.totalPrice,
       selectedSizeIndex: selectedSizeIndex ?? this.selectedSizeIndex,
       selectedTypeIndex: selectedTypeIndex ?? this.selectedTypeIndex,
-      selectedMilk: selectedMilk ?? this.selectedMilk,
+      selectedOption: selectedOption ?? this.selectedOption,
       selectedSyrup: selectedSyrup ?? this.selectedSyrup,
       selectedTopping: selectedTopping ?? this.selectedTopping,
     );
@@ -105,13 +108,29 @@ class BuyingViewModel extends _$BuyingViewModel {
     }
   }
 
-  selectMilk(String value, double price, double? oldPrice) {
-    state = state.copyWith(
-        selectedMilk: (value * state.quantity),
-        totalPrice: (state.totalPrice + price));
+  selectOption(
+      Map<String, dynamic> value, int index, double price, double? oldPrice) {
+    List<Map<String, dynamic>> currentList = [];
+    if (index >= 0 && index < state.selectedOption.length) {
+      currentList = [
+        ...state.selectedOption.sublist(0, index),
+        value,
+        ...state.selectedOption.sublist(index + 1),
+      ];
+    } else {
+      currentList = [...state.selectedOption, value];
+    }
+    log("$price $oldPrice");
     if (oldPrice != null) {
-      state = state.copyWith(
-          totalPrice: state.totalPrice - (oldPrice * state.quantity));
+      state = state = state.copyWith(
+          selectedOption: currentList,
+          totalPrice: double.parse(
+              ((state.totalPrice + price) - oldPrice).toStringAsFixed(3)));
+    } else {
+      state = state = state.copyWith(
+          selectedOption: currentList,
+          totalPrice:
+              double.parse((state.totalPrice + price).toStringAsFixed(3)));
     }
   }
 
@@ -133,53 +152,22 @@ class BuyingViewModel extends _$BuyingViewModel {
     state = BuyingStateModel.initial();
   }
 
-  getCoffeeModel(String id) {
+  getCoffeeModel(String id) async {
     state.copyWith(isLoading: true);
-    final popularCoffeeList = [
-      {
-        "name": "Classic Brew",
-        "price": "3.50",
-        "imagePath": "assets/image1.png",
-        "id": "111",
-      },
-      {
-        "name": "Minty Fresh Brew",
-        "price": "4.50",
-        "imagePath": "assets/image2.png",
-        "id": "222",
-      },
-      {
-        "name": "Sunshine Brew",
-        "price": "5.50",
-        "imagePath": "assets/image3.png",
-        "id": "333",
-      },
-      {
-        "name": "Blueberry Brew",
-        "price": "4.00",
-        "imagePath": "assets/image4.png",
-        "id": "444",
-      },
-      {
-        "name": "Choco Brew",
-        "price": "5.50",
-        "imagePath": "assets/image5.png",
-        "id": "555",
-      },
-      {
-        "name": "Vanilla Brew",
-        "price": "6.00",
-        "imagePath": "assets/image6.png",
-        "id": "666",
-      }
-    ];
+    final coffeeDetails = await BuyingService.getCoffeeDetails(id);
     clearValues();
-    for (var coffee in popularCoffeeList) {
-      if (coffee["id"] == id) {
-        state = state.copyWith(coffeeModel: CoffeeModel.fromJson(coffee));
-        break;
-      }
-    }
+    coffeeDetails.fold(
+      (left) {
+        log(left.toString());
+      },
+      (right) {
+        log(right.optionList.toString());
+        state = state.copyWith(
+            coffeeModel: right,
+            isLoading: false,
+            totalPrice: double.parse(right.price));
+      },
+    );
   }
 }
 

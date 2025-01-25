@@ -1,3 +1,5 @@
+import 'package:coffee_app/features/introduction/views/introduction_pages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,29 +38,47 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: _appBar(),
       body: ListView(
         children: [
-          LimitedBox(
-            maxHeight: size.width * 0.6,
-            child: PageView(
-              children: List.generate(
-                3,
-                (index) => InkWell(
-                  onTap: () => NavigationUtils.offerDetailsPage(context),
-                  child: Container(
-                    width: double.infinity,
-                    height: 200,
-                    margin: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryColor(context),
-                      borderRadius: BorderRadius.circular(15),
-                      image: const DecorationImage(
-                        image: AssetImage("assets/banner1.png"),
-                        fit: BoxFit.cover,
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              LimitedBox(
+                maxHeight: size.width * 0.6,
+                child: PageView(
+                  children: List.generate(
+                    homeState.banners.length,
+                    (index) => InkWell(
+                      onTap: () {
+                        ref
+                            .read(homeViewModelProvider.notifier)
+                            .selectBanner(homeState.banners[index]);
+                        NavigationUtils.offerDetailsPage(context);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 200,
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryColor(context),
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                            image: NetworkImage(homeState.banners[index].image),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 25),
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SmoothIndicator(
+                        controller: controller,
+                        count: homeState.banners.length)),
+              )
+            ],
           ),
           _homeScreenCategoryText(
               "Nearby Shop", () => NavigationUtils.nearbyShopsPage(context)),
@@ -81,7 +101,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 1 / 1.2),
+                  crossAxisCount: 2, childAspectRatio: 1 / 1.25),
               itemBuilder: (context, index) =>
                   CoffeeCard(model: homeState.popularCoffees[index]),
               itemCount: homeState.popularCoffees.length),
@@ -104,9 +124,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             "Good Morning 🌤️",
             style: subtitleFont(fontSize: 15),
           ),
-          const Text(
-            "John Doe",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          Text(
+            FirebaseAuth.instance.currentUser!.displayName ?? "",
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
           )
         ],
       ),
@@ -179,16 +199,19 @@ class CoffeeCard extends StatelessWidget {
     required this.model,
     this.selected = false,
     this.isShopPage = false,
+    this.onLongPress,
   });
 
   final CoffeeModel model;
   final bool selected;
   final bool isShopPage;
+  final void Function()? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     return InkWell(
+      onLongPress: onLongPress,
       onTap: () => NavigationUtils.buyingPage(context, model.id, isShopPage),
       child: Column(
         children: [
@@ -205,7 +228,7 @@ class CoffeeCard extends StatelessWidget {
                   : null,
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: AssetImage(model.imagePath),
+                image: NetworkImage(model.imagePath),
                 fit: BoxFit.cover,
               ),
             ),
@@ -270,7 +293,7 @@ class NearbyShopCard extends StatelessWidget {
                 color: AppColors.secondaryColor(context),
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: NetworkImage(shopModel.image),
+                  image: NetworkImage(shopModel.images[0]),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -293,7 +316,7 @@ class NearbyShopCard extends StatelessWidget {
                             color: Colors.orange,
                           ),
                           Text(
-                            shopModel.rating,
+                            shopModel.rating.toString(),
                             style: const TextStyle(
                                 fontSize: 13, color: Colors.white),
                           )

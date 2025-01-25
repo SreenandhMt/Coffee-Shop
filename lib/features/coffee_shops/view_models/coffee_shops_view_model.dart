@@ -53,50 +53,121 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
       "https://b.zmtcdn.com/data/collections/e7e6c3774795c754eac6c2bbeb0ba57a_1709896412.png?fit=around|562.5:360&crop=562.5:360;*,*",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEBGzOS0ADSN2MRZHythXzbaj8s5oHNKzWAzwf4FgujpHwtgGjNoKnVxe1VgY-GB49BuI&usqp=CAU"
     ];
-    final nearbyShopsList = [
+    final shopFullData = [
       {
         "name": "Caffely Astoria Aromas",
         "rating": "4.8",
+        "reviews": [],
         "distance": "1.5 km",
         "image": images[0],
         "id": "111",
+        "products": [
+          "ids",
+          "",
+        ],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"},
+          ],
+        },
+        "address": "id"
       },
       {
         "name": "Caffely West Village Wake-Up",
         "rating": "4.6",
+        "reviews": [],
         "distance": "2.5 km",
         "image": images[1],
         "id": "222",
+        "products": [],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"}
+          ]
+        },
+        "address": "id"
       },
       {
         "name": "Caffely Upper East Espresso",
         "rating": "4.4",
+        "reviews": [],
         "distance": "3.5 km",
         "image": images[2],
         "id": "333",
+        "products": [],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"}
+          ]
+        },
+        "address": "id"
       },
       {
         "name": "Caffely Manhattan Morning",
         "rating": "4.5",
+        "reviews": [],
         "distance": "4.5 km",
         "image": images[3],
         "id": "444",
+        "products": [],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"}
+          ]
+        },
+        "address": "id"
       },
       {
         "name": "Caffely Wall Street",
         "rating": "4.7",
+        "reviews": [],
         "distance": "4.5 km",
         "image": images[4],
         "id": "555",
+        "products": [],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"}
+          ]
+        },
+        "address": "id"
       },
       {
         "name": "Caffely Queens",
         "rating": "4.8",
+        "reviews": [],
         "distance": "4.5 km",
         "image": images[5],
         "id": "666",
+        "products": [],
+        "offers": [],
+        "types": ["Coffee"],
+        "about": {
+          "about": "",
+          "opening": [
+            {"days": "Monday -Friday", "times": "9:00 AM - 22:00 PM"}
+          ]
+        },
+        "address": "id"
       }
     ];
+
+    final nearbyShopsList = shopFullData;
     List<ShopModel> shops = [];
     for (var shop in nearbyShopsList) {
       shops.add(ShopModel.fromJson(shop));

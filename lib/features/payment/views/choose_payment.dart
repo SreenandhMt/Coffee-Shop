@@ -64,21 +64,28 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
       ),
       body: Column(
         children: [
-          if (widget.isTopUpPage)
-            ...List.generate(
-              topUpMethods.length,
-              (index) => PaymentWidget(
-                  paymentMethod: topUpMethods[index],
-                  selected: viewModel.paymentMethod == topUpMethods[index]),
-            )
-          else
-            ...List.generate(
-              paymentMethods.length,
-              (index) => PaymentWidget(
-                  paymentMethod: paymentMethods[index],
-                  selected: viewModel.paymentMethod == paymentMethods[index]),
+          Expanded(
+            child: ListView(
+              children: [
+                if (widget.isTopUpPage)
+                  ...List.generate(
+                    topUpMethods.length,
+                    (index) => PaymentWidget(
+                        paymentMethod: topUpMethods[index],
+                        selected:
+                            viewModel.paymentMethod == topUpMethods[index]),
+                  )
+                else
+                  ...List.generate(
+                    paymentMethods.length,
+                    (index) => PaymentWidget(
+                        paymentMethod: paymentMethods[index],
+                        selected:
+                            viewModel.paymentMethod == paymentMethods[index]),
+                  ),
+              ],
             ),
-          const Spacer(),
+          ),
           if (widget.isTopUpPage)
             AuthButton(
               text: "Conform Top Up - \$100.00",
@@ -119,8 +126,6 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
               text: "OK",
               onPressed: () {
                 if (context.canPop()) context.pop();
-                if (context.canPop()) context.pop();
-                NavigationUtils.checkoutPage(context);
               },
             )
         ],

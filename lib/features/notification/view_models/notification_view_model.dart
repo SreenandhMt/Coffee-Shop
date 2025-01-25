@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:coffee_app/features/notification/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -45,69 +46,19 @@ class NotificationViewModel extends _$NotificationViewModel {
 
   Future<void> getNotifications() async {
     state = state.copyWith(loading: true);
-    final notificationJson = [
-      {
-        "title": "New Update Available",
-        "subtitle": "Update Caffely and get a better coffee experience!",
-        "date": "2023-08-01",
-        "time": "09:40 AM",
-        "isRead": false,
-        "isInfo": true,
-        "infoIcon": "0xef46"
+    Map<String, List<NotificationModel>>? groupNotifications;
+    final response = await NotificationService.getNotifications();
+    response.fold(
+      (l) => log(l),
+      (r) {
+        final notifications =
+            r.map((e) => NotificationModel.formJson(e)).toList();
+        groupNotifications = groupNotificationsByDate(notifications);
+        state = state.copyWith(
+          loading: false,
+          notifications: groupNotifications,
+        );
       },
-      {
-        "title": 'Your order "Classic Brew" is ready to be picked up!',
-        "date": "2023-08-01",
-        "time": "08:24 AM",
-        "isRead": false,
-        "isInfo": false,
-        "imageUrl": "assets/image1.png"
-      },
-      {
-        "title": "Enable 2-Factor Authentication",
-        "subtitle":
-            "Use 2-factor authentication for multiple layers of security on your account.",
-        "date": "2023-07-31",
-        "time": "04:45 PM",
-        "isRead": true,
-        "isInfo": true,
-        "infoIcon": "0xf47d"
-      },
-      {
-        "title": 'Your order "Minty Fresh Brew" is ready to be picked up!',
-        "date": "2023-07-31",
-        "time": "08:24 AM",
-        "isRead": true,
-        "isInfo": false,
-        "imageUrl": "assets/image2.png"
-      },
-      {
-        "title": "Multiple Payment Updates!",
-        "subtitle": "Now you can add a credit card for coffee payments.",
-        "date": "2023-07-02",
-        "time": "07:06 PM",
-        "isRead": true,
-        "isInfo": true,
-        "infoIcon": "0xf0057"
-      },
-      {
-        "title": "Christmas & New Year Offer!",
-        "subtitle":
-            "Limited time promo to order your favorite coffee on special and New Year's days",
-        "date": "2023-07-02",
-        "time": "05:45 PM",
-        "isRead": true,
-        "isInfo": true,
-        "infoIcon": "0xf184"
-      },
-    ];
-
-    final notifications =
-        notificationJson.map((e) => NotificationModel.formJson(e)).toList();
-    final groupNotifications = groupNotificationsByDate(notifications);
-    state = state.copyWith(
-      loading: false,
-      notifications: groupNotifications,
     );
   }
 

@@ -4,6 +4,7 @@
         "cupertino",
         "firestore",
         "pinput",
+        "prefs",
         "riverpod",
         "shopid"
     ]

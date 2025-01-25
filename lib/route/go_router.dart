@@ -21,7 +21,7 @@ import '/features/checkout/views/choose_delivery.dart';
 import '../features/payment/views/choose_payment.dart';
 import '/features/checkout/views/driver_profile.dart';
 import '/features/checkout/views/searching_driver.dart';
-import '/features/coffee_shop_details/views/vouchers_page.dart';
+import '../features/checkout/views/vouchers_page.dart';
 import '/features/coffee_shops/views/coffee_shops_page.dart';
 import '/features/orders/views/cancel_order_page.dart';
 import '/features/orders/views/order_details.dart';
@@ -57,7 +57,7 @@ import '/features/home/views/nearby_shops.dart';
 import '/features/home/views/offer_details_page.dart';
 import '/features/introduction/views/introduction_pages.dart';
 import '/features/introduction/views/splash_screen.dart';
-import '/features/introduction/views/welcome_screen.dart';
+import '../features/auth/views/welcome_screen.dart';
 import '/features/notification/views/notification_page.dart';
 import '/route/navigation_path.dart';
 import 'package:flutter/cupertino.dart';
@@ -300,9 +300,9 @@ class AppRouter {
                     }),
               ]),
           GoRoute(
-            path: "/check-out",
+            path: "/check-out/:shopId",
             builder: (context, state) {
-              return const CheckoutPage();
+              return CheckoutPage(shopID: state.pathParameters["shopId"]!);
             },
             routes: [
               GoRoute(

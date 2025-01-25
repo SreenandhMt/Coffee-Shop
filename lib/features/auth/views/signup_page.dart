@@ -36,100 +36,109 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         body: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const AuthHadingTexts(
-                  title: "Create Account 👩‍💻",
-                  subtitle: "Sign up to unlock the world of coffee"),
-              InputWithText(
-                controller: emailController,
-                hintText: "Email",
-                icon: Icons.email,
-                obscureText: false,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please enter your email";
-                  }
-                  if (!isValidEmail(value)) {
-                    return "Please enter a valid email";
-                  }
-                  return null;
-                },
-              ),
-              height5,
-              InputWithText(
-                controller: passwordController,
-                hintText: "Password",
-                icon: Icons.lock,
-                obscureText: true,
-                validator: (password) => isValidPassword(password!),
-              ),
-              height5,
-              InputWithText(
-                controller: TextEditingController(),
-                hintText: "Referral Code (optional)",
-                obscureText: false,
-                validator: (p0) => null,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    CupertinoCheckbox(
-                        value: false,
-                        onChanged: (value) {},
-                        activeColor: AppColors.primaryColor,
-                        fillColor: WidgetStateProperty.resolveWith<Color>(
-                            (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.disabled)) {
-                            return CupertinoColors.white.withOpacity(0.5);
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AuthHadingTexts(
+                          title: "Create Account 👩‍💻",
+                          subtitle: "Sign up to unlock the world of coffee"),
+                      InputWithText(
+                        controller: emailController,
+                        hintText: "Email",
+                        icon: Icons.email,
+                        obscureText: false,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter your email";
                           }
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColors.primaryColor;
+                          if (!isValidEmail(value)) {
+                            return "Please enter a valid email";
                           }
-                          return AppColors.primaryColor;
-                        })),
-                    width5,
-                    Text("I agree to Caffely",
-                        style: sharpLightFont(
-                            fontWeight: FontWeight.w600, fontSize: 16)),
-                    width5,
-                    Text("Terms & Conditions.",
-                        style: sharpLightFont(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: AppColors.primaryColor)),
-                  ],
+                          return null;
+                        },
+                      ),
+                      height5,
+                      InputWithText(
+                        controller: passwordController,
+                        hintText: "Password",
+                        icon: Icons.lock,
+                        obscureText: true,
+                        validator: (password) => isValidPassword(password!),
+                      ),
+                      height5,
+                      InputWithText(
+                        controller: TextEditingController(),
+                        hintText: "Referral Code (optional)",
+                        obscureText: false,
+                        validator: (p0) => null,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            CupertinoCheckbox(
+                                value: false,
+                                onChanged: (value) {},
+                                activeColor: AppColors.primaryColor,
+                                fillColor:
+                                    WidgetStateProperty.resolveWith<Color>(
+                                        (Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.disabled)) {
+                                    return CupertinoColors.white
+                                        .withOpacity(0.5);
+                                  }
+                                  if (states.contains(WidgetState.selected)) {
+                                    return AppColors.primaryColor;
+                                  }
+                                  return AppColors.primaryColor;
+                                })),
+                            width5,
+                            Text("I agree to Caffely",
+                                style: sharpLightFont(
+                                    fontWeight: FontWeight.w600, fontSize: 16)),
+                            width5,
+                            Text("Terms & Conditions.",
+                                style: sharpLightFont(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: AppColors.primaryColor)),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(thickness: 0.1),
+                      ),
+                      height10,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Already have an account?",
+                            style: sharpLightFont(fontSize: 15),
+                          ),
+                          width5,
+                          InkWell(
+                              onTap: () {
+                                if (context.canPop()) context.pop();
+                                context.push("/welcome/signin");
+                              },
+                              child: Text(
+                                "Sign in",
+                                style: sharpLightFont(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w700),
+                              ))
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Divider(thickness: 0.1),
-              ),
-              height10,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already have an account?",
-                    style: sharpLightFont(fontSize: 15),
-                  ),
-                  width5,
-                  InkWell(
-                      onTap: () {
-                        if (context.canPop()) context.pop();
-                        context.push("/welcome/signin");
-                      },
-                      child: Text(
-                        "Sign in",
-                        style: sharpLightFont(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w700),
-                      ))
-                ],
-              ),
-              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -143,7 +152,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       await ref.read(authViewModelProvider.notifier).signUp(
                           emailController.text, passwordController.text);
                       if (!mounted) return;
-                      authState.fold((left) {
+                      final currentState = ref.read(authViewModelProvider);
+                      currentState.fold((left) {
                         context.push('/welcome/signup/profileDetails');
                       }, (right) {
                         log(right);

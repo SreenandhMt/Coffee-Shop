@@ -34,29 +34,30 @@ class NavigationUtils {
       context.push("/shop-details/$shopId/review-rating");
 
   static offersPage(BuildContext context) => context.push("/offers");
-  static vouchersPage(BuildContext context) =>
-      context.push("/check-out/vouchers");
+  static vouchersPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/vouchers");
   static vouchersAndDiscountPage(BuildContext context) =>
       context.push("/vouchers-discount");
 
-  static checkoutPage(BuildContext context) => context.push("/check-out");
+  static checkoutPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid");
 
-  static chooseAddressPage(BuildContext context) =>
-      context.push("/check-out/choose-address");
+  static chooseAddressPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/choose-address");
 
-  static choosePaymentPage(BuildContext context) =>
-      context.push("/check-out/choose-payment");
+  static choosePaymentPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/choose-payment");
   static chooseTopUpPaymentPage(BuildContext context) =>
       context.push("/top-up/choose-payment");
 
-  static chooseDeliveryPage(BuildContext context) =>
-      context.push("/check-out/choose-delivery");
-  static chooseVouchersPage(BuildContext context) =>
-      context.push("/check-out/vouchers");
-  static searchingDriverPage(BuildContext context) =>
-      context.push("/check-out/success");
+  static chooseDeliveryPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/choose-delivery");
+  static chooseVouchersPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/vouchers");
+  static searchingDriverPage(BuildContext context, String shopid) =>
+      context.push("/check-out/$shopid/success");
   static driverProfilePage(BuildContext context) =>
-      context.push("/check-out/driver-profile");
+      context.push("/check-out/99/driver-profile");
   static chatDriverPage(BuildContext context) =>
       context.push("/orders/chat-driver");
   static videoCallDriverPage(BuildContext context) =>

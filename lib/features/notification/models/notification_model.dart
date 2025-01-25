@@ -7,7 +7,6 @@ class NotificationModel {
   final String postTime;
   final bool isRead;
   final String date;
-
   final bool? isInfo;
   final String? infoIcon;
 

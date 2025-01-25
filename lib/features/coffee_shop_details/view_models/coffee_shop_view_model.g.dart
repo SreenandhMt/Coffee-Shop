@@ -7,7 +7,7 @@ part of 'coffee_shop_view_model.dart';
 // **************************************************************************
 
 String _$shopDetailsViewModelHash() =>
-    r'183f66019616703331b268482a319bc795c95e7d';
+    r'4fd7f8c35cd84fe24d01511721b51b4d56eab1e9';
 
 /// See also [ShopDetailsViewModel].
 @ProviderFor(ShopDetailsViewModel)

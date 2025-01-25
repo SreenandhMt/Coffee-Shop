@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:coffee_app/core/app_colors.dart';
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/coffee_shops/view_models/coffee_shops_view_model.dart';
@@ -45,10 +48,11 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
       child: Scaffold(
         appBar: AppBar(
           leading: Container(
-            width: 30,
-            height: 30,
-            color: AppColors.primaryColor,
-          ),
+              margin: const EdgeInsets.only(left: 20),
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage(AppAssets.logo)))),
           centerTitle: true,
           title: Text("Shop", style: appBarTitleFont),
           actions: [
@@ -165,8 +169,8 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
                               width: size.width * 0.27,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: NetworkImage(
-                                          viewModel.coffeeShops[index].image),
+                                      image: NetworkImage(viewModel
+                                          .coffeeShops[index].images[0]),
                                       fit: BoxFit.cover),
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -224,7 +228,8 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
                                         ),
                                         width5,
                                         Text(
-                                            viewModel.coffeeShops[index].rating,
+                                            viewModel.coffeeShops[index].rating
+                                                .toString(),
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 16)),
@@ -267,7 +272,8 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
                               decoration: BoxDecoration(
                                   image: DecorationImage(
                                       image: NetworkImage(viewModel
-                                          .favoriteCoffeeShops[index].image),
+                                          .favoriteCoffeeShops[index]
+                                          .images[0]),
                                       fit: BoxFit.cover),
                                   borderRadius: BorderRadius.circular(10)),
                             ),
@@ -328,8 +334,9 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
                                         ),
                                         width5,
                                         Text(
-                                          viewModel.favoriteCoffeeShops[index]
-                                              .rating,
+                                          viewModel
+                                              .favoriteCoffeeShops[index].rating
+                                              .toString(),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16,
@@ -379,7 +386,8 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
               width: size.width * 0.27,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: NetworkImage(viewModel.coffeeShops[index].image),
+                      image:
+                          NetworkImage(viewModel.coffeeShops[index].images[0]),
                       fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -433,7 +441,7 @@ class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
                           color: Colors.amber,
                         ),
                         width5,
-                        Text(viewModel.coffeeShops[index].rating,
+                        Text(viewModel.coffeeShops[index].rating.toString(),
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16)),
                         const Expanded(

@@ -6,7 +6,7 @@ part of 'buying_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$buyingViewModelHash() => r'd0f3c75016a66cefdcc4e90cad63720644f3140c';
+String _$buyingViewModelHash() => r'85bd1953e12fa211bf314db9c296ed689fb96779';
 
 /// See also [BuyingViewModel].
 @ProviderFor(BuyingViewModel)

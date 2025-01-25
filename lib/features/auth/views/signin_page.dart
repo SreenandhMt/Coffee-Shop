@@ -45,108 +45,118 @@ class SigninPageState extends ConsumerState<SigninPage> {
         body: Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const AuthHadingTexts(
-                  title: "Welcome back 👋",
-                  subtitle: "Please enter your email & password to sign in"),
-              InputWithText(
-                controller: emailController,
-                hintText: "Email",
-                icon: Icons.email,
-                obscureText: false,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please enter your email";
-                  }
-                  if (!isValidEmail(value)) {
-                    return "Please enter a valid email";
-                  }
-                  return null;
-                },
-              ),
-              height5,
-              InputWithText(
-                controller: passwordController,
-                hintText: "Password",
-                icon: Icons.lock,
-                obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please enter your password";
-                  }
-                  if (value.length <= 8) {
-                    return "Password must be at least 8 characters";
-                  }
-                  return null;
-                },
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Divider(thickness: 0.1),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    CupertinoCheckbox(
-                        value: false,
-                        onChanged: (value) {},
-                        activeColor: AppColors.primaryColor,
-                        fillColor: WidgetStateProperty.resolveWith<Color>(
-                            (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.disabled)) {
-                            return CupertinoColors.white.withOpacity(0.4);
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AuthHadingTexts(
+                          title: "Welcome back 👋",
+                          subtitle:
+                              "Please enter your email & password to sign in"),
+                      InputWithText(
+                        controller: emailController,
+                        hintText: "Email",
+                        icon: Icons.email,
+                        obscureText: false,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter your email";
                           }
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColors.primaryColor;
+                          if (!isValidEmail(value)) {
+                            return "Please enter a valid email";
                           }
-                          return AppColors.primaryColor;
-                        })),
-                    width5,
-                    const Text("Remember me",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 16)),
-                    const Spacer(),
-                    InkWell(
-                        onTap: () => context
-                            .push("/welcome/signin/resetPassword-step-1"),
-                        child: const Text("Forget password?",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                                color: AppColors.primaryColor))),
-                  ],
+                          return null;
+                        },
+                      ),
+                      height5,
+                      InputWithText(
+                        controller: passwordController,
+                        hintText: "Password",
+                        icon: Icons.lock,
+                        obscureText: true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Please enter your password";
+                          }
+                          if (value.length <= 8) {
+                            return "Password must be at least 8 characters";
+                          }
+                          return null;
+                        },
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(thickness: 0.1),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          children: [
+                            CupertinoCheckbox(
+                                value: false,
+                                onChanged: (value) {},
+                                activeColor: AppColors.primaryColor,
+                                fillColor:
+                                    WidgetStateProperty.resolveWith<Color>(
+                                        (Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.disabled)) {
+                                    return CupertinoColors.white
+                                        .withOpacity(0.4);
+                                  }
+                                  if (states.contains(WidgetState.selected)) {
+                                    return AppColors.primaryColor;
+                                  }
+                                  return AppColors.primaryColor;
+                                })),
+                            width5,
+                            const Text("Remember me",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 16)),
+                            const Spacer(),
+                            InkWell(
+                                onTap: () => context.push(
+                                    "/welcome/signin/resetPassword-step-1"),
+                                child: const Text("Forget password?",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                        color: AppColors.primaryColor))),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Divider(thickness: 0.1),
+                      ),
+                      height10,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Don't have an account?",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          width5,
+                          InkWell(
+                              onTap: () {
+                                if (context.canPop()) context.pop();
+                                context.push("/welcome/signup");
+                              },
+                              child: const Text(
+                                "Sign up",
+                                style: TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w700),
+                              ))
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: Divider(thickness: 0.1),
-              ),
-              height10,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  width5,
-                  InkWell(
-                      onTap: () {
-                        if (context.canPop()) context.pop();
-                        context.push("/welcome/signup");
-                      },
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w700),
-                      ))
-                ],
-              ),
-              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -165,11 +175,13 @@ class SigninPageState extends ConsumerState<SigninPage> {
 
                       //mounted checking
                       if (!mounted) return;
-
+                      final currentState = ref.read(authViewModelProvider);
                       //response
-                      authState.fold((left) {
+                      currentState.fold((left) {
                         //success message
-                        _showDialogBox();
+                        if (left == AuthState.success) {
+                          _showDialogBox();
+                        }
                       }, (right) {
                         //error massage
                         //TODO: show error message on user

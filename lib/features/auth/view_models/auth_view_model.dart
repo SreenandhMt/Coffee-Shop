@@ -33,6 +33,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = left(AuthState.signin);
       await AuthServices.signInEmailAndPassword(
           email: email, password: password);
+      log("sss");
       state = left(AuthState.success);
     } catch (e) {
       state = right(e.toString());
@@ -58,113 +59,44 @@ class AuthViewModel extends _$AuthViewModel {
           name: name, phoneNumber: phoneNumber, birthDate: birthDate);
       state = left(AuthState.success);
     } catch (e) {
+      log(e.toString());
       state = right(e.toString());
     }
   }
-}
 
-class AuthViewModeld extends ChangeNotifier {
-  bool _loading = false;
-  int? _otp;
-
-  bool get loading => _loading;
-  int? get otp => _otp;
-
-  setLoading(bool value) {
-    _loading = value;
-    notifyListeners();
-  }
-
-  setOTP(int otp) {
-    _otp = otp;
-  }
-
-  Future<void> signin(
-      String email, String password, BuildContext context, bool mounted) async {
-    setLoading(true);
+  Future<void> signInWithGoogle() async {
     try {
-      if (!mounted) {
-        setLoading(false);
-        return;
-      }
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => DialogBox(
-              autoFunction: () {
-                if (!mounted) return;
-                NavigationUtils.replaceHomePage(context);
-              },
-              icon: Icons.person,
-              title: "Sign in Successful!",
-              subtitle:
-                  "Please wait... \n Your will be directed to the home page."));
-    } on FirebaseException catch (error) {
-      log(error.toString());
+      await AuthServices.signInWithGoogle();
+      state = left(AuthState.success);
     } catch (e) {
-      log(e.toString());
+      state = right(e.toString());
     }
-    setLoading(false);
   }
 
-  Future<void> signup(
-      String email, String password, BuildContext context, bool mounted) async {
-    setLoading(true);
+  Future<void> signInWithTwitter() async {
     try {
-      await AuthServices.signUpEmailAndPassword(
-          email: email, password: password);
-      if (!mounted) {
-        setLoading(false);
-        return;
-      }
-      context.push('/welcome/signup/profileDetails');
+      await AuthServices.signInWithTwitter();
+      state = left(AuthState.success);
     } catch (e) {
-      log(e.toString());
+      state = right(e.toString());
     }
-    setLoading(false);
   }
 
-  createProfile(String name, String phoneNumber, String birthDate,
-      BuildContext context, bool mounted) async {
-    setLoading(true);
-    await Future.delayed(
-        const Duration(seconds: 2)); //TODO: add create profile service
-    if (!mounted) {
-      setLoading(false);
-      return;
+  Future<void> signInWithGithub(BuildContext context) async {
+    try {
+      await AuthServices.signInWithGithub(context);
+      state = left(AuthState.success);
+    } catch (e) {
+      state = right(e.toString());
     }
-    setLoading(false);
   }
 
-  sendOTP(String email) async {
-    setLoading(true);
-    await Future.delayed(
-        const Duration(seconds: 2)); //TODO: add send otp service
-    setOTP(1234);
-    setLoading(false);
-  }
-
-  reSendOTP(String email) async {
-    setLoading(true);
-    await Future.delayed(
-        const Duration(seconds: 2)); //TODO: add resend otp service
-    setOTP(1235);
-    setLoading(false);
-  }
-
-  createNewPassword(
-      String email, String password, BuildContext context, bool mounted) async {
-    setLoading(true);
-    await Future.delayed(
-        const Duration(seconds: 2)); //TODO: add create new password service
-    if (!mounted) {
-      setLoading(false);
-      return;
+  Future<void> signInWithFacebook() async {
+    try {
+      await AuthServices.signInWithFacebook();
+      state = left(AuthState.success);
+    } catch (e) {
+      state = right(e.toString());
     }
-    await signin(email, password, context, mounted);
-    setLoading(false);
   }
-
-  /// add validators
-  ///
 }

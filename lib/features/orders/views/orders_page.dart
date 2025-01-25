@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/app_colors.dart';
+import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -22,10 +23,11 @@ class _OrdersPageState extends State<OrdersPage> {
       child: Scaffold(
         appBar: AppBar(
             leading: Container(
-              width: 30,
-              height: 30,
-              color: AppColors.primaryColor,
-            ),
+                margin: const EdgeInsets.only(left: 20),
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                    image: DecorationImage(image: AssetImage(AppAssets.logo)))),
             centerTitle: true,
             title: Text("Orders", style: appBarTitleFont),
             actions: const [
@@ -78,7 +80,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                   NavigationUtils.orderDetailsPagePickup(
                                       context),
                               child: Row(
-                                spacing: 10,
+                                spacing: 5,
                                 children: [
                                   width10,
                                   Container(
@@ -133,7 +135,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                   ),
                                   const Spacer(),
                                   const Icon(Icons.arrow_forward_ios_rounded),
-                                  width10,
+                                  width5,
                                 ],
                               ),
                             ),
@@ -184,7 +186,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                   NavigationUtils.orderDetailsPageDelivery(
                                       context),
                               child: Row(
-                                spacing: 10,
+                                spacing: 5,
                                 children: [
                                   width10,
                                   Container(

@@ -1,11 +1,14 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/home/models/shop_model.dart';
+import 'package:coffee_app/features/home/service/home_service.dart';
 
 import '../models/coffee_model.dart';
+import '../models/offer_model.dart';
 
 part 'home_view_model.g.dart';
 
@@ -13,30 +16,35 @@ class HomeStateModel {
   final bool loading;
   final List<CoffeeModel> popularCoffees;
   final List<ShopModel> nearbyShops;
+  final List<OfferModel> banners;
+  final OfferModel? selectedBanner;
 
   HomeStateModel({
     required this.loading,
     required this.popularCoffees,
     required this.nearbyShops,
+    required this.banners,
+    this.selectedBanner,
   });
 
   factory HomeStateModel.initial() {
     return HomeStateModel(
-      loading: true,
-      popularCoffees: [],
-      nearbyShops: [],
-    );
+        loading: true, popularCoffees: [], nearbyShops: [], banners: []);
   }
 
   HomeStateModel copyWith({
     bool? loading,
     List<CoffeeModel>? popularCoffees,
     List<ShopModel>? nearbyShops,
+    List<OfferModel>? banners,
+    OfferModel? selectedBanner,
   }) {
     return HomeStateModel(
       loading: loading ?? this.loading,
       popularCoffees: popularCoffees ?? this.popularCoffees,
       nearbyShops: nearbyShops ?? this.nearbyShops,
+      banners: banners ?? this.banners,
+      selectedBanner: selectedBanner ?? this.selectedBanner,
     );
   }
 }
@@ -49,157 +57,485 @@ class HomeViewModel extends _$HomeViewModel {
   }
 
   Future<void> getAllData() async {
+    state = state.copyWith(loading: true);
     getNearbyShops();
     getPopularCoffees();
+    getBanners();
+    state = state.copyWith(loading: false);
   }
 
   Future<void> getNearbyShops() async {
-    state = state.copyWith(loading: true);
-    final images = [
-      "https://media.istockphoto.com/id/1428594094/photo/empty-coffee-shop-interior-with-wooden-tables-coffee-maker-pastries-and-pendant-lights.jpg?s=612x612&w=0&k=20&c=dMqeYCJDs3BeBP_jv93qHRISDt-54895SPoVc6_oJt4=",
-      "https://images.pexels.com/photos/2159065/pexels-photo-2159065.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      "https://www.barniescoffee.com/cdn/shop/articles/bar-1869656_1920.jpg?v=1660683986",
-      "https://coffeebusiness.com/wp-content/uploads/2019/08/14tenents-pt2.jpg",
-      "https://b.zmtcdn.com/data/collections/e7e6c3774795c754eac6c2bbeb0ba57a_1709896412.png?fit=around|562.5:360&crop=562.5:360;*,*",
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEBGzOS0ADSN2MRZHythXzbaj8s5oHNKzWAzwf4FgujpHwtgGjNoKnVxe1VgY-GB49BuI&usqp=CAU"
-    ];
-    final nearbyShopsList = [
-      {
-        "name": "Caffely Astoria Aromas",
-        "rating": "4.8",
-        "distance": "1.5 km",
-        "image": images[0],
-        "id": "111",
-      },
-      {
-        "name": "Caffely West Village Wake-Up",
-        "rating": "4.6",
-        "distance": "2.5 km",
-        "image": images[1],
-        "id": "222",
-      },
-      {
-        "name": "Caffely Upper East Espresso",
-        "rating": "4.4",
-        "distance": "3.5 km",
-        "image": images[2],
-        "id": "333",
-      },
-      {
-        "name": "Caffely Manhattan Morning",
-        "rating": "4.5",
-        "distance": "4.5 km",
-        "image": images[3],
-        "id": "444",
-      },
-      {
-        "name": "Caffely Wall Street",
-        "rating": "4.7",
-        "distance": "4.5 km",
-        "image": images[4],
-        "id": "555",
-      },
-      {
-        "name": "Caffely Queens",
-        "rating": "4.8",
-        "distance": "4.5 km",
-        "image": images[5],
-        "id": "666",
+    final response = await HomeService.getNearbyShops();
+    response.fold((left) {
+      log(left);
+    }, (right) {
+      final List<ShopModel> shops = [];
+      for (var shop in right) {
+        shops.add(shop);
       }
-    ];
-    final List<ShopModel> shops = [];
-    for (var shop in nearbyShopsList) {
-      shops.add(ShopModel.fromJson(shop));
-    }
+      state = state.copyWith(nearbyShops: shops);
+    });
+  }
 
-    state = state.copyWith(nearbyShops: shops, loading: false);
+  void getBanners() async {
+    final response = await HomeService.getBanners();
+    response.fold((left) {
+      log(left);
+    }, (right) {
+      state = state.copyWith(banners: right);
+    });
+  }
+
+  void selectBanner(OfferModel offer) async {
+    state = state.copyWith(selectedBanner: offer);
   }
 
   Future<void> getPopularCoffees() async {
-    state = state.copyWith(loading: true);
-    final popularCoffeeList = [
+    final images = [
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage1.png?alt=media&token=be657265-9a71-4fde-82bd-af6f48e17bce",
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage2.png?alt=media&token=e39eedac-0ba6-494d-9f0e-3b04f7a9a653",
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage3.png?alt=media&token=302c21e3-ae3b-4a13-beee-5a2e9a6e5d60",
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage4.png?alt=media&token=b61f4334-1da6-4cfe-bd7e-751c17c96acf",
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage5.png?alt=media&token=6de1f9b7-2090-461e-b6c4-6411005de00d",
+      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage6.png?alt=media&token=f1c0c965-4b11-4fc2-8b42-1d5a3bcbda8a",
+    ];
+    final productFullData = [
       {
         "name": "Classic Brew",
         "price": "3.50",
-        "imagePath": "assets/image1.png",
+        "image-url": images[0],
         "id": "111",
+        "shop-id": "11",
+        "Type": "Coffee",
+        "custom-size": true,
+        "custom-coffee": true,
+        "options": [
+          {
+            "name": "Milk",
+            "options": [
+              {
+                "name": "Whole Milk",
+                "price": "0.50",
+              },
+              {
+                "name": "Skim Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Soya Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Almond Milk",
+                "price": "0.30",
+              },
+            ]
+          },
+          {
+            "name": "Syrup",
+            "options": [
+              {
+                "name": "Aren",
+                "price": "1.00",
+              },
+              {
+                "name": "Caramel",
+                "price": "0.90",
+              },
+              {
+                "name": "Hazelnut",
+                "price": "1.00",
+              },
+              {
+                "name": "Pecan",
+                "price": "1.00",
+              },
+              {
+                "name": "Manuka Honey",
+                "price": "0.50",
+              },
+              {
+                "name": "Vanilla",
+                "price": "1.00",
+              },
+            ]
+          },
+          {
+            "name": "Toppings",
+            "options": [
+              {
+                "name": "Cinnamon",
+                "price": "0.50",
+              },
+              {
+                "name": "Nutmeg",
+                "price": "0.40",
+              },
+              {
+                "name": "Cocoa Powder",
+                "price": "0.30",
+              },
+              {
+                "name": "Crumble",
+                "price": "0.35",
+              },
+              {
+                "name": "Sa Salt Cream",
+                "price": "0.50",
+              },
+              {
+                "name": "Milo Powder",
+                "price": "0.50",
+              },
+              {
+                "name": "Caramel Sauce",
+                "price": "0.30",
+              },
+            ]
+          }
+        ]
       },
       {
         "name": "Minty Fresh Brew",
-        "price": "4.50",
-        "imagePath": "assets/image2.png",
+        "price": "4.30",
+        "image-url": images[1],
         "id": "222",
-      },
-      {
-        "name": "Sunshine Brew",
-        "price": "5.50",
-        "imagePath": "assets/image3.png",
-        "id": "333",
+        "shop-id": "11",
+        "Type": "Coffee",
+        "custom-size": true,
+        "custom-coffee": true,
+        "options": [
+          {
+            "name": "Milk",
+            "options": [
+              {
+                "name": "Whole Milk",
+                "price": "0.50",
+              },
+              {
+                "name": "Skim Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Soya Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Almond Milk",
+                "price": "0.30",
+              },
+            ]
+          },
+          {
+            "name": "Syrup",
+            "options": [
+              {
+                "name": "Aren",
+                "price": "1.00",
+              },
+              {
+                "name": "Caramel",
+                "price": "0.90",
+              },
+              {
+                "name": "Hazelnut",
+                "price": "1.00",
+              },
+              {
+                "name": "Pecan",
+                "price": "1.00",
+              },
+              {
+                "name": "Manuka Honey",
+                "price": "0.50",
+              },
+              {
+                "name": "Vanilla",
+                "price": "1.00",
+              },
+            ]
+          },
+          {
+            "name": "Toppings",
+            "options": [
+              {
+                "name": "Cinnamon",
+                "price": "0.50",
+              },
+              {
+                "name": "Nutmeg",
+                "price": "0.40",
+              },
+              {
+                "name": "Cocoa Powder",
+                "price": "0.30",
+              },
+              {
+                "name": "Crumble",
+                "price": "0.35",
+              },
+              {
+                "name": "Sa Salt Cream",
+                "price": "0.50",
+              },
+              {
+                "name": "Milo Powder",
+                "price": "0.50",
+              },
+              {
+                "name": "Caramel Sauce",
+                "price": "0.30",
+              },
+            ]
+          }
+        ]
       },
       {
         "name": "Blueberry Brew",
         "price": "4.00",
-        "imagePath": "assets/image4.png",
+        "image-url": images[3],
         "id": "444",
+        "shop-id": "11",
+        "Type": "Coffee",
+        "custom-size": true,
+        "custom-coffee": true,
+        "options": [
+          {
+            "name": "Milk",
+            "options": [
+              {
+                "name": "Almond Milk",
+                "price": "0.50",
+                "id": "111",
+              },
+              {
+                "name": "Soya Milk",
+                "price": "0.30",
+                "id": "111",
+              }
+            ]
+          },
+          {
+            "name": "Toppings",
+            "options": [
+              {
+                "name": "Cinnamon",
+                "price": "0.10",
+                "id": "111",
+              },
+              {
+                "name": "Cocoa Powder",
+                "price": "0.30",
+                "id": "111",
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Choco Brew",
         "price": "5.50",
-        "imagePath": "assets/image5.png",
+        "image-url": images[4],
         "id": "555",
+        "shop-id": "11",
+        "Type": "Coffee",
+        "custom-size": true,
+        "custom-coffee": true,
+        "options": [
+          {
+            "name": "Milk",
+            "options": [
+              {
+                "name": "Whole Milk",
+                "price": "0.50",
+              },
+              {
+                "name": "Skim Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Soya Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Almond Milk",
+                "price": "0.30",
+              },
+            ]
+          },
+          {
+            "name": "Syrup",
+            "options": [
+              {
+                "name": "Aren",
+                "price": "1.00",
+              },
+              {
+                "name": "Caramel",
+                "price": "0.90",
+              },
+              {
+                "name": "Hazelnut",
+                "price": "1.00",
+              },
+              {
+                "name": "Pecan",
+                "price": "1.00",
+              },
+              {
+                "name": "Manuka Honey",
+                "price": "0.50",
+              },
+              {
+                "name": "Vanilla",
+                "price": "1.00",
+              },
+            ]
+          },
+          {
+            "name": "Toppings",
+            "options": [
+              {
+                "name": "Cinnamon",
+                "price": "0.50",
+              },
+              {
+                "name": "Nutmeg",
+                "price": "0.40",
+              },
+              {
+                "name": "Cocoa Powder",
+                "price": "0.30",
+              },
+              {
+                "name": "Crumble",
+                "price": "0.35",
+              },
+              {
+                "name": "Sa Salt Cream",
+                "price": "0.50",
+              },
+              {
+                "name": "Milo Powder",
+                "price": "0.50",
+              },
+              {
+                "name": "Caramel Sauce",
+                "price": "0.30",
+              },
+            ]
+          }
+        ]
       },
       {
         "name": "Vanilla Brew",
         "price": "6.00",
-        "imagePath": "assets/image6.png",
+        "image-url": images[5],
         "id": "666",
+        "shop-id": "11",
+        "Type": "Coffee",
+        "custom-size": true,
+        "custom-coffee": true,
+        "options": [
+          {
+            "name": "Milk",
+            "options": [
+              {
+                "name": "Whole Milk",
+                "price": "0.50",
+              },
+              {
+                "name": "Skim Milk",
+                "price": "0.30",
+              },
+              {
+                "name": "Soya Milk",
+                "price": "0.40",
+              },
+              {
+                "name": "Almond Milk",
+                "price": "1.00",
+              },
+            ]
+          },
+          {
+            "name": "Syrup",
+            "options": [
+              {
+                "name": "Aren",
+                "price": "1.00",
+              },
+              {
+                "name": "Caramel",
+                "price": "0.90",
+              },
+              {
+                "name": "Hazelnut",
+                "price": "1.00",
+              },
+              {
+                "name": "Pecan",
+                "price": "0.50",
+              },
+              {
+                "name": "Manuka Honey",
+                "price": "0.50",
+              },
+              {
+                "name": "Vanilla",
+                "price": "1.00",
+              },
+            ]
+          },
+          {
+            "name": "Toppings",
+            "options": [
+              {
+                "name": "Cinnamon",
+                "price": "0.50",
+              },
+              {
+                "name": "Nutmeg",
+                "price": "0.40",
+              },
+              {
+                "name": "Cocoa Powder",
+                "price": "0.30",
+              },
+              {
+                "name": "Crumble",
+                "price": "0.35",
+              },
+              {
+                "name": "Sa Salt Cream",
+                "price": "0.50",
+              },
+              {
+                "name": "Milo Powder",
+                "price": "0.50",
+              },
+              {
+                "name": "Caramel Sauce",
+                "price": "0.30",
+              },
+            ]
+          }
+        ]
       }
     ];
-    final List<CoffeeModel> popularCoffees = [];
-    for (var coffee in popularCoffeeList) {
-      popularCoffees.add(CoffeeModel.fromJson(coffee));
-    }
-    state = state.copyWith(popularCoffees: popularCoffees);
-  }
-}
-
-class HomeViewModeld extends ChangeNotifier {
-  bool _loading = false;
-  List<CoffeeModel> _popularCoffees = [];
-  List<ShopModel> _nearbyShops = [];
-
-  bool get loading => _loading;
-  List<CoffeeModel> get popularCoffees => _popularCoffees;
-  List<ShopModel> get nearbyShops => _nearbyShops;
-
-  setLoading(bool loading) {
-    _loading = loading;
-    notifyListeners();
-  }
-
-  setPopularCoffees(List<CoffeeModel> coffees) {
-    _popularCoffees = coffees;
-  }
-
-  setNearbyShops(List<ShopModel> shops) {
-    _nearbyShops = shops;
-  }
-
-  homeInitFunction() {
-    getPopularCoffee();
-    getNearbyShops();
-  }
-
-  getNearbyShops() {
-    // setNearbyShops(shops);
-    // log(shops.toString());
-    setLoading(false);
-  }
-
-  getPopularCoffee() {
-    setLoading(true);
-
-    // setPopularCoffees(popularCoffees);
-    setLoading(false);
+    final response = await HomeService.getPopularMenu();
+    response.fold((l) => null, (r) {
+      state = state.copyWith(popularCoffees: r);
+    });
+    // final popularCoffeeList = productFullData;
+    // final List<CoffeeModel> popularCoffees = [];
+    // for (var coffee in popularCoffeeList) {
+    //   // final id = DateTime.now().microsecondsSinceEpoch.toString();
+    //   // coffee["shop-id"] = "1737348240198464";
+    //   // coffee["id"] = id;
+    //   // FirebaseFirestore.instance.collection("products").doc(id).set(coffee);
+    //   popularCoffees.add(CoffeeModel.fromJson(coffee));
+    // }
+    // state = state.copyWith(popularCoffees: popularCoffees);
   }
 }

@@ -1,9 +1,11 @@
 import 'package:coffee_app/route/navigation_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/app_colors.dart';
+import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
 
@@ -20,10 +22,11 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       appBar: AppBar(
         leading: Container(
-          width: 30,
-          height: 30,
-          color: AppColors.primaryColor,
-        ),
+            margin: const EdgeInsets.only(left: 20),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage(AppAssets.logo)))),
         centerTitle: true,
         title: Text("Account", style: appBarTitleFont),
       ),
@@ -82,9 +85,9 @@ class _AccountPageState extends State<AccountPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   "General",
-                  style: TextStyle(color: Colors.black54),
+                  style: TextStyle(color: AppColors.themeTextColor(context)),
                 ),
                 width15,
                 Expanded(
@@ -145,9 +148,9 @@ class _AccountPageState extends State<AccountPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   "About",
-                  style: TextStyle(color: Colors.black54),
+                  style: TextStyle(color: AppColors.themeTextColor(context)),
                 ),
                 width15,
                 Expanded(
@@ -226,6 +229,7 @@ class _AccountPageState extends State<AccountPage> {
                                 60),
                           ),
                           onPressed: () {
+                            FirebaseAuth.instance.signOut();
                             context.go("/splash");
                           },
                           child: const Text("Yes, logout",
@@ -265,7 +269,7 @@ class _AccountPageState extends State<AccountPage> {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 23,
-                color: color ?? Colors.black54,
+                color: color ?? AppColors.themeTextColor(context),
               )
         ]),
       ),

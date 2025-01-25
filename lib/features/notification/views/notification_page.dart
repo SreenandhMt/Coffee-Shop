@@ -75,9 +75,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                 child: ListTile(
                   title: Text(
                     notifications[index].title,
+                    maxLines: 2,
                     style: subtitleFont(
                         fontWeight: FontWeight.w700,
-                        fontSize: 17,
+                        fontSize: 15,
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white70
                             : Colors.black87),
@@ -103,7 +104,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                     children: [
                       if (notifications[index].subtitle != null)
                         Text(notifications[index].subtitle!,
-                            style: subtitleFont())
+                            style: subtitleFont(), maxLines: 2)
                       else
                         height10,
                       Text(notifications[index].postTime,
@@ -129,7 +130,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                               borderRadius: BorderRadius.circular(10),
                               color: AppColors.secondaryColor(context),
                               image: DecorationImage(
-                                  image: AssetImage(
+                                  image: NetworkImage(
                                       notifications[index].imageUrl!),
                                   fit: BoxFit.fill)),
                         ),

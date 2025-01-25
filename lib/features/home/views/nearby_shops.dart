@@ -25,10 +25,14 @@ class _NearbyShopsPageState extends ConsumerState<NearbyShopsPage> {
       body: GridView.builder(
         itemCount: homeViewModel.nearbyShops.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, childAspectRatio: 1 / 1.28),
-        itemBuilder: (context, index) => NearbyShopCard(
-          shopModel: homeViewModel.nearbyShops[index],
-          width: (size.width / 2) * 0.9,
+            crossAxisCount: 2, childAspectRatio: 1 / 1.3),
+        padding: const EdgeInsets.symmetric(horizontal: 3),
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: NearbyShopCard(
+            shopModel: homeViewModel.nearbyShops[index],
+            width: (size.width / 2) * 0.9,
+          ),
         ),
       ),
     );
