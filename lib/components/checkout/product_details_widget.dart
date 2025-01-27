@@ -10,7 +10,7 @@ class ProductDetailsWidget extends StatefulWidget {
     super.key,
     required this.orderModel,
   });
-  final OrderDetailsModel orderModel;
+  final BasketProductModel orderModel;
 
   @override
   State<ProductDetailsWidget> createState() => _ProductDetailsWidgetState();

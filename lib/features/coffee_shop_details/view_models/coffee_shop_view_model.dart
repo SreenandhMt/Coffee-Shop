@@ -18,7 +18,7 @@ class ShopStateModel {
   final bool isLoading;
   final List<CoffeeModel>? coffeeModel;
   final ShopModel? shopModel;
-  final List<OrderDetailsModel> selectedCoffeeIds;
+  final List<BasketProductModel> selectedCoffeeIds;
   final double totalPrice;
   final List<ReviewModel>? sortedReview;
   final List<ReviewModel>? reviews;
@@ -48,7 +48,7 @@ class ShopStateModel {
     bool? isLoading,
     List<CoffeeModel>? coffeeModel,
     ShopModel? shopModel,
-    List<OrderDetailsModel>? selectedCoffeeIds,
+    List<BasketProductModel>? selectedCoffeeIds,
     double? totalPrice,
     List<ReviewModel>? reviews,
     List<ReviewModel>? sortedReview,
@@ -77,9 +77,9 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     return ShopStateModel.initial();
   }
 
-  void getCheckouts(String shopId) async {
+  void getBasket(String shopId) async {
     // await ShopDetailsService.addReview();
-    final response = await ShopDetailsService.getCheckouts(shopId);
+    final response = await ShopDetailsService.getBasket(shopId);
     response.fold((l) => log(l), (r) {
       double totalPrice = 0;
       for (var element in r) {
@@ -89,16 +89,17 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     });
   }
 
-  void removeProductID(OrderDetailsModel orderModel) {
-    ShopDetailsService.removeCheckout(orderModel.productModel.id);
+  void removeProductID(BasketProductModel orderModel) {
+    ShopDetailsService.removeBasket(
+        orderModel.productModel.id, orderModel.shopID);
     state = state.copyWith(
         selectedCoffeeIds: [...state.selectedCoffeeIds..remove(orderModel)],
         totalPrice: double.parse(
             (state.totalPrice - orderModel.totalPrice).toStringAsFixed(3)));
   }
 
-  void addProductID(OrderDetailsModel orderModel) {
-    ShopDetailsService.addCheckout(orderModel);
+  void addProductID(BasketProductModel orderModel) {
+    ShopDetailsService.AddBasket(orderModel);
     state = state.copyWith(
         selectedCoffeeIds: [...state.selectedCoffeeIds, orderModel],
         totalPrice: (state.totalPrice + orderModel.totalPrice));
@@ -111,7 +112,7 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
   void getAllData(String shopId) {
     state = state.copyWith(isLoading: true);
     getShopDetails(shopId);
-    getCheckouts(shopId);
+    getBasket(shopId);
     getReviews(shopId);
     // ShopDetailsService.addOffers(shopId);
     getOffers(shopId);
@@ -433,7 +434,6 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     }, (right) {
       state = state.copyWith(coffeeModel: right);
     });
-    getCheckouts(shopId);
     // final coffeeModels =
     //     productFullData.map((e) => CoffeeModel.fromJson(e)).toList();
     // state = state.copyWith(coffeeModel: coffeeModels, isLoading: false);

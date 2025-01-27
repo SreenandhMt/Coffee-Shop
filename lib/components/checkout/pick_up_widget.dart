@@ -1,11 +1,13 @@
-import 'package:coffee_app/components/checkout/product_details_widget.dart';
-import 'package:coffee_app/components/checkout/promo_widget.dart';
-import 'package:coffee_app/components/checkout/tile_widget.dart';
-import 'package:coffee_app/components/checkout/title_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:coffee_app/components/checkout/product_details_widget.dart';
+import 'package:coffee_app/components/checkout/promo_widget.dart';
+import 'package:coffee_app/components/checkout/tile_widget.dart';
+import 'package:coffee_app/components/checkout/title_widget.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
@@ -20,9 +22,11 @@ class PickupWidgets extends ConsumerStatefulWidget {
   const PickupWidgets({
     super.key,
     this.isOrderDetails = false,
+    this.orderID,
     required this.shopId,
   });
   final bool isOrderDetails;
+  final String? orderID;
   final String shopId;
 
   @override
@@ -30,9 +34,27 @@ class PickupWidgets extends ConsumerStatefulWidget {
 }
 
 class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
+  bool isValidate = false;
+  @override
+  void initState() {
+    if (widget.isOrderDetails && widget.orderID != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(checkoutViewModelProvider.notifier)
+            .loadOrderData(widget.orderID!);
+      });
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final checkoutViewModel = ref.watch(checkoutViewModelProvider);
+    if (checkoutViewModel.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Column(
       children: [
         Container(
@@ -44,15 +66,19 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TileWidget(
-                  onTap: () => showModalBottomSheet(
-                        context: context,
-                        builder: (context) => const ChoosePickUpWidget(),
-                      ),
+                  onTap: () => widget.isOrderDetails
+                      ? null
+                      : showModalBottomSheet(
+                          context: context,
+                          builder: (context) => const ChoosePickUpWidget(),
+                        ),
                   startIcon: Icons.timer_sharp,
                   title: checkoutViewModel.pickUpTime ?? "Choose pick up time",
                   subtitle: checkoutViewModel.pickUpDate ??
                       "Take orders directly at the shop",
-                  endIcon: Icons.arrow_forward_ios_rounded),
+                  endIcon: widget.isOrderDetails
+                      ? const IconData(0)
+                      : Icons.arrow_forward_ios_rounded),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Divider(thickness: 0.1),
@@ -74,18 +100,24 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                           color: AppColors.themeColor(context),
                         )),
                     width15,
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 4,
-                      children: [
-                        Text("Caffely Astoria Aromas",
-                            style: subtitleFont(
-                                fontSize: 18, fontWeight: FontWeight.w800)),
-                        const Text("350 5th Ave, New York, NY 10118, USA"),
-                        const Text("1.2 km form your location"),
-                      ],
-                    ),
+                    if (checkoutViewModel.shopModel != null)
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 4,
+                          children: [
+                            Text(checkoutViewModel.shopModel!.name,
+                                maxLines: 1,
+                                style: subtitleFont(
+                                    fontSize: 18, fontWeight: FontWeight.w800)),
+                            Text(checkoutViewModel
+                                .shopModel!.address!["address"]),
+                            Text(
+                                "${checkoutViewModel.shopModel!.distance} form your location"),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -197,6 +229,7 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                     child: SelectedPaymentWidget(
                         paymentMethod: checkoutViewModel.paymentMethod!))
                 : TileWidget(
+                    border: isValidate ? Border.all(color: Colors.red) : null,
                     onTap: () => NavigationUtils.choosePaymentPage(
                         context, widget.shopId),
                     startIcon: Icons.payment,
@@ -308,173 +341,61 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
               ],
             )),
         height35,
-        if (widget.isOrderDetails) ...[
+        if (widget.isOrderDetails && checkoutViewModel.orderModel != null) ...[
           CheckoutTitleWidget(
-              text: "Transaction Details",
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Amount",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "\$50.0",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Payment Method",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Caffely Wallet",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
+            text: "Transaction Details",
+            child: Column(
+              children: [
+                ...List.generate(
+                  checkoutViewModel.orderModel!.transactionDetails.length,
+                  (index) => Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Status",
-                          style: TextStyle(
+                        Text(
+                          checkoutViewModel
+                              .orderModel!.transactionDetails[index].type,
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w500),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.primaryColor),
-                          child: const Text(
-                            "Paid",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
-                        )
+                        if (checkoutViewModel
+                                .orderModel!.transactionDetails[index].type ==
+                            "Status")
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.primaryColor),
+                            child: Text(
+                              checkoutViewModel.orderModel!.paymentStatus,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white),
+                            ),
+                          )
+                        else
+                          Text(
+                            double.tryParse(checkoutViewModel.orderModel!
+                                        .transactionDetails[index].value
+                                        .toString()) !=
+                                    null
+                                ? "\$${checkoutViewModel.orderModel!.transactionDetails[index].value}"
+                                : checkoutViewModel.orderModel!
+                                    .transactionDetails[index].value,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
+                          )
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Date",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Dec 22, 2023",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Time",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "09:41:15 AM",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Order ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "ORD7395COF",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Transaction ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "TRX8274PAY",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Reference ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "REF6306RES",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
-                    ),
-                  ),
-                ],
-              )),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
             child: Row(
@@ -519,6 +440,17 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
           AuthButton(
               text: "Place Order",
               onPressed: () {
+                if (checkoutViewModel.paymentMethod == null) {
+                  setState(() {
+                    isValidate = true;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please choose payment method")));
+                  return;
+                }
+                ref
+                    .read(checkoutViewModelProvider.notifier)
+                    .pickupOrderConform();
                 showDialog(
                     context: context,
                     builder: (context) => DialogBox(

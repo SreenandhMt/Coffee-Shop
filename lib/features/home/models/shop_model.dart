@@ -8,6 +8,7 @@ class ShopModel {
   final String id;
   final Map<String, dynamic>? about;
   final List<dynamic> types;
+  final Map<dynamic, dynamic>? address;
 
   ShopModel({
     required this.name,
@@ -17,6 +18,7 @@ class ShopModel {
     required this.id,
     this.about,
     required this.types,
+    this.address,
   });
 
   factory ShopModel.fromJson(Map map) {
@@ -29,6 +31,7 @@ class ShopModel {
       id: map["id"].toString(),
       types: map["types"],
       about: map["about"],
+      address: map["address"],
     );
   }
 }

@@ -13,8 +13,9 @@ class NotificationService {
       if (user == null) {
         return left('User not logged in');
       }
-      final snapshot =
-          await _firestore.collection('notifications').where(user.uid).get();
+      final snapshot = await _firestore.collection('notifications').get();
+
+      ///add the where("uid",isEqualTo: _auth.currentUser.uid) to get only user notification
       final notifications = snapshot.docs.map((doc) => doc.data()).toList();
       return right(notifications);
     } catch (e) {

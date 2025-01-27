@@ -1,6 +1,6 @@
 import 'package:coffee_app/features/home/models/coffee_model.dart';
 
-class OrderDetailsModel {
+class BasketProductModel {
   final int quantity;
   final double totalPrice;
   final double basePrice;
@@ -13,7 +13,7 @@ class OrderDetailsModel {
   final Map<String, dynamic> map;
   CoffeeModel productModel;
 
-  OrderDetailsModel({
+  BasketProductModel({
     required this.quantity,
     required this.totalPrice,
     required this.basePrice,
@@ -27,7 +27,7 @@ class OrderDetailsModel {
     required this.productModel,
   });
 
-  factory OrderDetailsModel.fromJson(
+  factory BasketProductModel.fromJson(
       Map<String, dynamic> json, CoffeeModel coffeeModel) {
     json.addEntries({"shop-id": coffeeModel.shopId}.entries);
     List<Map<String, dynamic>> mapList = [];
@@ -40,7 +40,7 @@ class OrderDetailsModel {
         },
       );
     }
-    return OrderDetailsModel(
+    return BasketProductModel(
       quantity: json['quantity'],
       totalPrice: json['totalPrice'],
       basePrice: json['basePrice'],

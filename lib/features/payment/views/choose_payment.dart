@@ -8,7 +8,6 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
 
 class ChoosePaymentPage extends ConsumerStatefulWidget {
   const ChoosePaymentPage({
@@ -22,30 +21,40 @@ class ChoosePaymentPage extends ConsumerStatefulWidget {
 }
 
 class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
+  final paymentMethods = [
+    {"name": "Wallet", "image": ""},
+    {
+      "name": "PayPal",
+      "image": "https://cdn-icons-png.flaticon.com/512/2504/2504802.png"
+    },
+    {
+      "name": "Google Pay",
+      "image":
+          "https://w7.pngwing.com/pngs/63/1016/png-transparent-google-logo-google-logo-g-suite-chrome-text-logo-chrome.png"
+    },
+    {
+      "name": "Apple Pay",
+      "image":
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2XR3uve98Zaune2n4CVHaAjR6ReZwmcwHYg&s"
+    },
+    {
+      "name": ".... .... .... .... 4676",
+      "image":
+          "https://static-00.iconduck.com/assets.00/mastercard-icon-2048x1286-s6y46dfh.png"
+    },
+    {
+      "name": ".... .... .... .... 5567",
+      "image":
+          "https://w7.pngwing.com/pngs/167/298/png-transparent-card-credit-logo-visa-logos-and-brands-icon-thumbnail.png"
+    }
+  ];
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ref
         .read(checkoutViewModelProvider.notifier)
-        .setPaymentMethod("Wallet"));
+        .setPaymentMethod(paymentMethods[0]));
     super.initState();
   }
-
-  final paymentMethods = [
-    "Wallet",
-    "PayPal",
-    "Google Pay",
-    "Apple Pay",
-    ".... .... .... .... 4676",
-    ".... .... .... .... 5567"
-  ];
-
-  final topUpMethods = [
-    "PayPal",
-    "Google Pay",
-    "Apple Pay",
-    ".... .... .... .... 4676",
-    ".... .... .... .... 5567"
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +78,11 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
               children: [
                 if (widget.isTopUpPage)
                   ...List.generate(
-                    topUpMethods.length,
+                    paymentMethods.length,
                     (index) => PaymentWidget(
-                        paymentMethod: topUpMethods[index],
+                        paymentMethod: paymentMethods[index],
                         selected:
-                            viewModel.paymentMethod == topUpMethods[index]),
+                            viewModel.paymentMethod == paymentMethods[index]),
                   )
                 else
                   ...List.generate(
@@ -140,7 +149,7 @@ class PaymentWidget extends ConsumerStatefulWidget {
     required this.paymentMethod,
     required this.selected,
   });
-  final String paymentMethod;
+  final Map<String, dynamic> paymentMethod;
   final bool selected;
 
   @override
@@ -148,29 +157,13 @@ class PaymentWidget extends ConsumerStatefulWidget {
 }
 
 class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
-  final paymentMethods = [
-    "Wallet",
-    "PayPal",
-    "Google Pay",
-    "Apple Pay",
-    ".... .... .... .... 4676",
-    ".... .... .... .... 5567"
-  ];
-  final images = [
-    "",
-    "https://cdn-icons-png.flaticon.com/512/2504/2504802.png",
-    "https://w7.pngwing.com/pngs/63/1016/png-transparent-google-logo-google-logo-g-suite-chrome-text-logo-chrome.png",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2XR3uve98Zaune2n4CVHaAjR6ReZwmcwHYg&s",
-    "https://static-00.iconduck.com/assets.00/mastercard-icon-2048x1286-s6y46dfh.png",
-    "https://w7.pngwing.com/pngs/167/298/png-transparent-card-credit-logo-visa-logos-and-brands-icon-thumbnail.png"
-  ];
   @override
   Widget build(BuildContext context) {
     if (widget.paymentMethod == "Wallet") {
       return InkWell(
         onTap: () => ref
             .read(checkoutViewModelProvider.notifier)
-            .setPaymentMethod("Wallet"),
+            .setPaymentMethod(widget.paymentMethod),
         child: Container(
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -207,43 +200,39 @@ class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
         ),
       );
     } else {
-      for (int i = 0; i < paymentMethods.length; i++) {
-        if (paymentMethods[i] == widget.paymentMethod) {
-          return InkWell(
-            onTap: () => ref
-                .read(checkoutViewModelProvider.notifier)
-                .setPaymentMethod(paymentMethods[i]),
-            child: Container(
-              margin: const EdgeInsets.all(10),
-              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: !widget.selected
-                          ? AppColors.secondaryColor(context)
-                          : AppColors.primaryColor,
-                      width: 2)),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(images[i]),
-                  ),
-                  width20,
-                  Text(
-                    paymentMethods[i],
-                    style: TextStyle(
-                        color: widget.selected ? AppColors.primaryColor : null,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ],
+      return InkWell(
+        onTap: () => ref
+            .read(checkoutViewModelProvider.notifier)
+            .setPaymentMethod(widget.paymentMethod),
+        child: Container(
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                  color: !widget.selected
+                      ? AppColors.secondaryColor(context)
+                      : AppColors.primaryColor,
+                  width: 2)),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage:
+                    NetworkImage(widget.paymentMethod["image"] ?? ""),
               ),
-            ),
-          );
-        }
-      }
-      return const SizedBox();
+              width20,
+              Text(
+                widget.paymentMethod["name"] ?? "",
+                style: TextStyle(
+                    color: widget.selected ? AppColors.primaryColor : null,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+        ),
+      );
     }
   }
 }

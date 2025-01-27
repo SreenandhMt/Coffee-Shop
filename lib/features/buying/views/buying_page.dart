@@ -265,7 +265,7 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                           {"title": "Grande", "price": 0.50},
                           {"title": "Venti", "price": 1.00},
                         ];
-                        final orderModel = OrderDetailsModel.fromJson({
+                        final orderModel = BasketProductModel.fromJson({
                           "quantity": buyingViewModel.quantity,
                           "sizePrice":
                               sizes[buyingViewModel.selectedSizeIndex ?? 0]

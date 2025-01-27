@@ -44,34 +44,40 @@ class ShopDetailsService {
     }
   }
 
-  static Future<void> removeCheckout(String id) async {
+  static Future<void> removeBasket(String id, String shopID) async {
     try {
-      await _firestore.collection('checkouts').doc(id).delete();
+      await _firestore
+          .collection('shops')
+          .doc(shopID)
+          .collection("basket")
+          .doc(id)
+          .delete();
     } catch (e) {
       rethrow;
     }
   }
 
-  static Future<Either<String, List<OrderDetailsModel>>> getCheckouts(
+  static Future<Either<String, List<BasketProductModel>>> getBasket(
       String shopId) async {
     try {
       final response = await _firestore
-          .collection('checkouts')
-          .where("shop-id", isEqualTo: shopId)
+          .collection('shops')
+          .doc(shopId)
+          .collection("basket")
           .get()
           .then((value) async {
         return value;
       });
-      List<OrderDetailsModel> orderDetailsList = [];
+      List<BasketProductModel> orderDetailsList = [];
       for (var element in response.docs) {
         final coffeeModel = await _firestore
             .collection('products')
             .doc(element.data()["product-id"])
             .get()
             .then((value) => CoffeeModel.fromJson(value.data()!));
-        final orderDetailsModel =
-            OrderDetailsModel.fromJson(element.data(), coffeeModel);
-        orderDetailsList.add(orderDetailsModel);
+        final basketProductModel =
+            BasketProductModel.fromJson(element.data(), coffeeModel);
+        orderDetailsList.add(basketProductModel);
       }
       log(orderDetailsList.toString());
       return right(orderDetailsList);
@@ -80,10 +86,12 @@ class ShopDetailsService {
     }
   }
 
-  static Future<void> addCheckout(OrderDetailsModel orderModel) async {
+  static Future<void> AddBasket(BasketProductModel orderModel) async {
     try {
       await _firestore
-          .collection('checkouts')
+          .collection('shops')
+          .doc(orderModel.shopID)
+          .collection("basket")
           .doc(orderModel.productModel.id)
           .set(orderModel.map);
     } catch (e) {

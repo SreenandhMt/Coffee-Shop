@@ -1,9 +1,10 @@
-import 'package:coffee_app/components/checkout/promo_widget.dart';
-import 'package:coffee_app/components/checkout/title_widget.dart';
-import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:coffee_app/components/checkout/promo_widget.dart';
+import 'package:coffee_app/components/checkout/title_widget.dart';
+import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
@@ -18,9 +19,11 @@ class DeliveryWidgets extends ConsumerStatefulWidget {
   const DeliveryWidgets({
     super.key,
     this.isOrderDetails = false,
+    this.orderID,
     required this.shopId,
   });
   final bool isOrderDetails;
+  final String? orderID;
   final String shopId;
 
   @override
@@ -28,9 +31,27 @@ class DeliveryWidgets extends ConsumerStatefulWidget {
 }
 
 class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
+  bool isValidate = false;
+  @override
+  void initState() {
+    if (widget.isOrderDetails && widget.orderID != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(checkoutViewModelProvider.notifier)
+            .loadOrderData(widget.orderID!);
+      });
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final checkoutViewModel = ref.watch(checkoutViewModelProvider);
+    if (checkoutViewModel.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Column(
       children: [
         Container(
@@ -59,18 +80,24 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                           color: AppColors.themeColor(context),
                         )),
                     width15,
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 4,
-                      children: [
-                        Text("Caffely Astoria Aromas",
-                            style: subtitleFont(
-                                fontSize: 18, fontWeight: FontWeight.w800)),
-                        const Text("350 5th Ave, New York, NY 10118, USA"),
-                        const Text("1.2 km form your location"),
-                      ],
-                    ),
+                    if (checkoutViewModel.shopModel != null)
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 4,
+                          children: [
+                            Text(checkoutViewModel.shopModel!.name,
+                                maxLines: 1,
+                                style: subtitleFont(
+                                    fontSize: 18, fontWeight: FontWeight.w800)),
+                            Text(checkoutViewModel
+                                .shopModel!.address!["address"]),
+                            Text(
+                                "${checkoutViewModel.shopModel!.distance} form your location"),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -84,13 +111,17 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
               ),
               if (checkoutViewModel.selectedAddress != null)
                 TileWidget(
-                    onTap: () => NavigationUtils.chooseAddressPage(
-                        context, widget.shopId),
+                    onTap: () => widget.isOrderDetails
+                        ? null
+                        : NavigationUtils.chooseAddressPage(
+                            context, widget.shopId),
                     startIcon: Icons.location_on_rounded,
                     title: checkoutViewModel.selectedAddress!["title"],
                     subtitle:
                         "${checkoutViewModel.selectedAddress!["address"]} \n 5  minutes estimate arrived",
-                    endIcon: Icons.arrow_forward_ios_rounded)
+                    endIcon: widget.isOrderDetails
+                        ? const IconData(0)
+                        : Icons.arrow_forward_ios_rounded)
               else
                 TileWidget(
                     onTap: () => NavigationUtils.chooseAddressPage(
@@ -154,8 +185,10 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: InkWell(
-                      onTap: () => NavigationUtils.chooseDeliveryPage(
-                          context, widget.shopId),
+                      onTap: () => widget.isOrderDetails
+                          ? null
+                          : NavigationUtils.chooseDeliveryPage(
+                              context, widget.shopId),
                       child: Row(
                         children: [
                           width10,
@@ -177,13 +210,15 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                             ],
                           ),
                           const Spacer(),
-                          const Icon(Icons.arrow_forward_ios_rounded)
+                          if (!widget.isOrderDetails)
+                            const Icon(Icons.arrow_forward_ios_rounded)
                         ],
                       ),
                     ),
                   )
                 else
                   TileWidget(
+                    border: isValidate ? Border.all(color: Colors.red) : null,
                     onTap: () => NavigationUtils.chooseDeliveryPage(
                         context, widget.shopId),
                     startIcon: Icons.delivery_dining_outlined,
@@ -255,6 +290,7 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                     child: SelectedPaymentWidget(
                         paymentMethod: checkoutViewModel.paymentMethod!))
                 : TileWidget(
+                    border: isValidate ? Border.all(color: Colors.red) : null,
                     onTap: () => NavigationUtils.choosePaymentPage(
                         context, widget.shopId),
                     startIcon: Icons.payment,
@@ -386,169 +422,56 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
               ],
             )),
         height35,
-        if (widget.isOrderDetails) ...[
+        if (widget.isOrderDetails && checkoutViewModel.orderModel != null) ...[
           CheckoutTitleWidget(
               text: "Transaction Details",
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Amount",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "\$50.0",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Payment Method",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Caffely Wallet",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Status",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.primaryColor),
-                          child: const Text(
-                            "Paid",
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
+                  ...List.generate(
+                    checkoutViewModel.orderModel!.transactionDetails.length,
+                    (index) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            checkoutViewModel
+                                .orderModel!.transactionDetails[index].type,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Date",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Dec 22, 2023",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Time",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "09:41:15 AM",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Order ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "ORD7395COF",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Transaction ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "TRX8274PAY",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Reference ID",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        Text(
-                          "REF6306RES",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600),
-                        ),
-                        width5,
-                        Icon(Icons.file_copy_outlined)
-                      ],
+                          if (checkoutViewModel
+                                  .orderModel!.transactionDetails[index].type ==
+                              "Status")
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColors.primaryColor),
+                              child: Text(
+                                checkoutViewModel.orderModel!.paymentStatus,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                            )
+                          else
+                            Text(
+                              double.tryParse(checkoutViewModel.orderModel!
+                                          .transactionDetails[index].value
+                                          .toString()) !=
+                                      null
+                                  ? "\$${checkoutViewModel.orderModel!.transactionDetails[index].value}"
+                                  : checkoutViewModel.orderModel!
+                                      .transactionDetails[index].value,
+                              style: const TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w600),
+                            )
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -601,6 +524,23 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
           AuthButton(
               text: "Place Order",
               onPressed: () {
+                if (checkoutViewModel.paymentMethod == null) {
+                  isValidate = true;
+                  setState(() {});
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please select payment method")));
+                  return;
+                }
+                if (checkoutViewModel.selectedDelivery == null) {
+                  isValidate = true;
+                  setState(() {});
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please select delivery method")));
+                  return;
+                }
+                ref
+                    .read(checkoutViewModelProvider.notifier)
+                    .deliveryOrderConform();
                 NavigationUtils.searchingDriverPage(context, widget.shopId);
               })
       ],

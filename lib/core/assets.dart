@@ -29,4 +29,10 @@ class AppAssets {
         ? "assets/coffee_type/hot-coffee-white.png"
         : "assets/coffee_type/hot-coffee.png";
   }
+
+  static String emoji(BuildContext context, int index) {
+    return "assets/emojis/emoji-$index";
+  }
+
+  static String rewardedImage = "assets/reward-image.png";
 }
