@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../components/home/coffee_widget.dart';
 import '/core/app_colors.dart';
 import '/core/fonts.dart';
 import '/core/size.dart';

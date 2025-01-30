@@ -35,4 +35,6 @@ class AppAssets {
   }
 
   static String rewardedImage = "assets/reward-image.png";
+  static String supportedCard = "assets/logo-stripe.png";
+  static String stripeLogo = "assets/stripe.png";
 }

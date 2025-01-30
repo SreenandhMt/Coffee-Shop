@@ -1,3 +1,4 @@
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,30 +24,7 @@ class ChoosePaymentPage extends ConsumerStatefulWidget {
 class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
   final paymentMethods = [
     {"name": "Wallet", "image": ""},
-    {
-      "name": "PayPal",
-      "image": "https://cdn-icons-png.flaticon.com/512/2504/2504802.png"
-    },
-    {
-      "name": "Google Pay",
-      "image":
-          "https://w7.pngwing.com/pngs/63/1016/png-transparent-google-logo-google-logo-g-suite-chrome-text-logo-chrome.png"
-    },
-    {
-      "name": "Apple Pay",
-      "image":
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2XR3uve98Zaune2n4CVHaAjR6ReZwmcwHYg&s"
-    },
-    {
-      "name": ".... .... .... .... 4676",
-      "image":
-          "https://static-00.iconduck.com/assets.00/mastercard-icon-2048x1286-s6y46dfh.png"
-    },
-    {
-      "name": ".... .... .... .... 5567",
-      "image":
-          "https://w7.pngwing.com/pngs/167/298/png-transparent-card-credit-logo-visa-logos-and-brands-icon-thumbnail.png"
-    }
+    {"name": "Stripe", "image": AppAssets.stripeLogo},
   ];
   @override
   void initState() {
@@ -159,7 +137,7 @@ class PaymentWidget extends ConsumerStatefulWidget {
 class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
   @override
   Widget build(BuildContext context) {
-    if (widget.paymentMethod == "Wallet") {
+    if (widget.paymentMethod["name"] == "Wallet") {
       return InkWell(
         onTap: () => ref
             .read(checkoutViewModelProvider.notifier)
@@ -219,7 +197,7 @@ class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
               CircleAvatar(
                 radius: 30,
                 backgroundImage:
-                    NetworkImage(widget.paymentMethod["image"] ?? ""),
+                    AssetImage(widget.paymentMethod["image"] ?? ""),
               ),
               width20,
               Text(

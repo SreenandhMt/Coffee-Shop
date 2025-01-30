@@ -1,3 +1,4 @@
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,6 @@ class AddPaymentMethodPage extends StatefulWidget {
 }
 
 class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
-  final images = [
-    "https://cdn-icons-png.flaticon.com/512/2504/2504802.png",
-    "https://w7.pngwing.com/pngs/63/1016/png-transparent-google-logo-google-logo-g-suite-chrome-text-logo-chrome.png",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2XR3uve98Zaune2n4CVHaAjR6ReZwmcwHYg&s",
-    "https://static-00.iconduck.com/assets.00/mastercard-icon-2048x1286-s6y46dfh.png",
-    "https://w7.pngwing.com/pngs/167/298/png-transparent-card-credit-logo-visa-logos-and-brands-icon-thumbnail.png"
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,21 +43,12 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
               style: subtitleFont(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
-          Row(
-            children: List.generate(
-              images.length,
-              (index) => Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 15 : 5,
-                  top: 5,
-                  right: 5,
-                ),
-                child: Image.network(
-                  images[index],
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.fill,
-                ),
+          Container(
+            width: 300,
+            height: 100,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AppAssets.supportedCard),
               ),
             ),
           ),

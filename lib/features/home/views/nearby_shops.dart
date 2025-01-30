@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../components/home/shop_widget.dart';
 import '../../../core/fonts.dart';
 import '../view_models/home_view_model.dart';
 
