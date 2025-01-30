@@ -1,18 +1,14 @@
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
-class PointRewardPage extends StatefulWidget {
+class PointRewardPage extends StatelessWidget {
   const PointRewardPage({super.key});
 
-  @override
-  State<PointRewardPage> createState() => _PointRewardPageState();
-}
-
-class _PointRewardPageState extends State<PointRewardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +24,9 @@ class _PointRewardPageState extends State<PointRewardPage> {
               Container(
                 width: 300,
                 height: 300,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZsy7A2C7fKO0PkIHpoz58JT0B9EiQlKfSyQ&s",
-                    ),
+                    image: AssetImage(AppAssets.rewardedImage),
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                   ),
@@ -41,25 +35,26 @@ class _PointRewardPageState extends State<PointRewardPage> {
             ],
           ),
           height20,
-          const Text(
-            "Congratulations!",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
+          Text(
+            LocaleData.orderRewardTitle.getString(context),
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w700),
           ),
           height10,
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              "You earn 25 points from this order. You can see the points on the Caffely Points menu.",
-              style: TextStyle(),
+              LocaleData.orderRewardSubtitle.getString(context),
+              style: const TextStyle(),
               textAlign: TextAlign.center,
             ),
           ),
           const Spacer(),
           AuthButton(
-              text: "OK",
-              onPressed: () {
-                NavigationUtils.userResponsePage(context);
-              })
+            text: LocaleData.orderRewardButton.getString(context),
+            onPressed: () {
+              NavigationUtils.userResponsePage(context);
+            },
+          )
         ],
       ),
     );

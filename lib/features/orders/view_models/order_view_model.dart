@@ -14,6 +14,7 @@ class OrderStateModel {
   final List<OrderModel> canceledOrderModels;
   final bool isLoading;
   final OrderModel? selectedOrder;
+  final OrderModel? currentOrder;
 
   OrderStateModel({
     required this.activeOrderModels,
@@ -21,6 +22,7 @@ class OrderStateModel {
     required this.canceledOrderModels,
     required this.isLoading,
     this.selectedOrder,
+    this.currentOrder,
   });
 
   factory OrderStateModel.initial() {
@@ -38,6 +40,7 @@ class OrderStateModel {
     List<OrderModel>? canceledOrderModels,
     bool? isLoading,
     OrderModel? selectedOrder,
+    OrderModel? currentOrder,
   }) {
     return OrderStateModel(
       activeOrderModels: activeOrderModels ?? this.activeOrderModels,
@@ -45,6 +48,7 @@ class OrderStateModel {
       canceledOrderModels: canceledOrderModels ?? this.canceledOrderModels,
       isLoading: isLoading ?? this.isLoading,
       selectedOrder: selectedOrder ?? this.selectedOrder,
+      currentOrder: currentOrder ?? this.currentOrder,
     );
   }
 }
@@ -58,6 +62,17 @@ class OrderViewModel extends _$OrderViewModel {
 
   void selectOrderModel(OrderModel orderModel) {
     state = state.copyWith(selectedOrder: orderModel);
+  }
+
+  void getCurrentOrder(String id) async {
+    state = state.copyWith(isLoading: true);
+    final response = await OrderService.getOrderModelById(id);
+    response.fold((l) => log(l), (r) {
+      state = state.copyWith(
+        currentOrder: r,
+      );
+    });
+    state = state.copyWith(isLoading: false);
   }
 
   void getOrders() async {

@@ -309,12 +309,21 @@ class _CoffeeShopDetailsPageState extends ConsumerState<CoffeeShopDetailsPage> {
                           )),
                       const Spacer(),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            ref
+                                .read(shopDetailsViewModelProvider.notifier)
+                                .addShopFavoriteList();
+                          },
                           style: ButtonStyle(
                               backgroundColor:
                                   WidgetStatePropertyAll(backgroundColor)),
-                          icon: Icon(Icons.favorite_border,
-                              color: AppColors.backgroundColor(context))),
+                          icon: Icon(
+                              viewModel.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: viewModel.isFavorite
+                                  ? Colors.red
+                                  : AppColors.backgroundColor(context))),
                       IconButton(
                           onPressed: () {},
                           style: ButtonStyle(

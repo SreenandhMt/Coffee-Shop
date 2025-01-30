@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:coffee_app/features/account/views/about_caffely_page.dart';
 import 'package:coffee_app/features/account/views/help_center.dart';
+import 'package:coffee_app/localization/locales.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '/features/account/views/account_page.dart';
 import '../features/payment/views/add_payment_method_page.dart';
@@ -19,7 +21,7 @@ import '/features/checkout/views/checkout_page.dart';
 import '../features/address/views/choose_address.dart';
 import '/features/checkout/views/choose_delivery.dart';
 import '../features/payment/views/choose_payment.dart';
-import '/features/checkout/views/driver_profile.dart';
+import '../features/orders/views/driver_profile.dart';
 import '/features/checkout/views/searching_driver.dart';
 import '../features/checkout/views/vouchers_page.dart';
 import '/features/coffee_shops/views/coffee_shops_page.dart';
@@ -29,7 +31,7 @@ import '/features/orders/views/orders_page.dart';
 import '/features/orders/views/point_reward_page.dart';
 import '/features/orders/views/rating_driver_page.dart';
 import '/features/orders/views/rating_shop_page.dart';
-import '/features/orders/views/tip_page.dart';
+import '../features/orders/views/tip_driver_page.dart';
 import '/features/orders/views/check_mood_page.dart';
 import '/features/orders/views/video_call_page.dart';
 import '/features/orders/views/voice_call_page.dart';
@@ -90,26 +92,26 @@ class AppRouter {
                 unselectedItemColor: Colors.grey,
                 showUnselectedLabels: true,
                 type: BottomNavigationBarType.fixed,
-                items: const [
+                items: [
                   BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.home),
-                    label: "Home",
+                    icon: const Icon(CupertinoIcons.home),
+                    label: LocaleData.home.getString(context),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.shopping_cart),
-                    label: "Shop",
+                    icon: const Icon(CupertinoIcons.shopping_cart),
+                    label: LocaleData.shop.getString(context),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.doc_text),
-                    label: "Orders",
+                    icon: const Icon(CupertinoIcons.doc_text),
+                    label: LocaleData.orders.getString(context),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.account_balance_wallet_outlined),
-                    label: "Wallet",
+                    icon: const Icon(Icons.account_balance_wallet_outlined),
+                    label: LocaleData.wallet.getString(context),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(CupertinoIcons.person),
-                    label: "Account",
+                    icon: const Icon(CupertinoIcons.person),
+                    label: LocaleData.account.getString(context),
                   ),
                 ],
               ),
@@ -326,16 +328,16 @@ class AppRouter {
                 path: "/success",
                 builder: (context, state) => const SearchingDriverPage(),
               ),
-              GoRoute(
-                path: "/driver-profile",
-                builder: (context, state) => const DriverProfilePage(),
-              ),
             ],
           ),
           GoRoute(
               path: "/orders",
               builder: (context, state) => const SizedBox(),
               routes: [
+                GoRoute(
+                  path: "/driver-profile",
+                  builder: (context, state) => const DriverProfilePage(),
+                ),
                 GoRoute(
                   path: "/chat-driver",
                   builder: (context, state) => const ChatDriverPage(),

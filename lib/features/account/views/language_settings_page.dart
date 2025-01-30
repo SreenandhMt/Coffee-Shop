@@ -1,7 +1,9 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/fonts.dart';
 
@@ -65,7 +67,8 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Language", style: appBarTitleFont),
+        title: Text(LocaleData.accountLanguageTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: ListView.builder(
         itemCount: languages.length,

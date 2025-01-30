@@ -1,7 +1,9 @@
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/app_colors.dart';
@@ -26,10 +28,11 @@ class _EmailConformPageState extends State<EmailConformPage> {
           children: [
             Column(
               children: [
-                const AuthHadingTexts(
-                    title: "Reset your Password🔑",
-                    subtitle:
-                        "Please enter your email and we will send an OTP code in the next step to reset your password"),
+                AuthHadingTexts(
+                    title:
+                        LocaleData.forgetPasswordEmailTitle.getString(context),
+                    subtitle: LocaleData.forgetPasswordEmailSubTitle
+                        .getString(context)),
                 InputWithText(
                     controller: emailController,
                     hintText: "Email",
@@ -38,7 +41,7 @@ class _EmailConformPageState extends State<EmailConformPage> {
               ],
             ),
             AuthButton(
-                text: "Continue",
+                text: LocaleData.continueButton.getString(context),
                 onPressed: () {
                   context.push("/welcome/signin/resetPassword-step-2");
                 })

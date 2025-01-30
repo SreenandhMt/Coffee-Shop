@@ -1,7 +1,7 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
-import 'package:coffee_app/features/checkout/views/driver_profile.dart';
+import 'package:coffee_app/features/orders/views/driver_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

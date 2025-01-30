@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -35,7 +37,7 @@ class SigninPageState extends ConsumerState<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authViewModelProvider);
+    // final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.sizeOf(context);
     return Form(
       key: _key,
@@ -51,10 +53,11 @@ class SigninPageState extends ConsumerState<SigninPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const AuthHadingTexts(
-                          title: "Welcome back 👋",
+                      AuthHadingTexts(
+                          title: LocaleData.signinWelcomeMessage
+                              .getString(context),
                           subtitle:
-                              "Please enter your email & password to sign in"),
+                              LocaleData.signinSubtitle.getString(context)),
                       InputWithText(
                         controller: emailController,
                         hintText: "Email",
@@ -135,9 +138,9 @@ class SigninPageState extends ConsumerState<SigninPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            "Don't have an account?",
-                            style: TextStyle(fontSize: 15),
+                          Text(
+                            LocaleData.haveAccount.getString(context),
+                            style: const TextStyle(fontSize: 15),
                           ),
                           width5,
                           InkWell(
@@ -145,9 +148,9 @@ class SigninPageState extends ConsumerState<SigninPage> {
                                 if (context.canPop()) context.pop();
                                 context.push("/welcome/signup");
                               },
-                              child: const Text(
-                                "Sign up",
-                                style: TextStyle(
+                              child: Text(
+                                LocaleData.authSignup.getString(context),
+                                style: const TextStyle(
                                     color: AppColors.primaryColor,
                                     fontWeight: FontWeight.w700),
                               ))
@@ -166,30 +169,31 @@ class SigninPageState extends ConsumerState<SigninPage> {
                       fixedSize: Size(size.width * 0.9, 60),
                     ),
                     onPressed: () async {
-                      //validating
+                      //*validating
                       if (!_key.currentState!.validate()) return;
 
-                      //function calling
+                      //*function calling
                       await ref.read(authViewModelProvider.notifier).signIn(
                           emailController.text, passwordController.text);
 
-                      //mounted checking
+                      //*mounted checking
                       if (!mounted) return;
                       final currentState = ref.read(authViewModelProvider);
-                      //response
+                      //*response
                       currentState.fold((left) {
-                        //success message
+                        //!success message
                         if (left == AuthState.success) {
                           _showDialogBox();
                         }
                       }, (right) {
-                        //error massage
+                        //!error massage
                         //TODO: show error message on user
                         log(right);
                       });
                     },
-                    child: const Text("Sign in",
-                        style: TextStyle(color: Colors.white, fontSize: 17)),
+                    child: Text(LocaleData.authSignin.getString(context),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 17)),
                   ),
                 ],
               ),

@@ -1,4 +1,6 @@
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -7,21 +9,9 @@ import 'package:coffee_app/core/app_colors.dart';
 
 PageController controller = PageController();
 final List<Map<String, String>> contents = [
-  {
-    "title": "Get Your Coffee - Anytime, Anywhere",
-    "description":
-        "Choose the way you want to enjoy your coffee with Caffely. Just a few taps on the app, and your coffee is ready for you."
-  },
-  {
-    "title": "Seamless Payments with Our Secure Wallet",
-    "description":
-        "Say goodbye to hassle and hello to seamless transactions with Caffely's secure wallet. Making payments has never been easier."
-  },
-  {
-    "title": "Explore the World of Coffee Right Now",
-    "description":
-        "Dive into the fascinating world of coffee with Caffely. Discover unique and delightful coffee flavors, one sip at a time"
-  }
+  {"title": LocaleData.intro1Title, "description": LocaleData.intro1SubTitle},
+  {"title": LocaleData.intro2Title, "description": LocaleData.intro2SubTitle},
+  {"title": LocaleData.intro3Title, "description": LocaleData.intro3SubTitle}
 ];
 
 class IntroductionPage extends StatefulWidget {
@@ -109,9 +99,10 @@ class IntroWidgetState extends State<IntroWidget> {
                   backgroundColor: WidgetStatePropertyAll(
                       AppColors.primaryColor.withOpacity(0.1)),
                 ),
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(color: AppColors.primaryColor, fontSize: 15),
+                child: Text(
+                  LocaleData.skipButton.getString(context),
+                  style: const TextStyle(
+                      color: AppColors.primaryColor, fontSize: 15),
                 ),
               ),
               const SizedBox(width: 10),
@@ -128,8 +119,8 @@ class IntroWidgetState extends State<IntroWidget> {
                   backgroundColor:
                       const WidgetStatePropertyAll(AppColors.primaryColor),
                 ),
-                child: const Text('Continue',
-                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                child: Text(LocaleData.continueButton.getString(context),
+                    style: const TextStyle(color: Colors.white, fontSize: 15)),
               ),
             ],
           )
@@ -151,8 +142,8 @@ class IntroWidgetState extends State<IntroWidget> {
                   backgroundColor:
                       const WidgetStatePropertyAll(AppColors.primaryColor),
                 ),
-                child: const Text('Get Start',
-                    style: TextStyle(color: Colors.white, fontSize: 15)),
+                child: Text(LocaleData.getStarted.getString(context),
+                    style: const TextStyle(color: Colors.white, fontSize: 15)),
               ),
             ],
           ),

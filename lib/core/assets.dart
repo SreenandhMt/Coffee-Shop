@@ -31,7 +31,7 @@ class AppAssets {
   }
 
   static String emoji(BuildContext context, int index) {
-    return "assets/emojis/emoji-$index";
+    return "assets/emojis/emoji-$index.png";
   }
 
   static String rewardedImage = "assets/reward-image.png";

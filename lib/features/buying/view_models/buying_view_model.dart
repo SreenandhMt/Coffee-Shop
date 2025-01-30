@@ -1,10 +1,11 @@
 import 'dart:developer';
 
-import 'package:coffee_app/features/buying/service/buying_service.dart';
+import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:coffee_app/features/buying/service/buying_service.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
 
 part 'buying_view_model.g.dart';
@@ -17,6 +18,7 @@ class BuyingStateModel {
   final int? selectedSizeIndex;
   final int? selectedTypeIndex;
   final List<Map<String, dynamic>> selectedOption;
+  final bool isFavorite;
 
   BuyingStateModel({
     required this.isLoading,
@@ -26,15 +28,16 @@ class BuyingStateModel {
     this.selectedSizeIndex,
     this.selectedTypeIndex,
     required this.selectedOption,
+    required this.isFavorite,
   });
 
   factory BuyingStateModel.initial() {
     return BuyingStateModel(
-      isLoading: false,
-      quantity: 1,
-      totalPrice: 0,
-      selectedOption: [],
-    );
+        isLoading: false,
+        quantity: 1,
+        totalPrice: 0,
+        selectedOption: [],
+        isFavorite: false);
   }
 
   BuyingStateModel copyWith({
@@ -45,16 +48,17 @@ class BuyingStateModel {
     int? selectedSizeIndex,
     int? selectedTypeIndex,
     List<Map<String, dynamic>>? selectedOption,
+    bool? isFavorite,
   }) {
     return BuyingStateModel(
-      isLoading: isLoading ?? this.isLoading,
-      coffeeModel: coffeeModel ?? this.coffeeModel,
-      quantity: quantity ?? this.quantity,
-      totalPrice: totalPrice ?? this.totalPrice,
-      selectedSizeIndex: selectedSizeIndex ?? this.selectedSizeIndex,
-      selectedTypeIndex: selectedTypeIndex ?? this.selectedTypeIndex,
-      selectedOption: selectedOption ?? this.selectedOption,
-    );
+        isLoading: isLoading ?? this.isLoading,
+        coffeeModel: coffeeModel ?? this.coffeeModel,
+        quantity: quantity ?? this.quantity,
+        totalPrice: totalPrice ?? this.totalPrice,
+        selectedSizeIndex: selectedSizeIndex ?? this.selectedSizeIndex,
+        selectedTypeIndex: selectedTypeIndex ?? this.selectedTypeIndex,
+        selectedOption: selectedOption ?? this.selectedOption,
+        isFavorite: isFavorite ?? this.isFavorite);
   }
 }
 
@@ -67,6 +71,41 @@ class BuyingViewModel extends _$BuyingViewModel {
 
   selectTypeIndex(int index) {
     state = state.copyWith(selectedTypeIndex: index);
+  }
+
+  getFavoriteStatus(String id) async {
+    final isFavorite = await BuyingService.getFavoriteStatus(id);
+    state = state.copyWith(isFavorite: isFavorite);
+  }
+
+  void toggleFavorite() async {
+    if (state.isFavorite) {
+      state = state.copyWith(isFavorite: false);
+      await BuyingService.removeToFavorite(state.coffeeModel!);
+    } else {
+      state = state.copyWith(isFavorite: true);
+      await BuyingService.addToFavorite(state.coffeeModel!);
+    }
+  }
+
+  BasketProductModel getProducts() {
+    final sizes = [
+      {"title": "Toll", "price": 0.0},
+      {"title": "Grande", "price": 0.50},
+      {"title": "Venti", "price": 1.00},
+    ];
+    final orderModel = BasketProductModel.fromJson({
+      "quantity": state.quantity,
+      "sizePrice": sizes[state.selectedSizeIndex ?? 0]["price"],
+      "sizeName": sizes[state.selectedSizeIndex ?? 0]["title"],
+      "type": state.selectedTypeIndex == 0 ? "Hot" : "Iced",
+      if (state.selectedOption.isNotEmpty) "option": state.selectedOption,
+      "notes": "",
+      "product-id": state.coffeeModel!.id,
+      "basePrice": double.parse(state.coffeeModel!.price),
+      "totalPrice": state.totalPrice,
+    }, state.coffeeModel!);
+    return orderModel;
   }
 
   selectSizeIndex(int index, double price, double? oldPrice) {
@@ -124,6 +163,7 @@ class BuyingViewModel extends _$BuyingViewModel {
 
   getCoffeeModel(String id) async {
     state.copyWith(isLoading: true);
+    getFavoriteStatus(id);
     final coffeeDetails = await BuyingService.getCoffeeDetails(id);
     clearValues();
     coffeeDetails.fold(

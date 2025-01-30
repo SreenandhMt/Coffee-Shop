@@ -1,7 +1,9 @@
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/app_colors.dart';
@@ -16,7 +18,8 @@ class OfferDetailsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Special Offer", style: appBarTitleFont),
+        title: Text(LocaleData.offerPageAppBarTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,19 +191,13 @@ class OfferDetailsPage extends ConsumerWidget {
                     ],
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 15),
-                //   child: Text(
-                //     "1. Promotion period. The Caffely 30% discount\n   promotion is valid form December 20, 2023, to \n   December 31, 2023. All eligible orders must be\n   placed within this period to avail of the discount.\n2. Eliaibilitv: The promotion is open to all customers",
-                //     style:
-                //         subtitleFont(fontSize: 16, fontWeight: FontWeight.w500),
-                //   ),
-                // ),
                 height10,
               ],
             ),
           ),
-          AuthButton(text: "Claim Discount", onPressed: () {})
+          AuthButton(
+              text: LocaleData.offerClaimButton.getString(context),
+              onPressed: () {})
         ],
       ),
     );

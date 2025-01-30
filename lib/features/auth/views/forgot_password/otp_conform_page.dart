@@ -2,8 +2,10 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
@@ -43,9 +45,9 @@ class _OTPConformPageState extends State<OTPConformPage> {
       body: Column(
         children: [
           AuthHadingTexts(
-              title: "OTP code verification 🔐",
-              subtitle:
-                  "We have send an otp code to your email and$email. Enter the OTP code below to verify"),
+              title: LocaleData.forgetPasswordOTPTitle.getString(context),
+              subtitle: context
+                  .formatString(LocaleData.forgetPasswordOTPSubTitle, [email])),
           height20,
           Form(
             key: formKey,

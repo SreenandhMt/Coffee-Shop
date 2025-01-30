@@ -50,8 +50,16 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                     icon: const Icon(Icons.close)),
                 const Spacer(),
                 IconButton(
-                    onPressed: () => context.pop(),
-                    icon: const Icon(Icons.favorite_border_rounded)),
+                  onPressed: () => ref
+                      .read(buyingViewModelProvider.notifier)
+                      .toggleFavorite(),
+                  icon: Icon(
+                    buyingViewModel.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border_rounded,
+                    color: buyingViewModel.isFavorite ? Colors.red : null,
+                  ),
+                ),
                 IconButton(
                     onPressed: () => context.pop(),
                     icon: const Icon(Icons.share_outlined)),
@@ -173,53 +181,6 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                         onTap: (value, price, oldPrice) => ref
                             .read(buyingViewModelProvider.notifier)
                             .selectOption(value, index, price, oldPrice))),
-                // OptionWidget(
-                //     title: "Milk",
-                //     values: const [
-                //       "Whole Milk",
-                //       "Skim Mink",
-                //       "Soy Mink",
-                //       "Almond Mink",
-                //     ],
-                //     currentValue: buyingViewModel.selectedMilk,
-                //     onTap: (value, price, oldPrice) => ref
-                //         .read(buyingViewModelProvider.notifier)
-                //         .selectMilk(value, price, oldPrice)),
-                // height10,
-                // OptionWidget(
-                //   title: "Syrup",
-                //   values: const [
-                //     "Aren",
-                //     "Caramel",
-                //     "Hazelnut",
-                //     "Pandan",
-                //     "Irish",
-                //     "Pecan",
-                //     "Manuka Honey",
-                //     "Vanilla"
-                //   ],
-                //   currentValue: buyingViewModel.selectedSyrup,
-                //   onTap: (value, price, oldPrice) => ref
-                //       .read(buyingViewModelProvider.notifier)
-                //       .selectSyrup(value, price, oldPrice),
-                // ),
-                // height10,
-                // OptionWidget(
-                //   title: "Topping",
-                //   values: const [
-                //     "Cinnamon",
-                //     "Nutmeg",
-                //     "Cocoa Powder",
-                //     "Crumble",
-                //     "Sea Salt Cream",
-                //     "Milo Powder",
-                //     "Caramel Sauce"
-                //   ],
-                //   currentValue: buyingViewModel.selectedTopping,
-                //   onTap: (value, price, oldPrice) => ref
-                //       .read(buyingViewModelProvider.notifier)
-                //       .selectToppings(value, price, oldPrice),
-                // ),
                 height20,
                 const Text("Notes",
                     style:
@@ -260,30 +221,9 @@ class _BuyingPageState extends ConsumerState<BuyingPage> {
                             Size(MediaQuery.sizeOf(context).width * 0.7, 60),
                       ),
                       onPressed: () {
-                        final sizes = [
-                          {"title": "Toll", "price": 0.0},
-                          {"title": "Grande", "price": 0.50},
-                          {"title": "Venti", "price": 1.00},
-                        ];
-                        final orderModel = BasketProductModel.fromJson({
-                          "quantity": buyingViewModel.quantity,
-                          "sizePrice":
-                              sizes[buyingViewModel.selectedSizeIndex ?? 0]
-                                  ["price"],
-                          "sizeName":
-                              sizes[buyingViewModel.selectedSizeIndex ?? 0]
-                                  ["title"],
-                          "type": buyingViewModel.selectedTypeIndex == 0
-                              ? "Hot"
-                              : "Iced",
-                          if (buyingViewModel.selectedOption.isNotEmpty)
-                            "option": buyingViewModel.selectedOption,
-                          "notes": "",
-                          "product-id": buyingViewModel.coffeeModel!.id,
-                          "basePrice":
-                              double.parse(buyingViewModel.coffeeModel!.price),
-                          "totalPrice": buyingViewModel.totalPrice,
-                        }, buyingViewModel.coffeeModel!);
+                        final orderModel = ref
+                            .read(buyingViewModelProvider.notifier)
+                            .getProducts();
                         ref
                             .read(shopDetailsViewModelProvider.notifier)
                             .addProductID(orderModel);

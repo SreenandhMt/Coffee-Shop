@@ -23,6 +23,19 @@ class OrderService {
     }
   }
 
+  static Future<Either<String, OrderModel>> getOrderModelById(String id) async {
+    try {
+      return _firestore.collection("orders").doc(id).get().then((value) async {
+        final orderDetails =
+            await _getBasketModel(value.data()!["order-details"]);
+        final orderModel = OrderModel.fromJson(value.data()!, orderDetails);
+        return right(orderModel);
+      });
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
   static Future<BasketProductModel> _getBasketModel(value) async {
     final coffeeModel = await _firestore
         .collection('products')

@@ -3,14 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/app_colors.dart';
 
-class VideoCallPage extends StatefulWidget {
+class VideoCallPage extends StatelessWidget {
   const VideoCallPage({super.key});
 
-  @override
-  State<VideoCallPage> createState() => _VideoCallPageState();
-}
-
-class _VideoCallPageState extends State<VideoCallPage> {
   @override
   Widget build(BuildContext context) {
     return Container(

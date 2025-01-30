@@ -1,7 +1,9 @@
 import 'package:coffee_app/features/introduction/views/introduction_pages.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -81,7 +83,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
           _homeScreenCategoryText(
-              "Nearby Shop", () => NavigationUtils.nearbyShopsPage(context)),
+              LocaleData.homeShopListTitle.getString(context),
+              () => NavigationUtils.nearbyShopsPage(context)),
           LimitedBox(
               maxHeight: size.width * 0.65,
               maxWidth: size.width,
@@ -95,7 +98,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                         width: size.width * 0.37)),
               )),
           _homeScreenCategoryText(
-              "Popular Menu", () => NavigationUtils.popularMenuPage(context)),
+              LocaleData.homeProductListTitle.getString(context),
+              () => NavigationUtils.popularMenuPage(context)),
           height20,
           GridView.builder(
               shrinkWrap: true,
@@ -164,25 +168,28 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Row(
       children: [
         width20,
-        Text(
-          text,
-          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+          ),
         ),
-        const Spacer(),
         InkWell(
           onTap: onTap,
-          child: const Row(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "View All",
-                style: TextStyle(
+                LocaleData.viewAll.getString(context),
+                style: const TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               width10,
-              Icon(Icons.arrow_forward_ios,
+              const Icon(Icons.arrow_forward_ios,
                   size: 15, color: AppColors.primaryColor),
             ],
           ),

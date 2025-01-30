@@ -1,8 +1,10 @@
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/features/home/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../localization/locales.dart';
 import '../view_models/home_view_model.dart';
 
 class PopularMenuPage extends ConsumerStatefulWidget {
@@ -19,7 +21,8 @@ class _PopularMenuPageState extends ConsumerState<PopularMenuPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Popular Menu", style: appBarTitleFont),
+        title: Text(LocaleData.homeProductListTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: GridView.builder(
         itemCount: homeState.popularCoffees.length,

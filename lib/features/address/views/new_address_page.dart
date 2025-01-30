@@ -2,6 +2,7 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:coffee_app/features/orders/views/driver_profile.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
               width: double.infinity,
               decoration:
                   BoxDecoration(color: AppColors.secondaryColor(context)),
+              child: const GoogleMapWidget(
+                draggable: true,
+              ),
             ),
           ),
           Container(

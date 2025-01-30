@@ -1,8 +1,8 @@
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/account/views/notification_settings_page.dart';
-import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/fonts.dart';
@@ -28,7 +28,8 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Security", style: appBarTitleFont),
+        title: Text(LocaleData.accountSecurityTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

@@ -1,3 +1,4 @@
+import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +40,7 @@ class _AboutCaffelyPageState extends State<AboutCaffelyPage> {
         children: [
           height10,
           Image.asset(
-            "assets/logo.png",
+            AppAssets.logoWithText(context),
             height: 200,
             width: 200,
           ),

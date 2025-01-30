@@ -1,5 +1,7 @@
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/fonts.dart';
 
@@ -33,7 +35,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Notification", style: appBarTitleFont),
+        title: Text(LocaleData.accountNotificationTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

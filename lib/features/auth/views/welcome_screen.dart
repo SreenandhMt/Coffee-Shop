@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/check_navigation.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_app/core/app_colors.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +28,7 @@ class WelcomeScreen extends ConsumerWidget {
           ),
           Image.asset(AppAssets.logoWithText(context), height: 200),
           height10,
-          const Text("let's dive in into your account"),
+          Text(LocaleData.welcomePageTitle.getString(context)),
           height30,
           ContinueButton(
             name: "Google",
@@ -103,22 +103,22 @@ class WelcomeScreen extends ConsumerWidget {
                   shadowColor: WidgetStateColor.transparent,
                   backgroundColor:
                       const WidgetStatePropertyAll(AppColors.primaryColor)),
-              child: const Text(
-                "Sign in with password",
-                style: TextStyle(color: Colors.white, fontSize: 18),
+              child: Text(
+                LocaleData.authSigninWithPasswordButton.getString(context),
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               )),
           const Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Don't have account?"),
+              Text(LocaleData.haveAccount.getString(context)),
               width5,
               InkWell(
                 onTap: () {
                   context.push("/welcome/signup");
                 },
                 child: Text(
-                  "Sign up",
+                  LocaleData.authSignup.getString(context),
                   style: GoogleFonts.josefinSans(color: AppColors.primaryColor),
                 ),
               )
@@ -165,7 +165,8 @@ class _ContinueButtonState extends ConsumerState<ContinueButton> {
             Image.asset(widget.imageLink, height: 30, width: 30),
             const Spacer(),
             Text(
-              "Continue with ${widget.name}",
+              context.formatString(
+                  LocaleData.authSocialSigninButton, [widget.name]),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
             const Spacer(),

@@ -1,5 +1,6 @@
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 
 class TransactionHistory extends StatefulWidget {
@@ -16,7 +17,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Transaction History',
+          LocaleData.walletTransactionHistory,
           style: appBarTitleFont,
         ),
         actions: const [

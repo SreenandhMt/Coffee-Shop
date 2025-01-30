@@ -1,5 +1,7 @@
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 
+import '../../address/models/address_model.dart';
+
 class OrderModel {
   final String id;
   final String type; // "Pickup" or "Delivery"
@@ -22,7 +24,7 @@ class OrderModel {
   final BasketProductModel orderDetails;
   final List<TransactionDetail> transactionDetails;
   final Map<String, dynamic>? deliveryService;
-  final Map<String, dynamic>? address;
+  final AddressModel? address;
 
   OrderModel({
     required this.id,
@@ -79,7 +81,9 @@ class OrderModel {
           .map((e) => TransactionDetail.fromJson(e))
           .toList(),
       deliveryService: json['delivery-service'],
-      address: json['address'],
+      address: json['address'] == null
+          ? null
+          : AddressModel.fromJson(json['address']),
     );
   }
 }

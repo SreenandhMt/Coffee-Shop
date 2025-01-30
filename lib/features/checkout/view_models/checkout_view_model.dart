@@ -7,6 +7,7 @@ import 'package:coffee_app/features/checkout/services/checkout_service.dart';
 import 'package:coffee_app/features/home/models/offer_model.dart';
 import 'package:coffee_app/features/orders/models/order_model.dart';
 
+import '../../address/models/address_model.dart';
 import '../../home/models/shop_model.dart';
 
 part 'checkout_view_model.g.dart';
@@ -19,11 +20,12 @@ class CheckoutStateModel {
   final String? pickUpTime;
   final String? pickUpDate;
   final double totalPrice;
-  final Map<String, dynamic>? selectedAddress;
+  final AddressModel? selectedAddress;
   final Map<String, dynamic>? selectedDelivery;
   final List<OfferModel>? offers;
   final ShopModel? shopModel;
   final OrderModel? orderModel;
+  final String? orderId;
   CheckoutStateModel({
     required this.isLoading,
     required this.orderModels,
@@ -37,6 +39,7 @@ class CheckoutStateModel {
     this.offers,
     this.shopModel,
     this.orderModel,
+    this.orderId,
   });
 
   factory CheckoutStateModel.initial() {
@@ -56,11 +59,12 @@ class CheckoutStateModel {
     String? pickUpTime,
     String? pickUpDate,
     double? totalPrice,
-    Map<String, dynamic>? selectedAddress,
+    AddressModel? selectedAddress,
     Map<String, dynamic>? selectedDelivery,
     List<OfferModel>? offers,
     ShopModel? shopModel,
     OrderModel? orderModel,
+    String? orderId,
   }) {
     return CheckoutStateModel(
         isLoading: isLoading ?? this.isLoading,
@@ -74,7 +78,8 @@ class CheckoutStateModel {
         selectedDelivery: selectedDelivery ?? this.selectedDelivery,
         offers: offers ?? this.offers,
         shopModel: shopModel ?? this.shopModel,
-        orderModel: orderModel ?? this.orderModel);
+        orderModel: orderModel ?? this.orderModel,
+        orderId: orderId ?? this.orderId);
   }
 }
 
@@ -105,6 +110,10 @@ class CheckoutViewModel extends _$CheckoutViewModel {
     state = state.copyWith(isLoading: true);
     getOffers();
     getShopDetails(shopID);
+    final address = await CheckoutService.getInitAddress();
+    address.fold((l) => log(l), (r) {
+      state = state.copyWith(selectedAddress: r);
+    });
     final response = await CheckoutService.getBasketProducts(shopID);
     response.fold((l) => log(l), (r) {
       double totalPrice = 0;
@@ -153,7 +162,8 @@ class CheckoutViewModel extends _$CheckoutViewModel {
           isUsePoint: true,
           paymentMethod: state.paymentMethod!,
           deliveryService: state.selectedDelivery ?? {},
-          address: state.selectedAddress ?? {});
+          address:
+              state.selectedAddress != null ? state.selectedAddress!.map : {});
     }
   }
 
@@ -179,7 +189,7 @@ class CheckoutViewModel extends _$CheckoutViewModel {
     state = state.copyWith(pickUpTime: time, pickUpDate: date);
   }
 
-  selectAddress(Map<String, dynamic> address) {
+  selectAddress(AddressModel address) {
     state = state.copyWith(selectedAddress: address);
   }
 

@@ -16,8 +16,16 @@ class _TabbarItemState extends State<TabbarItem> {
   Widget build(BuildContext context) {
     return Tab(
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text(widget.text)],
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+              child: Text(
+            widget.text,
+            maxLines: 1,
+          ))
+        ],
       ),
     );
   }

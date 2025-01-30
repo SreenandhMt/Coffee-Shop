@@ -116,9 +116,9 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                         : NavigationUtils.chooseAddressPage(
                             context, widget.shopId),
                     startIcon: Icons.location_on_rounded,
-                    title: checkoutViewModel.selectedAddress!["title"],
+                    title: checkoutViewModel.selectedAddress!.title,
                     subtitle:
-                        "${checkoutViewModel.selectedAddress!["address"]} \n 5  minutes estimate arrived",
+                        "${checkoutViewModel.selectedAddress!.address} \n 5  minutes estimate arrived",
                     endIcon: widget.isOrderDetails
                         ? const IconData(0)
                         : Icons.arrow_forward_ios_rounded)

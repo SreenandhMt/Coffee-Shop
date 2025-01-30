@@ -2,21 +2,30 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
+import '../../../localization/locales.dart';
+import '../view_models/account_view_model.dart';
 
-class AccountPage extends StatefulWidget {
+class AccountPage extends ConsumerStatefulWidget {
   const AccountPage({super.key});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  ConsumerState<AccountPage> createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _AccountPageState extends ConsumerState<AccountPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +37,8 @@ class _AccountPageState extends State<AccountPage> {
             decoration: BoxDecoration(
                 image: DecorationImage(image: AssetImage(AppAssets.logo)))),
         centerTitle: true,
-        title: Text("Account", style: appBarTitleFont),
+        title:
+            Text(LocaleData.account.getString(context), style: appBarTitleFont),
       ),
       body: ListView(
         children: [
@@ -51,32 +61,32 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           _accountOptionWidget(
-            "Vouchers & Discount",
+            LocaleData.accountVouchersTitle.getString(context),
             Icons.discount_outlined,
             onTap: () => NavigationUtils.vouchersAndDiscountPage(context),
           ),
           _accountOptionWidget(
-            "Caffely Points",
+            LocaleData.accountPointsTitle.getString(context),
             Icons.monetization_on_outlined,
             onTap: () => NavigationUtils.caffelyPointsPage(context),
           ),
           _accountOptionWidget(
-            "Caffely Rewards",
+            LocaleData.accountRewardsTitle.getString(context),
             Icons.card_giftcard_outlined,
             onTap: () => NavigationUtils.navigateRewardPage(context),
           ),
           _accountOptionWidget(
-            "Favorite Coffee",
+            LocaleData.accountFavoriteCoffeeTitle.getString(context),
             Icons.coffee_outlined,
             onTap: () => NavigationUtils.navigateFavoriteCoffeePage(context),
           ),
           _accountOptionWidget(
-            "Saved Address",
+            LocaleData.accountAddressTitle.getString(context),
             Icons.location_on_outlined,
             onTap: () => NavigationUtils.navigateManageAddressPage(context),
           ),
           _accountOptionWidget(
-            "Payment Methods",
+            LocaleData.accountPaymentTitle.getString(context),
             Icons.payment_outlined,
             onTap: () => NavigationUtils.managePaymentsPage(context),
           ),
@@ -86,7 +96,7 @@ class _AccountPageState extends State<AccountPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "General",
+                  LocaleData.accountCategoryGeneral.getString(context),
                   style: TextStyle(color: AppColors.themeTextColor(context)),
                 ),
                 width15,
@@ -103,22 +113,22 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           _accountOptionWidget(
-            "Personal Info",
+            LocaleData.accountPersonalInfoTitle.getString(context),
             CupertinoIcons.person,
             onTap: () => NavigationUtils.personalInfoPage(context),
           ),
           _accountOptionWidget(
-            "Notification",
+            LocaleData.accountNotificationTitle.getString(context),
             Icons.notifications_outlined,
             onTap: () => NavigationUtils.notificationSettingPage(context),
           ),
           _accountOptionWidget(
-            "Security",
+            LocaleData.accountSecurityTitle.getString(context),
             Icons.shield_outlined,
             onTap: () => NavigationUtils.securitySettingsPage(context),
           ),
           _accountOptionWidget(
-            "Language",
+            LocaleData.accountLanguageTitle.getString(context),
             Icons.text_format_rounded,
             child: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -137,7 +147,9 @@ class _AccountPageState extends State<AccountPage> {
             ),
             onTap: () => NavigationUtils.languageSettingPage(context),
           ),
-          _accountOptionWidget("Dark Mode", Icons.dark_mode_outlined,
+          _accountOptionWidget(
+              LocaleData.accountDarkModeText.getString(context),
+              Icons.dark_mode_outlined,
               child: CupertinoSwitch(
                 value: true,
                 onChanged: (value) {},
@@ -149,7 +161,7 @@ class _AccountPageState extends State<AccountPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "About",
+                  LocaleData.accountCategoryAbout.getString(context),
                   style: TextStyle(color: AppColors.themeTextColor(context)),
                 ),
                 width15,
@@ -166,17 +178,17 @@ class _AccountPageState extends State<AccountPage> {
             ),
           ),
           _accountOptionWidget(
-            "Help Center",
+            LocaleData.accountHelpCenterTitle.getString(context),
             CupertinoIcons.doc_text,
             onTap: () => NavigationUtils.helpCenterPage(context),
           ),
           _accountOptionWidget(
-            "About Caffely",
+            LocaleData.accountAboutCaffelyTitle.getString(context),
             Icons.info_outlined,
             onTap: () => NavigationUtils.aboutCaffelyPage(context),
           ),
           _accountOptionWidget(
-            "Logout",
+            LocaleData.accountLogOutText.getString(context),
             Icons.logout,
             child: const SizedBox(),
             color: Colors.red,
@@ -188,18 +200,18 @@ class _AccountPageState extends State<AccountPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     height20,
-                    const Text(
-                      "Logout",
-                      style: TextStyle(
+                    Text(
+                      LocaleData.accountLogOutText.getString(context),
+                      style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Colors.red),
                     ),
                     height35,
-                    const Text(
-                      "Are you sure you want to log out?",
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    Text(
+                      LocaleData.logoutConfirmationMessage.getString(context),
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                     height35,
                     Row(
@@ -217,8 +229,9 @@ class _AccountPageState extends State<AccountPage> {
                           onPressed: () {
                             context.pop();
                           },
-                          child: const Text("Cancel",
-                              style: TextStyle(
+                          child: Text(
+                              LocaleData.cancelButton.getString(context),
+                              style: const TextStyle(
                                   color: AppColors.primaryColor, fontSize: 17)),
                         ),
                         ElevatedButton(
@@ -232,9 +245,11 @@ class _AccountPageState extends State<AccountPage> {
                             FirebaseAuth.instance.signOut();
                             context.go("/splash");
                           },
-                          child: const Text("Yes, logout",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 17)),
+                          child: Text(
+                              LocaleData.logoutConfirmationButton
+                                  .getString(context),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 17)),
                         ),
                       ],
                     ),

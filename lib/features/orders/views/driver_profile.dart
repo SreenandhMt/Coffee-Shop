@@ -1,17 +1,16 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:coffee_app/core/app_colors.dart';
-import 'package:coffee_app/core/fonts.dart';
-import 'package:coffee_app/core/size.dart';
-import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
-import 'package:coffee_app/features/auth/views/signin_page.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'package:coffee_app/core/app_colors.dart';
+import 'package:coffee_app/core/fonts.dart';
+import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:coffee_app/route/navigation_utils.dart';
 
 class DriverProfilePage extends StatefulWidget {
   const DriverProfilePage({super.key});
@@ -478,7 +477,11 @@ class _DriverProfilePageState extends State<DriverProfilePage> {
 }
 
 class GoogleMapWidget extends StatefulWidget {
-  const GoogleMapWidget({super.key});
+  const GoogleMapWidget({
+    super.key,
+    this.draggable = false,
+  });
+  final bool draggable;
 
   @override
   State<GoogleMapWidget> createState() => _GoogleMapWidgetState();
@@ -778,6 +781,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             final marker = Marker(
+              draggable: widget.draggable,
               markerId: const MarkerId('place_name'),
               position: const LatLng(37.42796133580664, -122.085749655962),
               icon: BitmapDescriptor.defaultMarkerWithHue(

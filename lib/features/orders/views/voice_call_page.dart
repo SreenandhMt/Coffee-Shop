@@ -3,23 +3,19 @@ import 'package:coffee_app/core/size.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class VoiceCallPage extends StatefulWidget {
+class VoiceCallPage extends StatelessWidget {
   const VoiceCallPage({super.key});
 
-  @override
-  State<VoiceCallPage> createState() => _VoiceCallPageState();
-}
-
-class _VoiceCallPageState extends State<VoiceCallPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
           gradient: LinearGradient(colors: [
         Colors.blueAccent,
-        Colors.blueGrey,
-        Colors.pink,
-        Colors.deepOrange
+        Color.fromARGB(255, 53, 101, 184),
+        Color.fromARGB(255, 53, 101, 184),
+        Color.fromARGB(255, 109, 57, 102),
+        Color.fromARGB(255, 205, 79, 40)
       ], begin: Alignment.topCenter)),
       child: Scaffold(
         backgroundColor: Colors.transparent,

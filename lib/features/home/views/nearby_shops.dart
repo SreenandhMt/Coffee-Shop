@@ -1,5 +1,7 @@
 import 'package:coffee_app/features/home/views/home_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/fonts.dart';
@@ -20,12 +22,13 @@ class _NearbyShopsPageState extends ConsumerState<NearbyShopsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Nearby Shops", style: appBarTitleFont),
+        title: Text(LocaleData.homeShopListTitle.getString(context),
+            style: appBarTitleFont),
       ),
       body: GridView.builder(
         itemCount: homeViewModel.nearbyShops.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, childAspectRatio: 1 / 1.3),
+            crossAxisCount: 2, childAspectRatio: 1 / 1.35),
         padding: const EdgeInsets.symmetric(horizontal: 3),
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),

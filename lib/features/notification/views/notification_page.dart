@@ -2,8 +2,10 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/notification/view_models/notification_view_model.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NotificationPage extends ConsumerStatefulWidget {
@@ -28,7 +30,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Notification",
+          LocaleData.notificationTitle.getString(context),
           style: appBarTitleFont,
         ),
         actions: [

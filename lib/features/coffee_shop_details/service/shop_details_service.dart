@@ -7,6 +7,7 @@ import 'package:coffee_app/features/home/models/coffee_model.dart';
 import 'package:coffee_app/features/home/models/offer_model.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/review_model.dart';
 
@@ -25,6 +26,16 @@ class ShopDetailsService {
     } catch (e) {
       return left(e.toString());
     }
+  }
+
+  static Future<bool> getFavoriteStatus(String shopId) async {
+    return await _firestore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("favorite-coffee")
+        .doc(shopId)
+        .get()
+        .then((value) => value.exists);
   }
 
   static Future<Either<String, List<CoffeeModel>>> getProducts(
@@ -84,6 +95,28 @@ class ShopDetailsService {
     } catch (e) {
       return left(e.toString());
     }
+  }
+
+  static Future<void> addFavoriteList(ShopModel shopModel) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("favorite-coffee")
+          .doc(shopModel.id)
+          .set(shopModel.map);
+    } catch (e) {}
+  }
+
+  static Future<void> removeFavoriteList(ShopModel shopModel) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("favorite-coffee")
+          .doc(shopModel.id)
+          .delete();
+    } catch (e) {}
   }
 
   static Future<void> AddBasket(BasketProductModel orderModel) async {

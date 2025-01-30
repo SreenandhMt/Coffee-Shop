@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffee_app/features/address/models/address_model.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
 import 'package:coffee_app/features/home/models/offer_model.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
@@ -19,6 +20,20 @@ class CheckoutService {
       await _firestore.collection('checkouts').doc(id).delete();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  static Future<Either<String, AddressModel>> getInitAddress() async {
+    try {
+      return await _firestore.collection("address").get().then(
+        //TODO: .where("uid", isEqualTo: _auth.currentUser!.uid) add this to find only user address
+        (value) {
+          AddressModel address = AddressModel.fromJson(value.docs.first.data());
+          return right(address);
+        },
+      );
+    } catch (e) {
+      return left(e.toString());
     }
   }
 

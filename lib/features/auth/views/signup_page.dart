@@ -4,8 +4,10 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,9 +44,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const AuthHadingTexts(
-                          title: "Create Account 👩‍💻",
-                          subtitle: "Sign up to unlock the world of coffee"),
+                      AuthHadingTexts(
+                          title: LocaleData.signupTitle.getString(context),
+                          subtitle:
+                              LocaleData.signupSubtitle.getString(context)),
                       InputWithText(
                         controller: emailController,
                         hintText: "Email",
@@ -118,7 +121,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "Already have an account?",
+                            LocaleData.alreadyHaveAccount.getString(context),
                             style: sharpLightFont(fontSize: 15),
                           ),
                           width5,
@@ -128,7 +131,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 context.push("/welcome/signin");
                               },
                               child: Text(
-                                "Sign in",
+                                LocaleData.authSignin.getString(context),
                                 style: sharpLightFont(
                                     color: AppColors.primaryColor,
                                     fontWeight: FontWeight.w700),
@@ -159,8 +162,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         log(right);
                       });
                     },
-                    child: const Text("Sign up",
-                        style: TextStyle(color: Colors.white, fontSize: 17)),
+                    child: Text(LocaleData.authSignup.getString(context),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 17)),
                   ),
                 ],
               ),

@@ -1,18 +1,16 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../../route/navigation_utils.dart';
 
-class RatingPage extends StatefulWidget {
+class RatingPage extends StatelessWidget {
   const RatingPage({super.key});
 
-  @override
-  State<RatingPage> createState() => _RatingPageState();
-}
-
-class _RatingPageState extends State<RatingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,74 +18,82 @@ class _RatingPageState extends State<RatingPage> {
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
-          spacing: 10,
           children: [
-            const CircleAvatar(radius: 80),
-            height15,
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                "Let's rate your driver's delivery service",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    const CircleAvatar(radius: 80),
+                    height15,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        LocaleData.rateDriverTitle.getString(context),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                    height10,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        LocaleData.rateDriverSubTitle.getString(context),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    height20,
+                    RatingBar(
+                      initialRating: 3,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemSize: 50,
+                      itemCount: 5,
+                      ratingWidget: RatingWidget(
+                        full: const Icon(
+                          Icons.star_rate_rounded,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
+                        half: const Icon(
+                          Icons.star_half_rounded,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
+                        empty: const Icon(
+                          Icons.star_border_rounded,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
+                      ),
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      onRatingUpdate: (rating) {
+                        print(rating);
+                      },
+                    ),
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      child: Divider(
+                        thickness: 0.3,
+                      ),
+                    ),
+                    Text(LocaleData.notReceiveOrder.getString(context)),
+                    height10,
+                    const Text(
+                      "Call your diver",
+                      style: TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor),
+                    ),
+                  ],
+                ),
               ),
             ),
-            height10,
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                "How was the delivery of your order from Caffely Astoria Aromas?",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ),
-            height20,
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.star_rate_rounded,
-                  color: Colors.orange,
-                  size: 50,
-                ),
-                Icon(
-                  Icons.star_rate_rounded,
-                  color: Colors.orange,
-                  size: 50,
-                ),
-                Icon(
-                  Icons.star_rate_rounded,
-                  color: Colors.orange,
-                  size: 50,
-                ),
-                Icon(
-                  Icons.star_rate_rounded,
-                  color: Colors.orange,
-                  size: 50,
-                ),
-                Icon(
-                  Icons.star_rate_rounded,
-                  color: Colors.orange,
-                  size: 50,
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              child: Divider(
-                thickness: 0.3,
-              ),
-            ),
-            const Text("Haven't received your order?"),
-            height10,
-            const Text(
-              "Call your diver",
-              style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primaryColor),
-            ),
-            const Spacer(),
             height10,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -102,8 +108,8 @@ class _RatingPageState extends State<RatingPage> {
                   onPressed: () {
                     NavigationUtils.tipDriverPage(context);
                   },
-                  child: const Text("Cancel",
-                      style: TextStyle(
+                  child: Text(LocaleData.cancelButton.getString(context),
+                      style: const TextStyle(
                           color: AppColors.primaryColor, fontSize: 17)),
                 ),
                 ElevatedButton(
@@ -115,8 +121,9 @@ class _RatingPageState extends State<RatingPage> {
                   onPressed: () {
                     NavigationUtils.tipDriverPage(context);
                   },
-                  child: const Text("Submit",
-                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                  child: Text(LocaleData.submitButton.getString(context),
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 17)),
                 ),
               ],
             ),

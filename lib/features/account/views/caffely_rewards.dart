@@ -1,8 +1,10 @@
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/app_colors.dart';
 
@@ -19,7 +21,8 @@ class _CaffelyRewardsPageState extends State<CaffelyRewardsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Caffely Rewards', style: appBarTitleFont),
+        title: Text(LocaleData.accountRewardsTitle.getString(context),
+            style: appBarTitleFont),
         actions: const [
           Icon(Icons.info_outline),
           width5,
@@ -30,14 +33,14 @@ class _CaffelyRewardsPageState extends State<CaffelyRewardsPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           height10,
-          const Text(
-            "Get Free Coffee!",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
+          Text(
+            LocaleData.caffelyRewardTitle.getString(context),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
           ),
-          const Text(
-            "Get a free coffee discount voucher every time your friend joins via your referral code.",
+          Text(
+            LocaleData.caffelyRewardSubtitle.getString(context),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 17),
+            style: const TextStyle(fontSize: 17),
           ),
           Container(
             width: double.infinity,
@@ -47,9 +50,9 @@ class _CaffelyRewardsPageState extends State<CaffelyRewardsPage> {
                 color: AppColors.secondaryColor(context)),
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           ),
-          const Text(
-            "Copy or share the referral code below",
-            style: TextStyle(fontSize: 14),
+          Text(
+            LocaleData.caffelyShareNote.getString(context),
+            style: const TextStyle(fontSize: 14),
           ),
           Container(
             padding: const EdgeInsets.all(10),
@@ -71,7 +74,9 @@ class _CaffelyRewardsPageState extends State<CaffelyRewardsPage> {
             ),
           ),
           const Spacer(),
-          AuthButton(text: "Share Referral Code", onPressed: () {})
+          AuthButton(
+              text: LocaleData.caffelyButton.getString(context),
+              onPressed: () {})
         ],
       ),
     );

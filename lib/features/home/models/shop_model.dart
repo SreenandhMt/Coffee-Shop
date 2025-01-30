@@ -9,6 +9,7 @@ class ShopModel {
   final Map<String, dynamic>? about;
   final List<dynamic> types;
   final Map<dynamic, dynamic>? address;
+  final Map<String, dynamic> map;
 
   ShopModel({
     required this.name,
@@ -19,9 +20,10 @@ class ShopModel {
     this.about,
     required this.types,
     this.address,
+    required this.map,
   });
 
-  factory ShopModel.fromJson(Map map) {
+  factory ShopModel.fromJson(Map<String, dynamic> map) {
     return ShopModel(
       name: map["name"],
       images: map["images"],
@@ -32,6 +34,7 @@ class ShopModel {
       types: map["types"],
       about: map["about"],
       address: map["address"],
+      map: map,
     );
   }
 }

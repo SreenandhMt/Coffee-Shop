@@ -1,9 +1,11 @@
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/features/account/view_models/account_view_model.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/fonts.dart';
-import '../../home/view_models/home_view_model.dart';
 import '../../home/views/home_page.dart';
 
 class FavoriteCoffeePage extends ConsumerStatefulWidget {
@@ -15,24 +17,32 @@ class FavoriteCoffeePage extends ConsumerStatefulWidget {
 
 class _FavoriteCoffeePageState extends ConsumerState<FavoriteCoffeePage> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        ref.read(accountViewModelProvider.notifier).getFavoriteCoffees());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final homeViewModel = ref.watch(homeViewModelProvider);
+    final viewModel = ref.watch(accountViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Favorite Coffee", style: appBarTitleFont),
+        title: Text(LocaleData.accountFavoriteCoffeeTitle.getString(context),
+            style: appBarTitleFont),
         actions: const [
           Icon(Icons.search, size: 30),
           width5,
         ],
       ),
       body: GridView.builder(
-        itemCount: homeViewModel.popularCoffees.length,
+        itemCount: viewModel.favoriteCoffees.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, childAspectRatio: 1 / 1.3),
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.all(10),
-          child: CoffeeCard(model: homeViewModel.popularCoffees[index]),
+          child: CoffeeCard(model: viewModel.favoriteCoffees[index]),
         ),
       ),
     );

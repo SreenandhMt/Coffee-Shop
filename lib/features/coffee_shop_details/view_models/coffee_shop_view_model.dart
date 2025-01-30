@@ -25,6 +25,7 @@ class ShopStateModel {
   final List<OfferModel>? offers;
   final List<OfferModel>? selectedOffers;
   final double? selectedFilter;
+  final bool isFavorite;
 
   ShopStateModel({
     required this.isLoading,
@@ -37,11 +38,15 @@ class ShopStateModel {
     this.offers,
     this.selectedOffers,
     this.selectedFilter,
+    required this.isFavorite,
   });
 
   factory ShopStateModel.initial() {
     return ShopStateModel(
-        isLoading: false, selectedCoffeeIds: [], totalPrice: 0.0);
+        isFavorite: false,
+        isLoading: false,
+        selectedCoffeeIds: [],
+        totalPrice: 0.0);
   }
 
   ShopStateModel copyWith({
@@ -55,18 +60,21 @@ class ShopStateModel {
     double? selectedFilter,
     List<OfferModel>? offers,
     List<OfferModel>? selectedOffers,
+    bool? isFavorite,
   }) {
     return ShopStateModel(
-        isLoading: isLoading ?? this.isLoading,
-        coffeeModel: coffeeModel ?? this.coffeeModel,
-        shopModel: shopModel ?? this.shopModel,
-        selectedCoffeeIds: selectedCoffeeIds ?? this.selectedCoffeeIds,
-        totalPrice: totalPrice ?? this.totalPrice,
-        reviews: reviews ?? this.reviews,
-        sortedReview: sortedReview ?? this.sortedReview,
-        selectedFilter: selectedFilter ?? this.selectedFilter,
-        offers: offers ?? this.offers,
-        selectedOffers: selectedOffers ?? this.selectedOffers);
+      isLoading: isLoading ?? this.isLoading,
+      coffeeModel: coffeeModel ?? this.coffeeModel,
+      shopModel: shopModel ?? this.shopModel,
+      selectedCoffeeIds: selectedCoffeeIds ?? this.selectedCoffeeIds,
+      totalPrice: totalPrice ?? this.totalPrice,
+      reviews: reviews ?? this.reviews,
+      sortedReview: sortedReview ?? this.sortedReview,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
+      offers: offers ?? this.offers,
+      selectedOffers: selectedOffers ?? this.selectedOffers,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
   }
 }
 
@@ -109,11 +117,27 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     state = ShopStateModel.initial();
   }
 
+  void addShopFavoriteList() {
+    if (state.isFavorite) {
+      ShopDetailsService.removeFavoriteList(state.shopModel!);
+      state = state.copyWith(isFavorite: false);
+      return;
+    }
+    ShopDetailsService.addFavoriteList(state.shopModel!);
+    state = state.copyWith(isFavorite: true);
+  }
+
+  getFavoriteStatus(String shopId) async {
+    final response = await ShopDetailsService.getFavoriteStatus(shopId);
+    state = state.copyWith(isFavorite: response);
+  }
+
   void getAllData(String shopId) {
     state = state.copyWith(isLoading: true);
     getShopDetails(shopId);
     getBasket(shopId);
     getReviews(shopId);
+    getFavoriteStatus(shopId);
     // ShopDetailsService.addOffers(shopId);
     getOffers(shopId);
     state = state.copyWith(isLoading: false);

@@ -1,3 +1,4 @@
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_app/core/fonts.dart';
@@ -25,7 +26,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Order Details", style: appBarTitleFont),
+        title: Text(LocaleData.orderDetailsTitle, style: appBarTitleFont),
       ),
       body: ListView(
         children: [

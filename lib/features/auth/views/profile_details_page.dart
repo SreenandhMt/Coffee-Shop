@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:coffee_app/features/auth/view_models/auth_view_model.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -46,10 +48,9 @@ class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       //top
-                      const AuthHadingTexts(
-                        title: "Complete Your Profile 👤",
-                        subtitle:
-                            "Add the finishing touches to your profile. Lets make your coffee experience more social!",
+                      AuthHadingTexts(
+                        title: LocaleData.profileTitle.getString(context),
+                        subtitle: LocaleData.profileSubtitle.getString(context),
                       ),
                       //center
                       Column(
@@ -111,7 +112,7 @@ class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
                 ),
               ),
               AuthButton(
-                text: "Finish",
+                text: LocaleData.profileFinish.getString(context),
                 onPressed: () async {
                   //validating
                   if (!key.currentState!.validate() ||

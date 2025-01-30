@@ -1,5 +1,7 @@
+import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/assets.dart';
@@ -25,7 +27,8 @@ class _WalletPageState extends State<WalletPage> {
             decoration: BoxDecoration(
                 image: DecorationImage(image: AssetImage(AppAssets.logo)))),
         centerTitle: true,
-        title: Text("Wallet", style: appBarTitleFont),
+        title:
+            Text(LocaleData.wallet.getString(context), style: appBarTitleFont),
         actions: const [
           Icon(
             Icons.search_rounded,
@@ -41,9 +44,9 @@ class _WalletPageState extends State<WalletPage> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
-                const Text(
-                  "Transaction History",
-                  style: TextStyle(
+                Text(
+                  LocaleData.walletTransactionHistory.getString(context),
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -160,9 +163,9 @@ class _WalletPageState extends State<WalletPage> {
             ),
           ),
           const Spacer(),
-          const Text(
-            "Your Balance",
-            style: TextStyle(
+          Text(
+            LocaleData.walletBalance.getString(context),
+            style: const TextStyle(
               color: Colors.white,
             ),
           ),
@@ -189,12 +192,12 @@ class _WalletPageState extends State<WalletPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.cloud_download_rounded),
+                      const Icon(Icons.cloud_download_rounded),
                       width5,
-                      Text("Top Up",
-                          style: TextStyle(
+                      Text(LocaleData.walletAddMoney.getString(context),
+                          style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600))
                     ],
                   ),

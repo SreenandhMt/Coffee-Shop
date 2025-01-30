@@ -1,18 +1,14 @@
-import 'package:flutter/cupertino.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/size.dart';
 import '../../../route/navigation_utils.dart';
 
-class TipDriver extends StatefulWidget {
+class TipDriver extends StatelessWidget {
   const TipDriver({super.key});
 
-  @override
-  State<TipDriver> createState() => TipDriverState();
-}
-
-class TipDriverState extends State<TipDriver> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,21 +20,23 @@ class TipDriverState extends State<TipDriver> {
           children: [
             const CircleAvatar(radius: 80),
             height15,
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Text(
-                "Wow 5 Star!🤩",
+                LocaleData.tipDriverTitle.getString(context),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
             height5,
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Text(
-                "Do you want to add additional tip to make your driver's day?",
+                LocaleData.tipDriverSubTitle.getString(context),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ),
             height10,
@@ -88,8 +86,8 @@ class TipDriverState extends State<TipDriver> {
                   onPressed: () {
                     NavigationUtils.ratingShopPage(context);
                   },
-                  child: const Text("Cancel",
-                      style: TextStyle(
+                  child: Text(LocaleData.cancelButton.getString(context),
+                      style: const TextStyle(
                           color: AppColors.primaryColor, fontSize: 17)),
                 ),
                 ElevatedButton(
@@ -101,8 +99,9 @@ class TipDriverState extends State<TipDriver> {
                   onPressed: () {
                     NavigationUtils.ratingShopPage(context);
                   },
-                  child: const Text("Submit",
-                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                  child: Text(LocaleData.submitButton.getString(context),
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 17)),
                 ),
               ],
             ),

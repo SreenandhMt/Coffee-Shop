@@ -1,6 +1,7 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/features/address/view_models/address_view_model.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 import 'package:flutter/material.dart';
@@ -15,34 +16,16 @@ class ChooseAddressPage extends ConsumerStatefulWidget {
 }
 
 class _ChooseAddressPageState extends ConsumerState<ChooseAddressPage> {
-  final List<Map<String, dynamic>> address = [
-    {
-      "title": "Home",
-      "name": "Andrew Ainsley",
-      "number": "+1 111 467 378 399",
-      "address": "701 7th Ave, New York, NY 10036, USA",
-      "pin": true,
-      "select": true
-    },
-    {
-      "title": "Apartment",
-      "name": "Andrew Ainsley",
-      "number": "+1 111 467 378 399",
-      "address": "Liberty Lsland, New York, NY 10036, USA",
-      "pin": true,
-      "select": false
-    },
-    {
-      "title": "Mom's House",
-      "name": "Jenny Wilson",
-      "number": "+1 111 467 378 399",
-      "address": "Central Park, New York, NY 10036, USA",
-      "pin": true,
-      "select": false
-    },
-  ];
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        ref.read(addressViewModelProvider.notifier).getAddresses());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final address = ref.watch(addressViewModelProvider).addresses;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -59,17 +42,11 @@ class _ChooseAddressPageState extends ConsumerState<ChooseAddressPage> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  border: address[index]["select"]
+                  border: address[index].isSelected
                       ? Border.all(color: AppColors.primaryColor, width: 2)
                       : Border.all(color: AppColors.secondaryColor(context))),
               child: InkWell(
                 onTap: () {
-                  setState(() {
-                    for (var element in address) {
-                      element["select"] = false;
-                    }
-                    address[index]["select"] = true;
-                  });
                   ref
                       .read(checkoutViewModelProvider.notifier)
                       .selectAddress(address[index]);
@@ -79,11 +56,11 @@ class _ChooseAddressPageState extends ConsumerState<ChooseAddressPage> {
                     Row(
                       children: [
                         Text(
-                          address[index]["title"],
+                          address[index].title,
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.w700),
                         ),
-                        if (address[index]["select"]) ...[
+                        if (address[index].isSelected) ...[
                           width20,
                           Container(
                             padding: const EdgeInsets.all(4),
@@ -105,18 +82,18 @@ class _ChooseAddressPageState extends ConsumerState<ChooseAddressPage> {
                     height30,
                     Row(
                       children: [
-                        Text(address[index]["name"],
+                        Text(address[index].name,
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w700)),
                         width20,
-                        Text("(${address[index]['number']})")
+                        Text("(${address[index].phoneNumber})")
                       ],
                     ),
                     height10,
                     Row(
                       children: [
-                        Text(address[index]["address"]),
-                        if (address[index]["select"]) ...[
+                        Text(address[index].address),
+                        if (address[index].isSelected) ...[
                           const Spacer(),
                           const Icon(Icons.done)
                         ]

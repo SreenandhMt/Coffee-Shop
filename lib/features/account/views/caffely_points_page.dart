@@ -1,8 +1,10 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 class CaffelyPointsPage extends StatefulWidget {
   const CaffelyPointsPage({super.key});
@@ -17,7 +19,8 @@ class _CaffelyPointsPageState extends State<CaffelyPointsPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Caffely Points", style: appBarTitleFont),
+        title: Text(LocaleData.accountPointsTitle.getString(context),
+            style: appBarTitleFont),
         actions: const [
           Icon(Icons.info_outlined),
           width5,
@@ -34,7 +37,7 @@ class _CaffelyPointsPageState extends State<CaffelyPointsPage> {
               borderRadius: BorderRadius.circular(15),
               color: AppColors.primaryColor,
             ),
-            child: const Column(
+            child: Column(
               spacing: 10,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,20 +45,20 @@ class _CaffelyPointsPageState extends State<CaffelyPointsPage> {
                 Row(
                   children: [
                     Text(
-                      "Total Caffely Points",
-                      style: TextStyle(
+                      LocaleData.totalPointText.getString(context),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Spacer(),
-                    Icon(
+                    const Spacer(),
+                    const Icon(
                       Icons.document_scanner_outlined,
                       color: Colors.white,
                     )
                   ],
                 ),
-                Text(
+                const Text(
                   "25",
                   style: TextStyle(
                       fontSize: 25,
@@ -63,30 +66,31 @@ class _CaffelyPointsPageState extends State<CaffelyPointsPage> {
                       color: Colors.white),
                 ),
                 Text(
-                  "100 points = \$1.00. You can use these points as payment.",
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  LocaleData.pointValueText.getString(context),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
                 )
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
                 Text(
-                  "Points History",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                  LocaleData.pointHistoryTitle.getString(context),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w800),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
-                  "View All",
-                  style: TextStyle(
+                  LocaleData.viewAll.getString(context),
+                  style: const TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w600),
                 ),
                 width10,
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios,
                   size: 23,
                   color: AppColors.primaryColor,

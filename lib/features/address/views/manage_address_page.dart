@@ -1,47 +1,31 @@
+import 'package:coffee_app/features/address/view_models/address_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
 
-class ManageAddressPage extends StatefulWidget {
+class ManageAddressPage extends ConsumerStatefulWidget {
   const ManageAddressPage({super.key});
 
   @override
-  State<ManageAddressPage> createState() => _ManageAddressPageState();
+  ConsumerState<ManageAddressPage> createState() => _ManageAddressPageState();
 }
 
-class _ManageAddressPageState extends State<ManageAddressPage> {
-  final List<Map<String, dynamic>> address = [
-    {
-      "title": "Home",
-      "name": "Andrew Ainsley",
-      "number": "+1 111 467 378 399",
-      "address": "701 7th Ave, New York, NY 10036, USA",
-      "pin": true,
-      "select": true
-    },
-    {
-      "title": "Apartment",
-      "name": "Andrew Ainsley",
-      "number": "+1 111 467 378 399",
-      "address": "Liberty Lsland, New York, NY 10036, USA",
-      "pin": true,
-      "select": false
-    },
-    {
-      "title": "Mom's House",
-      "name": "Jenny Wilson",
-      "number": "+1 111 467 378 399",
-      "address": "Central Park, New York, NY 10036, USA",
-      "pin": true,
-      "select": false
-    },
-  ];
+class _ManageAddressPageState extends ConsumerState<ManageAddressPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        ref.read(addressViewModelProvider.notifier).getAddresses());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(addressViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -57,7 +41,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
         children: [
           Expanded(
               child: ListView.builder(
-            itemCount: address.length,
+            itemCount: viewModel.addresses.length,
             itemBuilder: (context, index) => Container(
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -69,11 +53,11 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                   Row(
                     children: [
                       Text(
-                        address[index]["title"],
+                        viewModel.addresses[index].title,
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
-                      if (address[index]["select"]) ...[
+                      if (viewModel.addresses[index].isSelected) ...[
                         width20,
                         Container(
                           padding: const EdgeInsets.all(4),
@@ -95,18 +79,18 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                   height30,
                   Row(
                     children: [
-                      Text(address[index]["name"],
+                      Text(viewModel.addresses[index].name,
                           style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.w700)),
                       width20,
-                      Text("(${address[index]['number']})")
+                      Text("(${viewModel.addresses[index].phoneNumber})")
                     ],
                   ),
                   height10,
                   Row(
                     children: [
-                      Text(address[index]["address"]),
-                      if (address[index]["select"]) ...[
+                      Text(viewModel.addresses[index].address),
+                      if (viewModel.addresses[index].isSelected) ...[
                         const Spacer(),
                         const Icon(Icons.done)
                       ]
@@ -140,19 +124,12 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                           ),
                         ),
                       ),
-                      if (!address[index]["select"]) ...[
+                      if (!viewModel.addresses[index].isSelected) ...[
                         width10,
                         PopupMenuButton(
                           itemBuilder: (context) => [
                             PopupMenuItem(
-                              onTap: () {
-                                setState(() {
-                                  for (var element in address) {
-                                    element["select"] = false;
-                                  }
-                                  address[index]["select"] = true;
-                                });
-                              },
+                              onTap: () {},
                               child: const Row(
                                 children: [
                                   Icon(Icons.location_on_outlined, size: 25),
@@ -168,9 +145,7 @@ class _ManageAddressPageState extends State<ManageAddressPage> {
                             ),
                             PopupMenuItem(
                               onTap: () {
-                                setState(() {
-                                  address.removeAt(index);
-                                });
+                                setState(() {});
                               },
                               child: const Row(
                                 children: [

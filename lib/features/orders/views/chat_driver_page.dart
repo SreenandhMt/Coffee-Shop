@@ -5,14 +5,9 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ChatDriverPage extends StatefulWidget {
+class ChatDriverPage extends StatelessWidget {
   const ChatDriverPage({super.key});
 
-  @override
-  State<ChatDriverPage> createState() => _ChatDriverPageState();
-}
-
-class _ChatDriverPageState extends State<ChatDriverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
