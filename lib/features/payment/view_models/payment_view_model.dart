@@ -5,7 +5,6 @@ import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:coffee_app/features/payment/service/payment_service.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../components/checkout/pick_up_widget.dart';
@@ -26,7 +25,8 @@ class PaymentViewModel extends _$PaymentViewModel {
 
   void pickUpPayment(BuildContext context, int amount, String currency,
       ShopModel shopModel, Map<String, dynamic> paymentMethod) async {
-    final response = await PaymentService.makePayment();
+    final response =
+        await PaymentService.makePayment(amount, "usd", shopModel.name);
     if (response) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -50,7 +50,8 @@ class PaymentViewModel extends _$PaymentViewModel {
 
   void pay(BuildContext context, int amount, String currency,
       ShopModel shopModel, Map<String, dynamic> paymentMethod) async {
-    final response = await PaymentService.makePayment();
+    final response =
+        await PaymentService.makePayment(amount, "usd", shopModel.name);
     if (response) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

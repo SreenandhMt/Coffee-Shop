@@ -195,7 +195,7 @@ class CheckoutService {
             "value": paymentMethod["name"],
           },
           {
-            "type": "Payment Status",
+            "type": "Status",
             "value": "Paid",
           },
           {

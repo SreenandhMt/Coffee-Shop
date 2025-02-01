@@ -65,11 +65,6 @@ class AboutShopPage extends ConsumerWidget {
                 ],
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 15),
-            //   child: Text("Saturday - Sunday   : 12:00 - 20.00",
-            //       style: titleFonts(fontSize: 20, fontWeight: FontWeight.w600)),
-            // ),
             height20,
             Padding(
               padding: const EdgeInsets.only(left: 15, bottom: 5),

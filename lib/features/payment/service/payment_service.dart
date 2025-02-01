@@ -6,9 +6,10 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
-  static Future<bool> makePayment() async {
+  static Future<bool> makePayment(
+      int amount, String currency, String shopName) async {
     try {
-      final secretClient = await createPaymentIntent(100, "usd");
+      final secretClient = await createPaymentIntent(amount, currency);
       if (secretClient == null) {
         log("client secret is null");
         return false;
@@ -16,7 +17,7 @@ class PaymentService {
       await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
         paymentIntentClientSecret: secretClient,
-        merchantDisplayName: "Caffely",
+        merchantDisplayName: shopName,
       ));
       await Stripe.instance.presentPaymentSheet();
       return true;
