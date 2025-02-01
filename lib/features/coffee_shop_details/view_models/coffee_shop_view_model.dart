@@ -85,7 +85,7 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     return ShopStateModel.initial();
   }
 
-  void getBasket(String shopId) async {
+  Future<void> getBasket(String shopId) async {
     // await ShopDetailsService.addReview();
     final response = await ShopDetailsService.getBasket(shopId);
     response.fold((l) => log(l), (r) {
@@ -132,14 +132,13 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     state = state.copyWith(isFavorite: response);
   }
 
-  void getAllData(String shopId) {
-    state = state.copyWith(isLoading: true);
-    getShopDetails(shopId);
-    getBasket(shopId);
-    getReviews(shopId);
-    getFavoriteStatus(shopId);
-    // ShopDetailsService.addOffers(shopId);
-    getOffers(shopId);
+  Future<void> getAllData(String shopId, {bool loading = true}) async {
+    state = state.copyWith(isLoading: loading);
+    await getShopDetails(shopId);
+    await getBasket(shopId);
+    await getReviews(shopId);
+    await getFavoriteStatus(shopId);
+    await getOffers(shopId);
     state = state.copyWith(isLoading: false);
   }
 
@@ -156,12 +155,12 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     }
   }
 
-  void getOffers(String shopid) async {
+  Future<void> getOffers(String shopid) async {
     final response = await ShopDetailsService.getOffers(shopid);
     response.fold((l) => log(l), (r) => state = state.copyWith(offers: r));
   }
 
-  void getReviews(String shopid) async {
+  Future<void> getReviews(String shopid) async {
     final response = await ShopDetailsService.getReviews(shopid);
     response.fold((l) => log(l),
         (r) => state = state.copyWith(reviews: r, sortedReview: r));

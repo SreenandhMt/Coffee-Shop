@@ -1,7 +1,4 @@
-import 'dart:developer';
-
-import 'package:coffee_app/core/progress_bar.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:coffee_app/components/all_coffee_shops/loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,86 +51,98 @@ class _AllCoffeeShopsPageState extends ConsumerState<AllCoffeeShopsPage> {
             width10,
           ],
         ),
-        body: viewModel.isLoading
-            ? const AppProgressBar()
-            : Column(
+        body: Column(
+          children: [
+            //*Current location
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                spacing: 5,
                 children: [
-                  //*Current location
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    child: Row(
-                      spacing: 5,
-                      children: [
-                        const Icon(Icons.location_on_outlined),
-                        width5,
-                        Text(LocaleData.yourLocation.getString(context),
-                            style: titleFonts(
-                                fontWeight: FontWeight.w600, fontSize: 19)),
-                        const Spacer(),
-                        Text("New York",
-                            style: titleFonts(
-                                fontWeight: FontWeight.w700, fontSize: 19)),
-                        const Icon(
-                          Icons.arrow_drop_down_rounded,
-                          size: 30,
-                          color: AppColors.primaryColor,
-                        )
-                      ],
-                    ),
-                  ),
-                  //*tabbar
-                  Container(
-                    height: 45,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                        color: AppColors.secondaryColor(context),
-                        borderRadius: BorderRadius.circular(15)),
-                    child: TabBar(
-                      dividerColor: Colors.transparent,
-                      indicator: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelColor: Colors.white,
-                      unselectedLabelColor: Colors.black54,
-                      tabs: [
-                        TabbarItem(
-                            text: LocaleData.allShopTitle.getString(context)),
-                        TabbarItem(
-                            text: LocaleData.favoriteShopTitle
-                                .getString(context)),
-                      ],
-                    ),
-                  ),
-                  //*tabbar view
-                  Expanded(
-                    child: TabBarView(children: [
-                      ListView.builder(
-                        itemCount: viewModel.coffeeShops.length,
-                        itemBuilder: (context, index) {
-                          return ShopWidget(
-                              index: index,
-                              shopModel: viewModel.coffeeShops[index]);
-                        },
-                      ),
-                      ListView.builder(
-                        itemCount: viewModel.favoriteCoffeeShops.length,
-                        itemBuilder: (context, index) {
-                          return ShopWidget(
-                            index: index,
-                            shopModel: viewModel.favoriteCoffeeShops[index],
-                          );
-                        },
-                      )
-                    ]),
-                  ),
+                  const Icon(Icons.location_on_outlined),
+                  width5,
+                  Text(LocaleData.yourLocation.getString(context),
+                      style: titleFonts(
+                          fontWeight: FontWeight.w600, fontSize: 19)),
+                  const Spacer(),
+                  Text("New York",
+                      style: titleFonts(
+                          fontWeight: FontWeight.w700, fontSize: 19)),
+                  const Icon(
+                    Icons.arrow_drop_down_rounded,
+                    size: 30,
+                    color: AppColors.primaryColor,
+                  )
                 ],
               ),
+            ),
+            //*tabbar
+            Container(
+              height: 45,
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                  color: AppColors.secondaryColor(context),
+                  borderRadius: BorderRadius.circular(15)),
+              child: TabBar(
+                dividerColor: Colors.transparent,
+                indicator: const BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.black54,
+                tabs: [
+                  TabbarItem(text: LocaleData.allShopTitle.getString(context)),
+                  TabbarItem(
+                      text: LocaleData.favoriteShopTitle.getString(context)),
+                ],
+              ),
+            ),
+            //*tabbar view
+            Expanded(
+              child: TabBarView(children: [
+                viewModel.isLoading || viewModel.coffeeShops == null
+                    ? const AllCoffeeShopLoadingPage()
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          await ref
+                              .read(coffeeShopsViewModelProvider.notifier)
+                              .getShops();
+                        },
+                        child: ListView.builder(
+                          itemCount: viewModel.coffeeShops!.length,
+                          itemBuilder: (context, index) {
+                            return ShopWidget(
+                                index: index,
+                                shopModel: viewModel.coffeeShops![index]);
+                          },
+                        ),
+                      ),
+                viewModel.isLoading || viewModel.coffeeShops == null
+                    ? const AllCoffeeShopLoadingPage()
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          await ref
+                              .read(coffeeShopsViewModelProvider.notifier)
+                              .getFavoriteShops();
+                        },
+                        child: ListView.builder(
+                          itemCount: viewModel.favoriteCoffeeShops.length,
+                          itemBuilder: (context, index) {
+                            return ShopWidget(
+                              index: index,
+                              shopModel: viewModel.favoriteCoffeeShops[index],
+                            );
+                          },
+                        ),
+                      )
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }

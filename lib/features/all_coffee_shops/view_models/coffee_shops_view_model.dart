@@ -10,14 +10,14 @@ part 'coffee_shops_view_model.g.dart';
 
 class CoffeeShopsStateModel {
   final bool isLoading;
-  final List<ShopModel> coffeeShops;
+  final List<ShopModel>? coffeeShops;
   final List<ShopModel> favoriteCoffeeShops;
   final List<ShopModel> searchedShops;
   final List<String> searchHistory;
 
   CoffeeShopsStateModel({
     required this.isLoading,
-    required this.coffeeShops,
+    this.coffeeShops,
     required this.favoriteCoffeeShops,
     required this.searchedShops,
     required this.searchHistory,
@@ -26,7 +26,6 @@ class CoffeeShopsStateModel {
   factory CoffeeShopsStateModel.initial() {
     return CoffeeShopsStateModel(
       isLoading: false,
-      coffeeShops: [],
       favoriteCoffeeShops: [],
       searchedShops: [],
       searchHistory: [],
@@ -59,14 +58,13 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
   Future<String> searchShops(String query) async {
     state = state.copyWith(isLoading: true);
     List<ShopModel> shops = [];
-    for (var shop in state.coffeeShops) {
+    for (var shop in state.coffeeShops!) {
       if (shop.name.toLowerCase().contains(query.toLowerCase()) ||
           shop.types.contains(query)) {
         shops.add(shop);
       }
     }
     state = state.copyWith(isLoading: false, searchedShops: shops);
-    log(state.searchedShops.toString());
     return "";
   }
 
@@ -78,7 +76,23 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
     });
     final allShops = await CoffeeShopsService.getAllShops();
     allShops.fold((l) => null, (shops) {
-      state = state.copyWith(coffeeShops: shops, isLoading: false);
+      state = state.copyWith(coffeeShops: shops);
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    state = state.copyWith(isLoading: false);
+  }
+
+  getFavoriteShops() async {
+    final favoriteShops = await CoffeeShopsService.getFavoriteCoffeeShops();
+    favoriteShops.fold((l) => log(l), (shops) {
+      state = state.copyWith(favoriteCoffeeShops: shops);
+    });
+  }
+
+  getShops() async {
+    final allShops = await CoffeeShopsService.getAllShops();
+    allShops.fold((l) => null, (shops) {
+      state = state.copyWith(coffeeShops: shops);
     });
   }
 }

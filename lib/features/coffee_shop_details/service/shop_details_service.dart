@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
@@ -29,13 +28,17 @@ class ShopDetailsService {
   }
 
   static Future<bool> getFavoriteStatus(String shopId) async {
-    return await _firestore
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection("favorite-coffee")
-        .doc(shopId)
-        .get()
-        .then((value) => value.exists);
+    try {
+      return await _firestore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("favorite-coffee")
+          .doc(shopId)
+          .get()
+          .then((value) => value.exists);
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<Either<String, List<CoffeeModel>>> getProducts(

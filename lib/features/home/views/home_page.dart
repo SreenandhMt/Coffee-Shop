@@ -1,3 +1,4 @@
+import 'package:coffee_app/components/home/home_loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,78 +38,87 @@ class _HomePageState extends ConsumerState<HomePage> {
     final homeState = ref.watch(homeViewModelProvider);
     return Scaffold(
       appBar: _appBar(),
-      body: ListView(
-        children: [
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              LimitedBox(
-                maxHeight: size.width * 0.6,
-                child: PageView(
-                  children: List.generate(
-                    homeState.banners.length,
-                    (index) => InkWell(
-                      onTap: () {
-                        ref
-                            .read(homeViewModelProvider.notifier)
-                            .selectBanner(homeState.banners[index]);
-                        NavigationUtils.offerDetailsPage(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 200,
-                        margin: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryColor(context),
-                          borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: NetworkImage(homeState.banners[index].image),
-                            fit: BoxFit.cover,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref.read(homeViewModelProvider.notifier).getAllData();
+        },
+        child: homeState.loading
+            ? const HomeLoading()
+            : ListView(
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      LimitedBox(
+                        maxHeight: size.width * 0.6,
+                        child: PageView(
+                          children: List.generate(
+                            homeState.banners.length,
+                            (index) => InkWell(
+                              onTap: () {
+                                ref
+                                    .read(homeViewModelProvider.notifier)
+                                    .selectBanner(homeState.banners[index]);
+                                NavigationUtils.offerDetailsPage(context);
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 200,
+                                margin: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondaryColor(context),
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        homeState.banners[index].image),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 25),
+                        child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SmoothIndicator(
+                                controller: controller,
+                                count: homeState.banners.length)),
+                      )
+                    ],
                   ),
-                ),
+                  HomeCategoryText(
+                      text: LocaleData.homeShopListTitle.getString(context),
+                      onTap: () => NavigationUtils.nearbyShopsPage(context)),
+                  LimitedBox(
+                      maxHeight: size.width * 0.65,
+                      maxWidth: size.width,
+                      child: ListView(
+                        padding: const EdgeInsets.only(left: 5),
+                        scrollDirection: Axis.horizontal,
+                        children: List.generate(
+                            homeState.nearbyShops.length,
+                            (index) => NearbyShopCard(
+                                shopModel: homeState.nearbyShops[index],
+                                width: size.width * 0.37)),
+                      )),
+                  HomeCategoryText(
+                      text: LocaleData.homeProductListTitle.getString(context),
+                      onTap: () => NavigationUtils.popularMenuPage(context)),
+                  height20,
+                  GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, childAspectRatio: 1 / 1.25),
+                      itemBuilder: (context, index) =>
+                          CoffeeCard(model: homeState.popularCoffees[index]),
+                      itemCount: homeState.popularCoffees.length),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 25),
-                child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SmoothIndicator(
-                        controller: controller,
-                        count: homeState.banners.length)),
-              )
-            ],
-          ),
-          HomeCategoryText(
-              text: LocaleData.homeShopListTitle.getString(context),
-              onTap: () => NavigationUtils.nearbyShopsPage(context)),
-          LimitedBox(
-              maxHeight: size.width * 0.65,
-              maxWidth: size.width,
-              child: ListView(
-                padding: const EdgeInsets.only(left: 5),
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                    homeState.nearbyShops.length,
-                    (index) => NearbyShopCard(
-                        shopModel: homeState.nearbyShops[index],
-                        width: size.width * 0.37)),
-              )),
-          HomeCategoryText(
-              text: LocaleData.homeProductListTitle.getString(context),
-              onTap: () => NavigationUtils.popularMenuPage(context)),
-          height20,
-          GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 1 / 1.25),
-              itemBuilder: (context, index) =>
-                  CoffeeCard(model: homeState.popularCoffees[index]),
-              itemCount: homeState.popularCoffees.length),
-        ],
       ),
     );
   }

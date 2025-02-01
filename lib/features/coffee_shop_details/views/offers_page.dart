@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_app/core/fonts.dart';
 
 import '../../../components/coffee_shop_details/offer_widget.dart';
+import '../../../core/app_colors.dart';
 import '../view_models/coffee_shop_view_model.dart';
 
 class OffersPage extends ConsumerWidget {
@@ -20,24 +21,23 @@ class OffersPage extends ConsumerWidget {
         title: Text('Spacial Offers', style: appBarTitleFont),
         actions: const [Icon(Icons.search, size: 30)],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                ...List.generate(
-                  viewModel.offers!.length,
-                  (index) => OfferWidget(
-                    offer: viewModel.offers![index],
-                    isSelected: viewModel.selectedOffers == null ||
-                        !viewModel.selectedOffers!
-                            .contains(viewModel.offers![index]),
-                  ),
-                ),
-              ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(shopDetailsViewModelProvider.notifier)
+              .getOffers(viewModel.shopModel!.id);
+        },
+        color: AppColors.primaryColor,
+        child: ListView(
+          children: List.generate(
+            viewModel.offers!.length,
+            (index) => OfferWidget(
+              offer: viewModel.offers![index],
+              isSelected: viewModel.selectedOffers == null ||
+                  !viewModel.selectedOffers!.contains(viewModel.offers![index]),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

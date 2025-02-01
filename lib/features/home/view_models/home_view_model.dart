@@ -56,11 +56,12 @@ class HomeViewModel extends _$HomeViewModel {
     return HomeStateModel.initial();
   }
 
-  Future<void> getAllData() async {
-    state = state.copyWith(loading: true);
+  Future<void> getAllData({bool isLoading = true}) async {
+    state = state.copyWith(loading: isLoading);
     getNearbyShops();
     getPopularCoffees();
     getBanners();
+    await Future.delayed(const Duration(seconds: 1));
     state = state.copyWith(loading: false);
   }
 

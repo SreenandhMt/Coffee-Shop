@@ -24,84 +24,92 @@ class RatingAndReviews extends ConsumerWidget {
       ),
       body: viewModel.reviews == null
           ? const AppProgressBar()
-          : ListView(
-              children: [
-                //*total rate
-                TotalRateWidget(
-                  reviewsLength: viewModel.reviews!.length,
-                  shopModel: viewModel.shopModel!,
-                ),
-                //*sorting
-                height20,
-                LimitedBox(
-                  maxHeight: size.width * 0.11,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: InkWell(
-                        onTap: () => viewModel.selectedFilter == null ||
-                                viewModel.selectedFilter!.toInt() != index
-                            ? ref
-                                .read(shopDetailsViewModelProvider.notifier)
-                                .reviewSort(index.toDouble())
-                            : ref
-                                .read(shopDetailsViewModelProvider.notifier)
-                                .clearFilter(),
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: viewModel.selectedFilter == null ||
-                                          viewModel.selectedFilter!.toInt() !=
-                                              index
-                                      ? Colors.grey
-                                      : AppColors.primaryColor)),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (index == 0) ...[
-                                const Icon(Icons.sort),
-                                width5,
-                                const Text(
-                                  "Sort by",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                width5,
-                              ] else ...[
-                                const Icon(Icons.star_border_rounded),
-                                width5,
-                                Text(
-                                  "$index",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                width5,
-                              ]
-                            ],
+          : RefreshIndicator(
+              onRefresh: () async {
+                await ref
+                    .read(shopDetailsViewModelProvider.notifier)
+                    .getReviews(viewModel.shopModel!.id);
+              },
+              color: AppColors.primaryColor,
+              child: ListView(
+                children: [
+                  //*total rate
+                  TotalRateWidget(
+                    reviewsLength: viewModel.reviews!.length,
+                    shopModel: viewModel.shopModel!,
+                  ),
+                  //*sorting
+                  height20,
+                  LimitedBox(
+                    maxHeight: size.width * 0.11,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 6,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: InkWell(
+                          onTap: () => viewModel.selectedFilter == null ||
+                                  viewModel.selectedFilter!.toInt() != index
+                              ? ref
+                                  .read(shopDetailsViewModelProvider.notifier)
+                                  .reviewSort(index.toDouble())
+                              : ref
+                                  .read(shopDetailsViewModelProvider.notifier)
+                                  .clearFilter(),
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color: viewModel.selectedFilter == null ||
+                                            viewModel.selectedFilter!.toInt() !=
+                                                index
+                                        ? Colors.grey
+                                        : AppColors.primaryColor)),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (index == 0) ...[
+                                  const Icon(Icons.sort),
+                                  width5,
+                                  const Text(
+                                    "Sort by",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  width5,
+                                ] else ...[
+                                  const Icon(Icons.star_border_rounded),
+                                  width5,
+                                  Text(
+                                    "$index",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  width5,
+                                ]
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                //*Reviews List
-                height20,
-                ...List.generate(
-                  viewModel.sortedReview!.length,
-                  (index) =>
-                      ReviewWidget(review: viewModel.sortedReview![index]),
-                )
-              ],
+                  //*Reviews List
+                  height20,
+                  ...List.generate(
+                    viewModel.sortedReview!.length,
+                    (index) =>
+                        ReviewWidget(review: viewModel.sortedReview![index]),
+                  )
+                ],
+              ),
             ),
     );
   }
