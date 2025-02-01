@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
+import '../../../components/account/about_caffely_widget.dart';
 
 class AboutCaffelyPage extends StatefulWidget {
   const AboutCaffelyPage({super.key});
@@ -46,25 +49,7 @@ class _AboutCaffelyPageState extends State<AboutCaffelyPage> {
           ),
           height10,
           ...List.generate(
-              terms.length,
-              (index) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
-                    child: Row(
-                      children: [
-                        Text(
-                          terms[index],
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        const Spacer(),
-                        const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 20,
-                        )
-                      ],
-                    ),
-                  ))
+              terms.length, (index) => AboutCaffelyWidget(title: terms[index]))
         ],
       ),
     );

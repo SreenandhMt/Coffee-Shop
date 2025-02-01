@@ -4,6 +4,7 @@ import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 
+import '../../../components/account/text_and_switch.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/fonts.dart';
 

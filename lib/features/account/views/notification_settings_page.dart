@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 
+import '../../../components/account/text_and_switch.dart';
 import '../../../core/fonts.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
@@ -42,45 +43,6 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         itemCount: texts.length,
         itemBuilder: (context, index) => TextWithSwitch(text: texts[index]),
-      ),
-    );
-  }
-}
-
-class TextWithSwitch extends StatefulWidget {
-  const TextWithSwitch({
-    super.key,
-    required this.text,
-  });
-  final String text;
-
-  @override
-  State<TextWithSwitch> createState() => _TextWithSwitchState();
-}
-
-class _TextWithSwitchState extends State<TextWithSwitch> {
-  bool value = true;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            widget.text,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
-          ),
-          const Spacer(),
-          CupertinoSwitch(
-            value: value,
-            onChanged: (value) {
-              setState(() {
-                this.value = value;
-              });
-            },
-          ),
-        ],
       ),
     );
   }

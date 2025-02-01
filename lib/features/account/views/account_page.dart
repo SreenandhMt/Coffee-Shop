@@ -1,4 +1,3 @@
-import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,9 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:coffee_app/route/navigation_utils.dart';
+
+import '../../../components/account/account_option_widget.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
@@ -59,34 +61,34 @@ class _AccountPageState extends ConsumerState<AccountPage> {
               thickness: 0.2,
             ),
           ),
-          _accountOptionWidget(
-            LocaleData.accountVouchersTitle.getString(context),
-            Icons.discount_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountVouchersTitle.getString(context),
+            icon: Icons.discount_outlined,
             onTap: () => NavigationUtils.vouchersAndDiscountPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountPointsTitle.getString(context),
-            Icons.monetization_on_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountPointsTitle.getString(context),
+            icon: Icons.monetization_on_outlined,
             onTap: () => NavigationUtils.caffelyPointsPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountRewardsTitle.getString(context),
-            Icons.card_giftcard_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountRewardsTitle.getString(context),
+            icon: Icons.card_giftcard_outlined,
             onTap: () => NavigationUtils.navigateRewardPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountFavoriteCoffeeTitle.getString(context),
-            Icons.coffee_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountFavoriteCoffeeTitle.getString(context),
+            icon: Icons.coffee_outlined,
             onTap: () => NavigationUtils.navigateFavoriteCoffeePage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountAddressTitle.getString(context),
-            Icons.location_on_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountAddressTitle.getString(context),
+            icon: Icons.location_on_outlined,
             onTap: () => NavigationUtils.navigateManageAddressPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountPaymentTitle.getString(context),
-            Icons.payment_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountPaymentTitle.getString(context),
+            icon: Icons.payment_outlined,
             onTap: () => NavigationUtils.managePaymentsPage(context),
           ),
           Padding(
@@ -111,24 +113,24 @@ class _AccountPageState extends ConsumerState<AccountPage> {
               ],
             ),
           ),
-          _accountOptionWidget(
-            LocaleData.accountPersonalInfoTitle.getString(context),
-            CupertinoIcons.person,
+          AccountOptionsWidget(
+            title: LocaleData.accountPersonalInfoTitle.getString(context),
+            icon: CupertinoIcons.person,
             onTap: () => NavigationUtils.personalInfoPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountNotificationTitle.getString(context),
-            Icons.notifications_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountNotificationTitle.getString(context),
+            icon: Icons.notifications_outlined,
             onTap: () => NavigationUtils.notificationSettingPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountSecurityTitle.getString(context),
-            Icons.shield_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountSecurityTitle.getString(context),
+            icon: Icons.shield_outlined,
             onTap: () => NavigationUtils.securitySettingsPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountLanguageTitle.getString(context),
-            Icons.text_format_rounded,
+          AccountOptionsWidget(
+            title: LocaleData.accountLanguageTitle.getString(context),
+            icon: Icons.text_format_rounded,
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -146,9 +148,9 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             ),
             onTap: () => NavigationUtils.languageSettingPage(context),
           ),
-          _accountOptionWidget(
-              LocaleData.accountDarkModeText.getString(context),
-              Icons.dark_mode_outlined,
+          AccountOptionsWidget(
+              title: LocaleData.accountDarkModeText.getString(context),
+              icon: Icons.dark_mode_outlined,
               child: CupertinoSwitch(
                 value: true,
                 onChanged: (value) {},
@@ -176,20 +178,19 @@ class _AccountPageState extends ConsumerState<AccountPage> {
               ],
             ),
           ),
-          _accountOptionWidget(
-            LocaleData.accountHelpCenterTitle.getString(context),
-            CupertinoIcons.doc_text,
+          AccountOptionsWidget(
+            title: LocaleData.accountHelpCenterTitle.getString(context),
+            icon: CupertinoIcons.doc_text,
             onTap: () => NavigationUtils.helpCenterPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountAboutCaffelyTitle.getString(context),
-            Icons.info_outlined,
+          AccountOptionsWidget(
+            title: LocaleData.accountAboutCaffelyTitle.getString(context),
+            icon: Icons.info_outlined,
             onTap: () => NavigationUtils.aboutCaffelyPage(context),
           ),
-          _accountOptionWidget(
-            LocaleData.accountLogOutText.getString(context),
-            Icons.logout,
-            child: const SizedBox(),
+          AccountOptionsWidget(
+            title: LocaleData.accountLogOutText.getString(context),
+            icon: Icons.logout,
             color: Colors.red,
             onTap: () => showModalBottomSheet(
               context: context,
@@ -257,35 +258,9 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                 ),
               ),
             ),
+            child: const SizedBox(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _accountOptionWidget(String title, IconData icon,
-      {Widget? child, Color? color, void Function()? onTap}) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 15),
-      child: InkWell(
-        onTap: onTap,
-        child: Row(children: [
-          Icon(
-            icon,
-            color: color,
-          ),
-          width20,
-          Text(title,
-              style: TextStyle(
-                  fontSize: 19, fontWeight: FontWeight.w600, color: color)),
-          const Spacer(),
-          child ??
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 23,
-                color: color ?? AppColors.themeTextColor(context),
-              )
-        ]),
       ),
     );
   }

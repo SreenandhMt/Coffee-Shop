@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 
+import '../../../components/account/caffely_point_widget.dart';
+
 class CaffelyPointsPage extends StatefulWidget {
   const CaffelyPointsPage({super.key});
 
@@ -101,48 +103,7 @@ class _CaffelyPointsPageState extends State<CaffelyPointsPage> {
           height10,
           ...List.generate(
             10,
-            (index) => _pointHistoryWidget(),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _pointHistoryWidget() {
-    return const Padding(
-      padding: EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 10),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                "Your Earn Points",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-              ),
-              Spacer(),
-              Text(
-                "+ 25",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-              ),
-            ],
-          ),
-          height5,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text("Dec 22, 2023"),
-              width5,
-              Icon(
-                Icons.circle,
-                size: 5,
-              ),
-              width5,
-              Text("09:41:23 AM"),
-            ],
-          ),
-          height10,
-          Divider(
-            thickness: 0.1,
+            (index) => const PointHistoryWidget(),
           )
         ],
       ),
