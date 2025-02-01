@@ -54,7 +54,7 @@ class _SelectedPaymentWidgetState extends State<SelectedPaymentWidget> {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundImage: NetworkImage(widget.paymentMethod["image"]!),
+              backgroundImage: AssetImage(widget.paymentMethod["image"]!),
             ),
             width20,
             Text(

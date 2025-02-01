@@ -1,3 +1,4 @@
+import 'package:coffee_app/features/payment/view_models/payment_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -538,10 +539,19 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                       content: Text("Please select delivery method")));
                   return;
                 }
-                ref
-                    .read(checkoutViewModelProvider.notifier)
-                    .deliveryOrderConform();
-                NavigationUtils.searchingDriverPage(context, widget.shopId);
+                if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {
+                  ref
+                      .read(checkoutViewModelProvider.notifier)
+                      .deliveryOrderConform();
+                  NavigationUtils.searchingDriverPage(context, widget.shopId);
+                  return;
+                }
+                ref.read(paymentViewModelProvider.notifier).pay(
+                    context,
+                    checkoutViewModel.totalPrice.toInt(),
+                    "inr",
+                    checkoutViewModel.shopModel!,
+                    checkoutViewModel.paymentMethod!);
               })
       ],
     );

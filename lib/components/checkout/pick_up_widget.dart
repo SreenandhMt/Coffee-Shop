@@ -15,6 +15,7 @@ import '../../core/size.dart';
 import '../../features/auth/views/forgot_password/email_conform_page.dart';
 import '../../features/auth/views/signin_page.dart';
 import '../../features/checkout/view_models/checkout_view_model.dart';
+import '../../features/payment/view_models/payment_view_model.dart';
 import '../../route/navigation_utils.dart';
 import 'payment_widget.dart';
 
@@ -448,58 +449,69 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                       content: Text("Please choose payment method")));
                   return;
                 }
-                ref
-                    .read(checkoutViewModelProvider.notifier)
-                    .pickupOrderConform();
-                showDialog(
-                    context: context,
-                    builder: (context) => DialogBox(
-                        icon: Icons.check_box_rounded,
-                        title: "Order Successful!",
-                        subtitle:
-                            "Step into a world of coffee bliss with our handcrafted brews",
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryColor,
-                                  fixedSize: Size(
-                                      MediaQuery.sizeOf(context).width * 0.9,
-                                      60),
-                                ),
-                                onPressed: () {},
-                                child: const Text("View My Orders",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 17)),
-                              ),
-                              height10,
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shadowColor: Colors.transparent,
-                                  backgroundColor:
-                                      AppColors.primaryColor.withOpacity(0.1),
-                                  fixedSize: Size(
-                                      MediaQuery.sizeOf(context).width * 0.9,
-                                      60),
-                                ),
-                                onPressed: () {
-                                  if (context.canPop()) context.pop();
-                                  if (context.canPop()) context.pop();
-                                  if (context.canPop()) context.pop();
-                                },
-                                child: const Text("back to Home",
-                                    style:
-                                        TextStyle(color: null, fontSize: 17)),
-                              ),
-                              height10,
-                            ],
-                          ),
-                        )));
+                if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {
+                  ref
+                      .read(checkoutViewModelProvider.notifier)
+                      .pickupOrderConform();
+                  showDialog(
+                      context: context,
+                      builder: (context) => const PickUpSuccessDialog());
+                  return;
+                }
+                ref.read(paymentViewModelProvider.notifier).pickUpPayment(
+                    context,
+                    checkoutViewModel.totalPrice.toInt(),
+                    "inr",
+                    checkoutViewModel.shopModel!,
+                    checkoutViewModel.paymentMethod!);
               })
       ],
     );
+  }
+}
+
+class PickUpSuccessDialog extends StatelessWidget {
+  const PickUpSuccessDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogBox(
+        icon: Icons.check_box_rounded,
+        title: "Order Successful!",
+        subtitle:
+            "Step into a world of coffee bliss with our handcrafted brews",
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  fixedSize: Size(MediaQuery.sizeOf(context).width * 0.9, 60),
+                ),
+                onPressed: () {},
+                child: const Text("View My Orders",
+                    style: TextStyle(color: Colors.white, fontSize: 17)),
+              ),
+              height10,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shadowColor: Colors.transparent,
+                  backgroundColor: AppColors.primaryColor.withOpacity(0.1),
+                  fixedSize: Size(MediaQuery.sizeOf(context).width * 0.9, 60),
+                ),
+                onPressed: () {
+                  if (context.canPop()) context.pop();
+                  if (context.canPop()) context.pop();
+                  if (context.canPop()) context.pop();
+                },
+                child: const Text("back to Home",
+                    style: TextStyle(color: null, fontSize: 17)),
+              ),
+              height10,
+            ],
+          ),
+        ));
   }
 }
 

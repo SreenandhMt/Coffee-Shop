@@ -11,7 +11,6 @@ import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
 import '../../../localization/locales.dart';
-import '../view_models/account_view_model.dart';
 
 class AccountPage extends ConsumerStatefulWidget {
   const AccountPage({super.key});

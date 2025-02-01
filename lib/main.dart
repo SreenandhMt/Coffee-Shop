@@ -1,3 +1,4 @@
+import 'package:coffee_app/core/secrets.dart';
 import 'package:coffee_app/core/theme.dart';
 import 'package:coffee_app/firebase_options.dart';
 import 'package:coffee_app/localization/locales.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Stripe.publishableKey = stripePublishableApiKey;
   runApp(const MyApp());
 }
 

@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'address_view_model.dart';
+part of 'payment_view_model.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addressViewModelHash() => r'4af44d06b5edd5bcff9b048422dcb55f15d47eef';
+String _$paymentViewModelHash() => r'e23c0f74c0e1bb7b4583fe23abb151d662e14c38';
 
-/// See also [AddressViewModel].
-@ProviderFor(AddressViewModel)
-final addressViewModelProvider =
-    AutoDisposeNotifierProvider<AddressViewModel, AddressState>.internal(
-  AddressViewModel.new,
-  name: r'addressViewModelProvider',
+/// See also [PaymentViewModel].
+@ProviderFor(PaymentViewModel)
+final paymentViewModelProvider =
+    AutoDisposeNotifierProvider<PaymentViewModel, PaymentState>.internal(
+  PaymentViewModel.new,
+  name: r'paymentViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$addressViewModelHash,
+      : _$paymentViewModelHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AddressViewModel = AutoDisposeNotifier<AddressState>;
+typedef _$PaymentViewModel = AutoDisposeNotifier<PaymentState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
