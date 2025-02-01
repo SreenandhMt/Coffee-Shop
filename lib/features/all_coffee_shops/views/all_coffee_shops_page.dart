@@ -10,23 +10,21 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
-import 'package:coffee_app/features/coffee_shops/view_models/coffee_shops_view_model.dart';
-import 'package:coffee_app/features/home/models/shop_model.dart';
+import 'package:coffee_app/features/all_coffee_shops/view_models/coffee_shops_view_model.dart';
 import 'package:coffee_app/localization/locales.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
 
-import '../../../components/coffee_shops/search_widget.dart';
-import '../../../components/coffee_shops/shops_widget.dart';
+import '../../../components/all_coffee_shops/search_widget.dart';
+import '../../../components/all_coffee_shops/shops_widget.dart';
 import '../../../core/tabbar.dart';
 
-class CoffeeShopsPage extends ConsumerStatefulWidget {
-  const CoffeeShopsPage({super.key});
+class AllCoffeeShopsPage extends ConsumerStatefulWidget {
+  const AllCoffeeShopsPage({super.key});
 
   @override
-  ConsumerState<CoffeeShopsPage> createState() => _CoffeeShopsPageState();
+  ConsumerState<AllCoffeeShopsPage> createState() => _AllCoffeeShopsPageState();
 }
 
-class _CoffeeShopsPageState extends ConsumerState<CoffeeShopsPage> {
+class _AllCoffeeShopsPageState extends ConsumerState<AllCoffeeShopsPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

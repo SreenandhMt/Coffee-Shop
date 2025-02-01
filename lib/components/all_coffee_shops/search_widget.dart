@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/fonts.dart';
-import '../../features/coffee_shops/view_models/coffee_shops_view_model.dart';
+import '../../features/all_coffee_shops/view_models/coffee_shops_view_model.dart';
 import 'shops_widget.dart';
 
 class ShopSearchPage extends ConsumerStatefulWidget {

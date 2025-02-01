@@ -24,7 +24,7 @@ import '../features/payment/views/choose_payment.dart';
 import '../features/orders/views/driver_profile.dart';
 import '/features/checkout/views/searching_driver.dart';
 import '../features/checkout/views/vouchers_page.dart';
-import '/features/coffee_shops/views/coffee_shops_page.dart';
+import '../features/all_coffee_shops/views/all_coffee_shops_page.dart';
 import '/features/orders/views/cancel_order_page.dart';
 import '/features/orders/views/order_details.dart';
 import '/features/orders/views/orders_page.dart';
@@ -128,7 +128,7 @@ class AppRouter {
                 GoRoute(
                   path: "/shops",
                   builder: (context, state) {
-                    return const CoffeeShopsPage();
+                    return const AllCoffeeShopsPage();
                   },
                 ),
               ]),

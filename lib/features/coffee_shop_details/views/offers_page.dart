@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:coffee_app/core/fonts.dart';
 
-import '../../../components/shop_details_page/offer_widget.dart';
+import '../../../components/coffee_shop_details/offer_widget.dart';
 import '../view_models/coffee_shop_view_model.dart';
 
 class OffersPage extends ConsumerWidget {

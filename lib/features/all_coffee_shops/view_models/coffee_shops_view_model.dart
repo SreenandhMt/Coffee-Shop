@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:coffee_app/features/coffee_shops/services/coffee_shop_service.dart';
+import 'package:coffee_app/features/all_coffee_shops/services/coffee_shop_service.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
 
 part 'coffee_shops_view_model.g.dart';

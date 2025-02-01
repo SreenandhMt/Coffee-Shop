@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../components/shop_details_page/app_bar.dart';
-import '../../../components/shop_details_page/checkout_button.dart';
-import '../../../components/shop_details_page/coffee_list.dart';
+import '../../../components/coffee_shop_details/app_bar.dart';
+import '../../../components/coffee_shop_details/checkout_button.dart';
+import '../../../components/coffee_shop_details/coffee_list.dart';
 import '/core/app_colors.dart';
 import '/core/fonts.dart';
 import '/core/size.dart';

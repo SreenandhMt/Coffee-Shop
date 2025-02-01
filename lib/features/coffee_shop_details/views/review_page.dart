@@ -6,8 +6,8 @@ import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 
-import '../../../components/shop_details_page/review_widget.dart';
-import '../../../components/shop_details_page/total_rate_widget.dart';
+import '../../../components/coffee_shop_details/review_widget.dart';
+import '../../../components/coffee_shop_details/total_rate_widget.dart';
 import '../view_models/coffee_shop_view_model.dart';
 
 class RatingAndReviews extends ConsumerWidget {
