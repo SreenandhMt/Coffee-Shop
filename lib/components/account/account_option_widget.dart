@@ -32,7 +32,7 @@ class AccountOptionsWidget extends StatelessWidget {
           width20,
           Text(title,
               style: TextStyle(
-                  fontSize: 19, fontWeight: FontWeight.w600, color: color)),
+                  fontSize: 17, fontWeight: FontWeight.w600, color: color)),
           const Spacer(),
           child ??
               Icon(

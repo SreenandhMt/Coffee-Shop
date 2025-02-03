@@ -40,7 +40,7 @@ class _FavoriteCoffeePageState extends ConsumerState<FavoriteCoffeePage> {
       body: GridView.builder(
         itemCount: viewModel.favoriteCoffees.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, childAspectRatio: 1 / 1.3),
+            crossAxisCount: 2, childAspectRatio: 1 / 1.35),
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.all(10),
           child: CoffeeCard(model: viewModel.favoriteCoffees[index]),

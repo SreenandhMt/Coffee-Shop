@@ -28,7 +28,7 @@ class _PopularMenuPageState extends ConsumerState<PopularMenuPage> {
       body: GridView.builder(
         itemCount: homeState.popularCoffees.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, childAspectRatio: 1 / 1.3),
+            crossAxisCount: 2, childAspectRatio: 1 / 1.34),
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.all(10),
           child: CoffeeCard(model: homeState.popularCoffees[index]),

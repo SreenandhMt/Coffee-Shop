@@ -39,12 +39,13 @@ class _HelpCenterDetailsWidgetState extends State<HelpCenterDetailsWidget> {
         children: [
           Row(
             children: [
-              Text(
-                widget.title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
+                ),
               ),
-              const Spacer(),
               IconButton(
                   onPressed: () {
                     setState(() {

@@ -13,11 +13,12 @@ class AboutCaffelyWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       child: Row(
         children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
           ),
-          const Spacer(),
           const Icon(
             Icons.arrow_forward_ios_rounded,
             size: 20,

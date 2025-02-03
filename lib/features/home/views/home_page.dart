@@ -40,7 +40,9 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: _appBar(),
       body: RefreshIndicator(
         onRefresh: () async {
-          await ref.read(homeViewModelProvider.notifier).getAllData();
+          await ref
+              .read(homeViewModelProvider.notifier)
+              .getAllData(isLoading: false);
         },
         child: homeState.loading
             ? const HomeLoading()

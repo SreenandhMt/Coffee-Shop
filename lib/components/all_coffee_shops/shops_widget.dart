@@ -20,7 +20,7 @@ class ShopWidget extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
     return Container(
       height: size.width * 0.3,
-      margin: const EdgeInsets.only(top: 15, left: 10, right: 10),
+      margin: const EdgeInsets.only(top: 15, left: 20, right: 10),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () => NavigationUtils.coffeeShopDetailsPage(context,

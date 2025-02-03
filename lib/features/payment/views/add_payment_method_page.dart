@@ -28,31 +28,41 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
         ],
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
         children: [
-          height10,
-          const inputWithLabelWidget("Card Number", "Enter Card Number"),
-          const inputWithLabelWidget(
-              "Card Holder Name", "Enter Card Holder Name"),
-          _CardDetailsFormField(MediaQuery.sizeOf(context)),
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Text(
-              "Supported Payments:",
-              style: subtitleFont(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Container(
-            width: 300,
-            height: 100,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AppAssets.supportedCard),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  height10,
+                  const InputWithLabelWidget(
+                      "Card Number", "Enter Card Number"),
+                  const InputWithLabelWidget(
+                      "Card Holder Name", "Enter Card Holder Name"),
+                  _cardDetailsFormField(MediaQuery.sizeOf(context)),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      "Supported Payments:",
+                      style: subtitleFont(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Container(
+                    width: 200,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(AppAssets.supportedCard),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const Spacer(),
           AuthButton(
             text: "Add Card",
             onPressed: () {
@@ -64,26 +74,26 @@ class _AddPaymentMethodPageState extends State<AddPaymentMethodPage> {
     );
   }
 
-  Widget _CardDetailsFormField(Size size) {
+  Widget _cardDetailsFormField(Size size) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         LimitedBox(
           maxWidth: (size.width / 2) * 0.9,
-          child: const inputWithLabelWidget("Expiry Date", "00/00",
+          child: const InputWithLabelWidget("Expiry Date", "00/00",
               icon: Icons.date_range_outlined),
         ),
         LimitedBox(
           maxWidth: (size.width / 2) * 0.9,
-          child: const inputWithLabelWidget("CVV", "000"),
+          child: const InputWithLabelWidget("CVV", "000"),
         )
       ],
     );
   }
 }
 
-class inputWithLabelWidget extends StatelessWidget {
-  const inputWithLabelWidget(this.label, this.hintText, {this.icon, super.key});
+class InputWithLabelWidget extends StatelessWidget {
+  const InputWithLabelWidget(this.label, this.hintText, {this.icon, super.key});
   final String label;
   final String hintText;
   final IconData? icon;
@@ -100,7 +110,7 @@ class inputWithLabelWidget extends StatelessWidget {
             label,
             style: subtitleFont(
               fontSize: 16,
-              color: Colors.black87,
+              color: AppColors.themeTextColor(context),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -110,9 +120,9 @@ class inputWithLabelWidget extends StatelessWidget {
                 fontWeight: FontWeight.w600),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(
+              hintStyle: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
+                color: AppColors.themeTextColor(context),
               ),
               suffixIcon: icon != null ? Icon(icon) : null,
               filled: true,

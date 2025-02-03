@@ -75,8 +75,8 @@ class OrderViewModel extends _$OrderViewModel {
     state = state.copyWith(isLoading: false);
   }
 
-  void getOrders() async {
-    state = state.copyWith(isLoading: true);
+  Future<void> getOrders({bool loading = true}) async {
+    state = state.copyWith(isLoading: loading);
     final response = await OrderService.getOrderModels();
     response.fold((l) => log(l), (r) {
       state = state.copyWith(

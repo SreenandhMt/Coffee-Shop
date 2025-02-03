@@ -131,10 +131,10 @@ class _AccountPageState extends ConsumerState<AccountPage> {
           AccountOptionsWidget(
             title: LocaleData.accountLanguageTitle.getString(context),
             icon: Icons.text_format_rounded,
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "English (US)",
                   style: TextStyle(fontSize: 16),
                 ),
@@ -142,7 +142,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 23,
-                  color: Colors.black54,
+                  color: AppColors.themeTextColor(context),
                 )
               ],
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../components/notification/notification_loading.dart';
 import '/core/fonts.dart';
 import '/features/notification/view_models/notification_view_model.dart';
 import '/localization/locales.dart';
@@ -40,12 +41,23 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               icon: const Icon(Icons.settings))
         ],
       ),
-      body: ListView(
-        children: notificationViewModel.notifications == null
-            ? List.empty()
-            : List.generate(
-                notificationViewModel.notifications!.keys.toList().length,
-                (index) => NotificationWidget(index: index),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(notificationViewModelProvider.notifier)
+              .getNotifications(loading: false);
+        },
+        child: notificationViewModel.loading
+            ? const NotificationLoading()
+            : ListView(
+                children: notificationViewModel.notifications == null
+                    ? List.empty()
+                    : List.generate(
+                        notificationViewModel.notifications!.keys
+                            .toList()
+                            .length,
+                        (index) => NotificationWidget(index: index),
+                      ),
               ),
       ),
     );

@@ -44,8 +44,8 @@ class NotificationViewModel extends _$NotificationViewModel {
     return NotificationStateModel.initial();
   }
 
-  Future<void> getNotifications() async {
-    state = state.copyWith(loading: true);
+  Future<void> getNotifications({bool loading = true}) async {
+    state = state.copyWith(loading: loading);
     Map<String, List<NotificationModel>>? groupNotifications;
     final response = await NotificationService.getNotifications();
     response.fold(

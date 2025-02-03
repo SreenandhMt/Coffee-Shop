@@ -1,5 +1,6 @@
 import 'package:coffee_app/core/assets.dart';
 import 'package:coffee_app/features/auth/views/signin_page.dart';
+import 'package:coffee_app/features/payment/view_models/payment_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,11 +57,11 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
               children: [
                 if (widget.isTopUpPage)
                   ...List.generate(
-                    paymentMethods.length,
+                    paymentMethods.length - 1,
                     (index) => PaymentWidget(
-                        paymentMethod: paymentMethods[index],
-                        selected:
-                            viewModel.paymentMethod == paymentMethods[index]),
+                        paymentMethod: paymentMethods[index + 1],
+                        selected: viewModel.paymentMethod ==
+                            paymentMethods[index + 1]),
                   )
                 else
                   ...List.generate(
@@ -77,35 +78,9 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
             AuthButton(
               text: "Conform Top Up - \$100.00",
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => DialogBox(
-                    icon: Icons.check_box_rounded,
-                    title: "Top Up Successful!",
-                    subtitle:
-                        "The amount of \$100 hs been added to your wallet",
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
-                              fixedSize: const Size(double.infinity, 60),
-                            ),
-                            onPressed: () {
-                              if (context.canPop()) context.pop();
-                              if (context.canPop()) context.pop();
-                              if (context.canPop()) context.pop();
-                            },
-                            child: const Text("OK",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 17)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                ref
+                    .read(paymentViewModelProvider.notifier)
+                    .payOnTopUp(context, 100, "usd", paymentMethods[1]);
               },
             )
           else
