@@ -6,6 +6,7 @@ import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../components/auth/auth_text_form.dart';
 import '../../../../core/app_colors.dart';
 
 class EmailConformPage extends StatefulWidget {

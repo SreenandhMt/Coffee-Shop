@@ -1,13 +1,13 @@
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/auth/views/profile_details_page.dart';
-import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:coffee_app/localization/locales.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../../components/auth/auth_text_form.dart';
+import '../../../../components/auth/dialog_box.dart';
 
 class CreatePasswordPage extends StatefulWidget {
   const CreatePasswordPage({super.key});

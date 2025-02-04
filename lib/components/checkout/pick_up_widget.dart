@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,10 +12,10 @@ import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
 import '../../core/size.dart';
 import '../../features/auth/views/forgot_password/email_conform_page.dart';
-import '../../features/auth/views/signin_page.dart';
 import '../../features/checkout/view_models/checkout_view_model.dart';
 import '../../features/payment/view_models/payment_view_model.dart';
 import '../../route/navigation_utils.dart';
+import '../auth/dialog_box.dart';
 import 'payment_widget.dart';
 
 class PickupWidgets extends ConsumerStatefulWidget {

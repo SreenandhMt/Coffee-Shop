@@ -25,66 +25,68 @@ class OrderModel {
   final List<TransactionDetail> transactionDetails;
   final Map<String, dynamic>? deliveryService;
   final AddressModel? address;
+  final Map map;
 
-  OrderModel({
-    required this.id,
-    required this.type,
-    this.pickupTime, // Optional
-    required this.status,
-    required this.shopId,
-    required this.shopName,
-    required this.shopImages,
-    required this.shopAddress,
-    required this.productName,
-    required this.productId,
-    required this.productImage,
-    required this.userId,
-    required this.discounts,
-    required this.usePoint,
-    required this.paymentMethod,
-    required this.paymentStatus,
-    required this.paymentDetails,
-    required this.orderDate,
-    required this.orderDetails,
-    required this.transactionDetails,
-    this.deliveryService, // Optional
-    this.address, // Optional
-  });
+  OrderModel(
+      {required this.id,
+      required this.type,
+      this.pickupTime, // Optional
+      required this.status,
+      required this.shopId,
+      required this.shopName,
+      required this.shopImages,
+      required this.shopAddress,
+      required this.productName,
+      required this.productId,
+      required this.productImage,
+      required this.userId,
+      required this.discounts,
+      required this.usePoint,
+      required this.paymentMethod,
+      required this.paymentStatus,
+      required this.paymentDetails,
+      required this.orderDate,
+      required this.orderDetails,
+      required this.transactionDetails,
+      this.deliveryService, // Optional
+      this.address, // Optional
+      required this.map});
 
   factory OrderModel.fromJson(
       Map<String, dynamic> json, BasketProductModel basketMode) {
     return OrderModel(
-      id: json['id'],
-      type: json['type'],
-      pickupTime: json['pickup-time'] != null && json['pickup-time'].isNotEmpty
-          ? DateTime.parse(json['pickup-time'])
-          : null,
-      status: json['status'],
-      shopId: json['shop-id'],
-      shopName: json['shop-name'],
-      shopImages: List<String>.from(json['shop-image']),
-      shopAddress: json['shop-address'],
-      productName: json['product-name'],
-      productId: json['product-id'],
-      productImage: json['product-image'],
-      userId: json['user-id'],
-      discounts: List<String>.from(json['discount']),
-      usePoint: json['use-point'],
-      paymentMethod: Map<String, dynamic>.from(json['payment-method']),
-      paymentStatus: json['payment-status'],
-      paymentDetails: (json['payment-details'] as List)
-          .map((e) => PaymentDetail.fromJson(e))
-          .toList(),
-      orderDate: json['order-date'].toString(),
-      orderDetails: basketMode,
-      transactionDetails: (json['transaction-details'] as List)
-          .map((e) => TransactionDetail.fromJson(e))
-          .toList(),
-      deliveryService: json['delivery-service'],
-      address: json['address'] == null
-          ? null
-          : AddressModel.fromJson(json['address']),
-    );
+        id: json['id'],
+        type: json['type'],
+        pickupTime:
+            json['pickup-time'] != null && json['pickup-time'].isNotEmpty
+                ? DateTime.parse(json['pickup-time'])
+                : null,
+        status: json['status'],
+        shopId: json['shop-id'],
+        shopName: json['shop-name'],
+        shopImages: List<String>.from(json['shop-image']),
+        shopAddress: json['shop-address'],
+        productName: json['product-name'],
+        productId: json['product-id'],
+        productImage: json['product-image'],
+        userId: json['user-id'],
+        discounts: List<String>.from(json['discount']),
+        usePoint: json['use-point'],
+        paymentMethod: Map<String, dynamic>.from(json['payment-method']),
+        paymentStatus: json['payment-status'],
+        paymentDetails: (json['payment-details'] as List)
+            .map((e) => PaymentDetail.fromJson(e))
+            .toList(),
+        orderDate: json['order-date'].toString(),
+        orderDetails: basketMode,
+        transactionDetails: (json['transaction-details'] as List)
+            .map((e) => TransactionDetail.fromJson(e))
+            .toList(),
+        deliveryService: json['delivery-service'],
+        address: json['address'] == null
+            ? null
+            : AddressModel.fromJson(json['address']),
+        map: json);
   }
 }
 

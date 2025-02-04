@@ -29,54 +29,66 @@ class _CaffelyRewardsPageState extends State<CaffelyRewardsPage> {
         ],
       ),
       body: Column(
-        spacing: 10,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          height10,
-          Text(
-            LocaleData.caffelyRewardTitle.getString(context),
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
-          ),
-          Text(
-            LocaleData.caffelyRewardSubtitle.getString(context),
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 17),
-          ),
-          Container(
-            width: double.infinity,
-            height: 350,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: AppColors.secondaryColor(context)),
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          ),
-          Text(
-            LocaleData.caffelyShareNote.getString(context),
-            style: const TextStyle(fontSize: 14),
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            margin:
-                const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: AppColors.secondaryColor(context)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SelectableText(
-                  "XM4LWP3",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                IconButton(
-                    onPressed: () {}, icon: const Icon(Icons.copy_rounded))
-              ],
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  height10,
+                  Text(
+                    LocaleData.caffelyRewardTitle.getString(context),
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.w900),
+                  ),
+                  Text(
+                    LocaleData.caffelyRewardSubtitle.getString(context),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 350,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.secondaryColor(context)),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                  ),
+                  Text(
+                    LocaleData.caffelyShareNote.getString(context),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(
+                        left: 20, right: 20, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.secondaryColor(context)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SelectableText(
+                          "XM4LWP3",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.copy_rounded))
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const Spacer(),
           AuthButton(
-              text: LocaleData.caffelyButton.getString(context),
-              onPressed: () {})
+            text: LocaleData.caffelyButton.getString(context),
+            onPressed: () {},
+          )
         ],
       ),
     );

@@ -194,15 +194,15 @@ class _WalletPageState extends State<WalletPage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.cloud_download_rounded,
-                        color: AppColors.backgroundColor(context),
+                        color: Colors.black,
                       ),
                       width5,
                       Text(
                         LocaleData.walletAddMoney.getString(context),
-                        style: TextStyle(
-                          color: AppColors.backgroundColor(context),
+                        style: const TextStyle(
+                          color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

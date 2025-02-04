@@ -1,10 +1,8 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
-import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/orders/views/driver_profile.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddNewAddressPage extends StatefulWidget {
@@ -62,10 +60,16 @@ class _AddNewAddressPageState extends State<AddNewAddressPage> {
                   ),
                 ),
                 const Text("75 9th Ave, New York, NY 10011, USA"),
-                height20,
-                AuthButton(
-                    text: "Select Location & Continue Fill Address",
-                    onPressed: () => NavigationUtils.fillUpAddressPage(context))
+                height10,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    fixedSize: const Size(double.infinity, 60),
+                  ),
+                  onPressed: () => NavigationUtils.fillUpAddressPage(context),
+                  child: const Text("Select Location & Continue Fill Address",
+                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                ),
               ],
             ),
           )

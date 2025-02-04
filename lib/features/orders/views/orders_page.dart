@@ -91,17 +91,39 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                           .read(orderViewModelProvider.notifier)
                           .getOrders(loading: false);
                     },
-                    child: SingleChildScrollView(
-                      child: Column(
-                        spacing: 10,
-                        children: [
-                          ...List.generate(
-                            orderModel.activeOrderModels.length,
-                            (index) => ActiveOrderWidget(index: index),
+                    child: orderModel.activeOrderModels.isEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              const Center(child: Text("Orders are empty")),
+                              height10,
+                              ElevatedButton(
+                                  style: const ButtonStyle(
+                                      shadowColor: WidgetStateColor.transparent,
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          AppColors.primaryColor)),
+                                  onPressed: () async {
+                                    await ref
+                                        .read(orderViewModelProvider.notifier)
+                                        .getOrders(loading: true);
+                                  },
+                                  child: const Text(
+                                    "Refresh",
+                                    style: TextStyle(color: Colors.white),
+                                  ))
+                            ],
+                          )
+                        : SingleChildScrollView(
+                            child: Column(
+                              spacing: 10,
+                              children: List.generate(
+                                orderModel.activeOrderModels.length,
+                                (index) => ActiveOrderWidget(index: index),
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
                   ),
                 if (orderModel.isLoading)
                   const OrderLoading()

@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
@@ -107,7 +105,7 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
   }
 
   void addProductID(BasketProductModel orderModel) {
-    ShopDetailsService.AddBasket(orderModel);
+    ShopDetailsService.addBasket(orderModel);
     state = state.copyWith(
         selectedCoffeeIds: [...state.selectedCoffeeIds, orderModel],
         totalPrice: (state.totalPrice + orderModel.totalPrice));

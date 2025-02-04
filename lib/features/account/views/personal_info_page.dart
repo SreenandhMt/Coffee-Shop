@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../components/auth/auth_text_form.dart';
 import '../../../core/fonts.dart';
-import '../../auth/views/signin_page.dart';
 
 class PersonalInfoPage extends ConsumerStatefulWidget {
   const PersonalInfoPage({super.key});

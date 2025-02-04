@@ -1,8 +1,6 @@
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
-import 'package:coffee_app/features/auth/views/profile_details_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -81,10 +79,11 @@ class _FillUpAddressDetailsPageState extends State<FillUpAddressDetailsPage> {
         spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Recipient's Phone Number",
             style: TextStyle(
               fontSize: 16,
+              color: AppColors.themeTextColor(context),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -105,7 +104,7 @@ class _FillUpAddressDetailsPageState extends State<FillUpAddressDetailsPage> {
             showCountryFlag: true,
             style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: AppColors.themeColor(context)),
+                color: AppColors.themeTextColor(context)),
             decoration: InputDecoration(
               filled: true,
               fillColor: AppColors.secondaryColor(context).withOpacity(0.5),
@@ -139,9 +138,9 @@ class _FillUpAddressDetailsPageState extends State<FillUpAddressDetailsPage> {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
-              color: Colors.black,
+              color: AppColors.themeTextColor(context),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -151,9 +150,9 @@ class _FillUpAddressDetailsPageState extends State<FillUpAddressDetailsPage> {
                 fontWeight: FontWeight.w600),
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(
+              hintStyle: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
+                color: AppColors.themeTextColor(context),
                 fontWeight: FontWeight.bold,
               ),
               filled: true,

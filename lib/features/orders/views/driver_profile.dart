@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:coffee_app/features/orders/view_models/order_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,17 +11,18 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
-import 'package:coffee_app/features/auth/views/signin_page.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 
-class DriverProfilePage extends StatefulWidget {
+import '../../../components/auth/dialog_box.dart';
+
+class DriverProfilePage extends ConsumerStatefulWidget {
   const DriverProfilePage({super.key});
 
   @override
-  State<DriverProfilePage> createState() => _DriverProfilePageState();
+  ConsumerState<DriverProfilePage> createState() => _DriverProfilePageState();
 }
 
-class _DriverProfilePageState extends State<DriverProfilePage> {
+class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
   final scaffoldState = GlobalKey<ScaffoldState>();
   double profileSize = 350.0;
   bool isDriverArrived = false, shopDialog = false;
@@ -27,6 +30,10 @@ class _DriverProfilePageState extends State<DriverProfilePage> {
   @override
   void initState() {
     _locationPermission();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) =>
+          ref.read(orderViewModelProvider.notifier).initOrderDetails(),
+    );
     Future.delayed(const Duration(seconds: 25), () {
       if (!mounted || shopDialog) return;
       showDialog(

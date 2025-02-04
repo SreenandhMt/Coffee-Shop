@@ -33,7 +33,6 @@ class AuthViewModel extends _$AuthViewModel {
       state = left(AuthState.signin);
       await AuthServices.signInEmailAndPassword(
           email: email, password: password);
-      log("sss");
       state = left(AuthState.success);
     } catch (e) {
       state = right(e.toString());

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,6 +10,8 @@ import 'package:coffee_app/features/buying/service/buying_service.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
 
 part 'buying_view_model.g.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class BuyingStateModel {
   final bool isLoading;
@@ -95,6 +98,7 @@ class BuyingViewModel extends _$BuyingViewModel {
       {"title": "Venti", "price": 1.00},
     ];
     final orderModel = BasketProductModel.fromJson({
+      "uid": _auth.currentUser!.uid,
       "quantity": state.quantity,
       "sizePrice": sizes[state.selectedSizeIndex ?? 0]["price"],
       "sizeName": sizes[state.selectedSizeIndex ?? 0]["title"],

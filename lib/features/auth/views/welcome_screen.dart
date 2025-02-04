@@ -13,6 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../components/auth/continue_button.dart';
+
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
@@ -37,7 +39,6 @@ class WelcomeScreen extends ConsumerWidget {
               await ref.read(authViewModelProvider.notifier).signInWithGoogle();
               final currentValue = ref.read(authViewModelProvider);
               currentValue.fold((left) {
-                log(left.toString());
                 checkAuthStatus(context, true);
               }, (right) {
                 log(right);
@@ -53,7 +54,6 @@ class WelcomeScreen extends ConsumerWidget {
                   .signInWithGithub(context);
               final response = ref.read(authViewModelProvider);
               response.fold((left) {
-                log(left.toString());
                 checkAuthStatus(context, true);
               }, (right) {
                 log(right);
@@ -69,7 +69,6 @@ class WelcomeScreen extends ConsumerWidget {
                   .signInWithFacebook();
               final response = ref.read(authViewModelProvider);
               response.fold((left) {
-                log(left.toString());
                 checkAuthStatus(context, true);
               }, (right) {
                 log(right);
@@ -85,7 +84,6 @@ class WelcomeScreen extends ConsumerWidget {
                   .signInWithTwitter();
               final response = ref.read(authViewModelProvider);
               response.fold((left) {
-                log(left.toString());
                 checkAuthStatus(context, true);
               }, (right) {
                 log(right);
@@ -126,53 +124,6 @@ class WelcomeScreen extends ConsumerWidget {
           ),
           const Spacer(),
         ],
-      ),
-    );
-  }
-}
-
-class ContinueButton extends ConsumerStatefulWidget {
-  const ContinueButton({
-    super.key,
-    required this.imageLink,
-    required this.name,
-    this.onTap,
-  });
-  final String imageLink;
-  final String name;
-  final void Function()? onTap;
-
-  @override
-  ConsumerState<ContinueButton> createState() => _ContinueButtonState();
-}
-
-class _ContinueButtonState extends ConsumerState<ContinueButton> {
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: widget.onTap,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
-        height: 60,
-        decoration: BoxDecoration(
-            color: AppColors.secondaryColor(context),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(width: 0.2, color: Colors.grey)),
-        child: Row(
-          children: [
-            width20,
-            Image.asset(widget.imageLink, height: 30, width: 30),
-            const Spacer(),
-            Text(
-              context.formatString(
-                  LocaleData.authSocialSigninButton, [widget.name]),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-            const Spacer(),
-            width30,
-          ],
-        ),
       ),
     );
   }

@@ -12,6 +12,7 @@ import '../models/review_model.dart';
 
 class ShopDetailsService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static Future<Either<String, ShopModel>> getShopDetails(String shopId) async {
     try {
       return await _firestore
@@ -31,7 +32,7 @@ class ShopDetailsService {
     try {
       return await _firestore
           .collection("users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .doc(_auth.currentUser!.uid)
           .collection("favorite-coffee")
           .doc(shopId)
           .get()
@@ -78,6 +79,7 @@ class ShopDetailsService {
           .collection('shops')
           .doc(shopId)
           .collection("basket")
+          .where("uid", isEqualTo: _auth.currentUser!.uid)
           .get()
           .then((value) async {
         return value;
@@ -122,7 +124,7 @@ class ShopDetailsService {
     } catch (e) {}
   }
 
-  static Future<void> AddBasket(BasketProductModel orderModel) async {
+  static Future<void> addBasket(BasketProductModel orderModel) async {
     try {
       await _firestore
           .collection('shops')

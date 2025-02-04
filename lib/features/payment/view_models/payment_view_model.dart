@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../components/auth/dialog_box.dart';
 import '../../../components/checkout/pick_up_widget.dart';
-import '../../auth/views/signin_page.dart';
 import '../../checkout/view_models/checkout_view_model.dart';
 
 part 'payment_view_model.g.dart';

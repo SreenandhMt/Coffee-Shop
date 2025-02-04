@@ -9,9 +9,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pinput/pinput.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../components/auth/auth_text_form.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/size.dart';
 
@@ -28,7 +28,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authViewModelProvider);
+    // final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.sizeOf(context);
     return Form(
       key: _key,
@@ -151,15 +151,27 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       fixedSize: Size(size.width * 0.9, 60),
                     ),
                     onPressed: () async {
+                      //*validating
                       if (!_key.currentState!.validate()) return;
+                      //*
                       await ref.read(authViewModelProvider.notifier).signUp(
                           emailController.text, passwordController.text);
+                      //*
                       if (!mounted) return;
                       final currentState = ref.read(authViewModelProvider);
                       currentState.fold((left) {
+                        //*success response
                         context.push('/welcome/signup/profileDetails');
                       }, (right) {
-                        log(right);
+                        //*error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(right),
+                            backgroundColor: Colors.redAccent,
+                            behavior: SnackBarBehavior.floating,
+                            width: 200,
+                          ),
+                        );
                       });
                     },
                     child: Text(LocaleData.authSignup.getString(context),

@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/orders/services/order_service.dart';
 
+import '../../checkout/view_models/checkout_view_model.dart';
 import '/features/orders/models/order_model.dart';
 
 part 'order_view_model.g.dart';
@@ -14,7 +16,7 @@ class OrderStateModel {
   final List<OrderModel> canceledOrderModels;
   final bool isLoading;
   final OrderModel? selectedOrder;
-  final OrderModel? currentOrder;
+  final ShopModel? shopModel;
 
   OrderStateModel({
     required this.activeOrderModels,
@@ -22,7 +24,7 @@ class OrderStateModel {
     required this.canceledOrderModels,
     required this.isLoading,
     this.selectedOrder,
-    this.currentOrder,
+    this.shopModel,
   });
 
   factory OrderStateModel.initial() {
@@ -40,7 +42,7 @@ class OrderStateModel {
     List<OrderModel>? canceledOrderModels,
     bool? isLoading,
     OrderModel? selectedOrder,
-    OrderModel? currentOrder,
+    ShopModel? shopModel,
   }) {
     return OrderStateModel(
       activeOrderModels: activeOrderModels ?? this.activeOrderModels,
@@ -48,7 +50,7 @@ class OrderStateModel {
       canceledOrderModels: canceledOrderModels ?? this.canceledOrderModels,
       isLoading: isLoading ?? this.isLoading,
       selectedOrder: selectedOrder ?? this.selectedOrder,
-      currentOrder: currentOrder ?? this.currentOrder,
+      shopModel: shopModel ?? this.shopModel,
     );
   }
 }
@@ -64,15 +66,25 @@ class OrderViewModel extends _$OrderViewModel {
     state = state.copyWith(selectedOrder: orderModel);
   }
 
-  void getCurrentOrder(String id) async {
+  void rateAndReviewShop(double rating, String review) {
+    OrderService.rateAndReviewShop(
+      rating,
+      review,
+      state.selectedOrder!.shopId,
+    );
+  }
+
+  void initOrderDetails() {
     state = state.copyWith(isLoading: true);
-    final response = await OrderService.getOrderModelById(id);
-    response.fold((l) => log(l), (r) {
-      state = state.copyWith(
-        currentOrder: r,
-      );
-    });
+    getShopModel();
     state = state.copyWith(isLoading: false);
+  }
+
+  void getShopModel() async {
+    final response = ref.read(checkoutViewModelProvider).shopModel!;
+    state = state.copyWith(
+      shopModel: response,
+    );
   }
 
   Future<void> getOrders({bool loading = true}) async {

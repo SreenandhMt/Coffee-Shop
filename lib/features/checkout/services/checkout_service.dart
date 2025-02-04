@@ -245,6 +245,7 @@ class CheckoutService {
           .collection('shops')
           .doc(shopId)
           .collection("basket")
+          .where("uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .get()
           .then((value) async {
         return value;
