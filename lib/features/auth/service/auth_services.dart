@@ -31,12 +31,8 @@ class AuthServices {
           await _auth.signInWithCredential(credential);
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Wrong password provided for that user.');
-      }
-      throw Exception(e.message);
+      final error = _getAuthErrorMessage(e);
+      throw Exception(error);
     } catch (e) {
       rethrow;
     }
@@ -145,6 +141,23 @@ class AuthServices {
       });
     } catch (e) {
       rethrow;
+    }
+  }
+
+  static String _getAuthErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return "The email address is invalid.";
+      case 'user-disabled':
+        return "This account has been disabled.";
+      case 'user-not-found':
+        return "No user found with this email.";
+      case 'wrong-password':
+        return "Incorrect password. Please try again.";
+      case 'too-many-requests':
+        return "Too many failed attempts. Try again later.";
+      default:
+        return "Authentication failed: ${e.message}";
     }
   }
 }

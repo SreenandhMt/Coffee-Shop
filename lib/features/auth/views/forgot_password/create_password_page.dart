@@ -63,7 +63,8 @@ class _CreatePasswordPageState extends State<CreatePasswordPage> {
         autoFunction: () {
           if (context.canPop()) context.pop();
           if (context.canPop()) context.pop();
-          context.go("/");
+          if (context.canPop()) context.pop();
+          if (context.canPop()) context.pop();
         },
         icon: Icons.person,
         title: "Reset Password Successful!",

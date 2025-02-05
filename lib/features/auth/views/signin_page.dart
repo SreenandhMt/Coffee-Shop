@@ -28,16 +28,30 @@ class SigninPage extends ConsumerStatefulWidget {
 class SigninPageState extends ConsumerState<SigninPage> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool snackBarOpened = false;
 
   @override
   Widget build(BuildContext context) {
-    // final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.sizeOf(context);
+    ref.listen(authViewModelProvider, (previous, next) {
+      next.fold((left) {
+        if (left == AuthState.success) {
+          _showDialogBox();
+        }
+      }, (right) {
+        if (snackBarOpened) return;
+        snackBarOpened = true;
+        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(right),
+            showCloseIcon: true,
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        snackBar.closed.then((value) => snackBarOpened = false);
+      });
+    });
     return Form(
       key: _key,
       child: Scaffold(
@@ -174,27 +188,6 @@ class SigninPageState extends ConsumerState<SigninPage> {
                       //*function calling
                       await ref.read(authViewModelProvider.notifier).signIn(
                           emailController.text, passwordController.text);
-
-                      //*mounted checking
-                      if (!mounted) return;
-                      final currentState = ref.read(authViewModelProvider);
-                      //*response
-                      currentState.fold((left) {
-                        //*success message
-                        if (left == AuthState.success) {
-                          _showDialogBox();
-                        }
-                      }, (right) {
-                        //*error massage
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(right),
-                            backgroundColor: Colors.redAccent,
-                            behavior: SnackBarBehavior.floating,
-                            width: 200,
-                          ),
-                        );
-                      });
                     },
                     child: Text(LocaleData.authSignin.getString(context),
                         style:

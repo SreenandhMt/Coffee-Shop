@@ -15,12 +15,33 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/auth/continue_button.dart';
 
+bool _snackBarOpened = false;
+
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
     final size = MediaQuery.sizeOf(context);
+    ref.listen(authViewModelProvider, (previous, next) {
+      next.fold((left) {
+        if (left == AuthState.success) {
+          checkAuthStatus(context, true);
+        }
+      }, (right) {
+        if (_snackBarOpened) return;
+        _snackBarOpened = true;
+        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(right),
+            showCloseIcon: true,
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        snackBar.closed.then((value) => _snackBarOpened = false);
+      });
+    });
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -36,58 +57,30 @@ class WelcomeScreen extends ConsumerWidget {
             name: "Google",
             imageLink: AppAssets.googleLogo,
             onTap: () async {
-              await ref.read(authViewModelProvider.notifier).signInWithGoogle();
-              final currentValue = ref.read(authViewModelProvider);
-              currentValue.fold((left) {
-                checkAuthStatus(context, true);
-              }, (right) {
-                log(right);
-              });
+              ref.read(authViewModelProvider.notifier).signInWithGoogle();
             },
           ),
           ContinueButton(
             imageLink: AppAssets.githubLogo(context),
             name: "Github",
             onTap: () async {
-              await ref
+              ref
                   .read(authViewModelProvider.notifier)
                   .signInWithGithub(context);
-              final response = ref.read(authViewModelProvider);
-              response.fold((left) {
-                checkAuthStatus(context, true);
-              }, (right) {
-                log(right);
-              });
             },
           ),
           ContinueButton(
             imageLink: AppAssets.facebookLogo,
             name: "Facebook",
             onTap: () async {
-              await ref
-                  .read(authViewModelProvider.notifier)
-                  .signInWithFacebook();
-              final response = ref.read(authViewModelProvider);
-              response.fold((left) {
-                checkAuthStatus(context, true);
-              }, (right) {
-                log(right);
-              });
+              ref.read(authViewModelProvider.notifier).signInWithFacebook();
             },
           ),
           ContinueButton(
             imageLink: AppAssets.twitterLogo,
             name: "Twitter",
             onTap: () async {
-              await ref
-                  .read(authViewModelProvider.notifier)
-                  .signInWithTwitter();
-              final response = ref.read(authViewModelProvider);
-              response.fold((left) {
-                checkAuthStatus(context, true);
-              }, (right) {
-                log(right);
-              });
+              ref.read(authViewModelProvider.notifier).signInWithTwitter();
             },
           ),
           const Spacer(),

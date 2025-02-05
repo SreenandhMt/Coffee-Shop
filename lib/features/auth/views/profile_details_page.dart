@@ -28,9 +28,28 @@ class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
   TextEditingController fullNameController = TextEditingController(),
       phoneNumberController = TextEditingController(text: ""),
       birthDateController = TextEditingController();
+  bool snackBarOpened = false;
   @override
   Widget build(BuildContext context) {
-    // final size = MediaQuery.sizeOf(context);
+    ref.listen(authViewModelProvider, (previous, next) {
+      next.fold((left) {
+        if (left == AuthState.profileDetailsSuccess) {
+          NavigationUtils.showAuthSuccessPage(context);
+        }
+      }, (right) {
+        if (snackBarOpened) return;
+        snackBarOpened = true;
+        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(right),
+            showCloseIcon: true,
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        snackBar.closed.then((value) => snackBarOpened = false);
+      });
+    });
     return Form(
       key: key,
       child: Scaffold(
@@ -119,21 +138,10 @@ class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
                       phoneNumberController.text.length != 10) {
                     return;
                   }
-                  //function calling
-                  await ref.read(authViewModelProvider.notifier).createProfile(
+                  ref.read(authViewModelProvider.notifier).createProfile(
                       fullNameController.text,
                       phoneNumberController.text,
                       birthDateController.text);
-                  //mounted checking
-                  if (!mounted) return;
-
-                  //response user
-                  final authState = ref.read(authViewModelProvider);
-                  authState.fold((left) {
-                    NavigationUtils.showAuthSuccessPage(context);
-                  }, (right) {
-                    log(right);
-                  });
                 },
               ),
               height15,

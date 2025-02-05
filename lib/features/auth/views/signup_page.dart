@@ -25,11 +25,30 @@ class SignupPage extends ConsumerStatefulWidget {
 class _SignupPageState extends ConsumerState<SignupPage> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController passwordController = TextEditingController();
+  bool snackBarOpened = false;
 
   @override
   Widget build(BuildContext context) {
-    // final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.sizeOf(context);
+    ref.listen(authViewModelProvider, (previous, next) {
+      next.fold((left) {
+        if (left == AuthState.success) {
+          context.push('/welcome/signup/profileDetails');
+        }
+      }, (right) {
+        if (snackBarOpened) return;
+        snackBarOpened = true;
+        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(right),
+            showCloseIcon: true,
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        snackBar.closed.then((value) => snackBarOpened = false);
+      });
+    });
     return Form(
       key: _key,
       child: Scaffold(
@@ -79,7 +98,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         validator: (p0) => null,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(5),
                         child: Row(
                           children: [
                             CupertinoCheckbox(
@@ -153,26 +172,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     onPressed: () async {
                       //*validating
                       if (!_key.currentState!.validate()) return;
-                      //*
-                      await ref.read(authViewModelProvider.notifier).signUp(
+                      ref.read(authViewModelProvider.notifier).signUp(
                           emailController.text, passwordController.text);
-                      //*
-                      if (!mounted) return;
-                      final currentState = ref.read(authViewModelProvider);
-                      currentState.fold((left) {
-                        //*success response
-                        context.push('/welcome/signup/profileDetails');
-                      }, (right) {
-                        //*error message
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(right),
-                            backgroundColor: Colors.redAccent,
-                            behavior: SnackBarBehavior.floating,
-                            width: 200,
-                          ),
-                        );
-                      });
                     },
                     child: Text(LocaleData.authSignup.getString(context),
                         style:
@@ -190,12 +191,11 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   bool isValidEmail(String email) {
     String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-    RegExp regex = RegExp(emailPattern);
-    return regex.hasMatch(email);
+    return RegExp(emailPattern).hasMatch(email);
   }
 
   String? isValidPassword(String password) {
-    if (password.length <= 8) return "At least 8 characters";
+    if (password.length < 8) return "At least 8 characters";
     if (!password.contains(RegExp(r'[A-Z]'))) {
       return "At least one uppercase letter";
     }

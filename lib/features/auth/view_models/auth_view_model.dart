@@ -2,22 +2,14 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 
 import 'package:coffee_app/features/auth/service/auth_services.dart';
-import 'package:coffee_app/route/navigation_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import "package:cloud_firestore/cloud_firestore.dart";
-
-import '../views/signin_page.dart';
 
 part 'auth_view_model.g.dart';
 
 enum AuthState {
-  welcome,
-  signin,
-  signup,
-  profileDetails,
+  none,
+  profileDetailsSuccess,
   success,
 }
 
@@ -25,12 +17,11 @@ enum AuthState {
 class AuthViewModel extends _$AuthViewModel {
   @override
   Either<AuthState, String> build() {
-    return left(AuthState.welcome);
+    return left(AuthState.none);
   }
 
   Future<void> signIn(String email, String password) async {
     try {
-      state = left(AuthState.signin);
       await AuthServices.signInEmailAndPassword(
           email: email, password: password);
       state = left(AuthState.success);
@@ -41,10 +32,9 @@ class AuthViewModel extends _$AuthViewModel {
 
   Future<void> signUp(String email, String password) async {
     try {
-      state = left(AuthState.signup);
       await AuthServices.signUpEmailAndPassword(
           email: email, password: password);
-      state = left(AuthState.profileDetails);
+      state = left(AuthState.success);
     } catch (e) {
       state = right(e.toString());
     }
@@ -53,10 +43,9 @@ class AuthViewModel extends _$AuthViewModel {
   Future<void> createProfile(
       String name, String phoneNumber, String birthDate) async {
     try {
-      state = left(AuthState.profileDetails);
       await AuthServices.createProfile(
           name: name, phoneNumber: phoneNumber, birthDate: birthDate);
-      state = left(AuthState.success);
+      state = left(AuthState.profileDetailsSuccess);
     } catch (e) {
       log(e.toString());
       state = right(e.toString());
