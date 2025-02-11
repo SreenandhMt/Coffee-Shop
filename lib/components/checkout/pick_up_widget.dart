@@ -455,12 +455,13 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                   return;
                 }
                 if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {
-                  ref
-                      .read(checkoutViewModelProvider.notifier)
-                      .pickupOrderConform();
-                  showDialog(
-                      context: context,
-                      builder: (context) => const PickUpSuccessDialog());
+                  ref.read(paymentViewModelProvider.notifier).pickUpPayment(
+                      context,
+                      checkoutViewModel.totalPrice.toInt(),
+                      "inr",
+                      checkoutViewModel.shopModel!,
+                      checkoutViewModel.paymentMethod!,
+                      true);
                   return;
                 }
                 ref.read(paymentViewModelProvider.notifier).pickUpPayment(
@@ -468,7 +469,8 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                     checkoutViewModel.totalPrice.toInt(),
                     "inr",
                     checkoutViewModel.shopModel!,
-                    checkoutViewModel.paymentMethod!);
+                    checkoutViewModel.paymentMethod!,
+                    false);
               })
       ],
     );

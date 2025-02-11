@@ -2,17 +2,22 @@ import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/localization/locales.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TransactionHistory extends StatefulWidget {
+import '../model/wallet_model.dart';
+import '../view_models/wallet_view_model.dart';
+
+class TransactionHistory extends ConsumerStatefulWidget {
   const TransactionHistory({super.key});
 
   @override
-  State<TransactionHistory> createState() => _TransactionHistoryState();
+  ConsumerState<TransactionHistory> createState() => _TransactionHistoryState();
 }
 
-class _TransactionHistoryState extends State<TransactionHistory> {
+class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
   @override
   Widget build(BuildContext context) {
+    final walletModel = ref.watch(walletViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -26,18 +31,19 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         ],
       ),
       body: ListView.separated(
-          itemBuilder: (context, index) => transactionWidget(),
+          itemBuilder: (context, index) =>
+              transactionWidget(walletModel.historyModel[index]),
           separatorBuilder: (context, index) => const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Divider(thickness: 0.2),
               ),
-          itemCount: 15),
+          itemCount: walletModel.historyModel.length),
     );
   }
 
-  Widget transactionWidget() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+  Widget transactionWidget(TransactionHistoryModel history) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
         children: [
           Column(
@@ -45,13 +51,13 @@ class _TransactionHistoryState extends State<TransactionHistory> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Classic Brew",
-                style: TextStyle(
+                history.name,
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Row(
+              const Row(
                 children: [
                   Text("Dec 22, 2023"),
                   width10,
@@ -65,19 +71,19 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               )
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Column(
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "-\$4.20",
-                style: TextStyle(
+                history.amount,
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Text("Caffely Wallet"),
+              Text(history.paymentMethod),
             ],
           )
         ],

@@ -11,6 +11,8 @@ import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
 
+import '../../wallet/views/top_up_page.dart';
+
 class ChoosePaymentPage extends ConsumerStatefulWidget {
   const ChoosePaymentPage({
     super.key,
@@ -32,6 +34,8 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) => ref
         .read(checkoutViewModelProvider.notifier)
         .setPaymentMethod(paymentMethods[0]));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        ref.read(paymentViewModelProvider.notifier).getWalletBalance());
     super.initState();
   }
 
@@ -76,11 +80,10 @@ class ChoosePaymentPageState extends ConsumerState<ChoosePaymentPage> {
           ),
           if (widget.isTopUpPage)
             AuthButton(
-              text: "Conform Top Up - \$100.00",
+              text: "Conform Top Up - \$${topUpAmount.text}",
               onPressed: () {
-                ref
-                    .read(paymentViewModelProvider.notifier)
-                    .payOnTopUp(context, 100, "usd", paymentMethods[1]);
+                ref.read(paymentViewModelProvider.notifier).payOnTopUp(context,
+                    int.parse(topUpAmount.text), "usd", paymentMethods[1]);
               },
             )
           else
@@ -112,6 +115,7 @@ class PaymentWidget extends ConsumerStatefulWidget {
 class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
   @override
   Widget build(BuildContext context) {
+    final walletBalance = ref.watch(paymentViewModelProvider).walletBalance;
     if (widget.paymentMethod["name"] == "Wallet") {
       return InkWell(
         onTap: () => ref
@@ -140,7 +144,7 @@ class _PaymentWidgetState extends ConsumerState<PaymentWidget> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               const Spacer(),
-              Text("\$948.50",
+              Text("\$$walletBalance",
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,

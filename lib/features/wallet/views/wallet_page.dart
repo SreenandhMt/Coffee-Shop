@@ -1,7 +1,10 @@
+import 'package:coffee_app/features/wallet/model/wallet_model.dart';
+import 'package:coffee_app/features/wallet/view_models/wallet_view_model.dart';
 import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../core/assets.dart';
@@ -10,16 +13,24 @@ import '../../../core/size.dart';
 
 //TODO add service and viewmodel and add user real value with payment history and balance and also show on the checkout page and if user dont have cash show failed order masssage
 
-class WalletPage extends StatefulWidget {
+class WalletPage extends ConsumerStatefulWidget {
   const WalletPage({super.key});
 
   @override
-  State<WalletPage> createState() => _WalletPageState();
+  ConsumerState<WalletPage> createState() => _WalletPageState();
 }
 
-class _WalletPageState extends State<WalletPage> {
+class _WalletPageState extends ConsumerState<WalletPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) =>
+        ref.read(walletViewModelProvider.notifier).initWallets());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final walletModel = ref.watch(walletViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         leading: Container(
@@ -41,7 +52,7 @@ class _WalletPageState extends State<WalletPage> {
       ),
       body: ListView(
         children: [
-          _walletCardWidget(),
+          _walletCardWidget(walletModel.balance),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
@@ -82,20 +93,21 @@ class _WalletPageState extends State<WalletPage> {
           ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => transactionWidget(),
+              itemBuilder: (context, index) =>
+                  transactionWidget(walletModel.historyModel[index]),
               separatorBuilder: (context, index) => const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Divider(thickness: 0.2),
                   ),
-              itemCount: 5)
+              itemCount: walletModel.historyModel.length)
         ],
       ),
     );
   }
 
-  Widget transactionWidget() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+  Widget transactionWidget(TransactionHistoryModel history) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
         children: [
           Column(
@@ -103,13 +115,13 @@ class _WalletPageState extends State<WalletPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Classic Brew",
-                style: TextStyle(
+                history.name,
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Row(
+              const Row(
                 children: [
                   Text("Dec 22, 2023"),
                   width10,
@@ -123,19 +135,19 @@ class _WalletPageState extends State<WalletPage> {
               )
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Column(
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "-\$4.20",
-                style: TextStyle(
+                history.amount,
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Text("Caffely Wallet"),
+              Text(history.paymentMethod),
             ],
           )
         ],
@@ -143,7 +155,7 @@ class _WalletPageState extends State<WalletPage> {
     );
   }
 
-  Widget _walletCardWidget() {
+  Widget _walletCardWidget(String balance) {
     return Container(
       width: double.infinity,
       height: 210,
@@ -174,9 +186,9 @@ class _WalletPageState extends State<WalletPage> {
           height5,
           Row(
             children: [
-              const Text(
-                "\$948.50",
-                style: TextStyle(
+              Text(
+                balance,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.w600,

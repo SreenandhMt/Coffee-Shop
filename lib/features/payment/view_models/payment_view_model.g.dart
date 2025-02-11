@@ -6,7 +6,7 @@ part of 'payment_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$paymentViewModelHash() => r'ac7faecdfadce733fbbe43b8eb8d9c7714e84a93';
+String _$paymentViewModelHash() => r'c6b9aec9b08708adb04282fa19a8227b24cead86';
 
 /// See also [PaymentViewModel].
 @ProviderFor(PaymentViewModel)

@@ -6,6 +6,8 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+TextEditingController topUpAmount = TextEditingController();
+
 class TopUpPage extends StatefulWidget {
   const TopUpPage({super.key});
 
@@ -43,6 +45,7 @@ class _TopUpPageState extends State<TopUpPage> {
                 children: [
                   TextField(
                     autofocus: true,
+                    controller: topUpAmount,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     textInputAction: TextInputAction.unspecified,

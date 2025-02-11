@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_app/core/secrets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
+  static FirebaseAuth auth = FirebaseAuth.instance;
   static Future<bool> makePayment(
       int amount, String currency, String shopName) async {
     try {
@@ -20,11 +23,99 @@ class PaymentService {
         merchantDisplayName: shopName,
       ));
       await Stripe.instance.presentPaymentSheet();
+
       return true;
     } catch (e) {
       debugPrint(e.toString());
       return false;
     }
+  }
+
+  static Future<void> setTransactionHistory(
+      int amount, String currency, String shopName, String method) async {
+    await FirebaseFirestore.instance
+        .collection("wallet")
+        .doc(auth.currentUser!.uid)
+        .collection("history")
+        .doc()
+        .set({
+      "amount": "-\$$amount",
+      "date": DateTime.now(),
+      "name": shopName,
+      "order": DateTime.now().microsecondsSinceEpoch,
+      "method": method,
+      "status": "success"
+    });
+  }
+
+  static Future<bool> payWithWallet(
+      int amount, String currency, String shopName) async {
+    return await FirebaseFirestore.instance
+        .collection("wallet")
+        .doc(auth.currentUser!.uid)
+        .get()
+        .then(
+      (value) async {
+        if (value.data() != null) {
+          await FirebaseFirestore.instance
+              .collection("wallet")
+              .doc(auth.currentUser!.uid)
+              .update({"balance": value.data()!["balance"] - amount});
+          await FirebaseFirestore.instance
+              .collection("wallet")
+              .doc(auth.currentUser!.uid)
+              .collection("history")
+              .doc()
+              .set({
+            "amount": "-\$$amount",
+            "date": DateTime.now(),
+            "name": "Top Up Wallet",
+            "order": DateTime.now().microsecondsSinceEpoch,
+            "method": "Stripe",
+            "status": "success"
+          });
+          return true;
+        } else {
+          return false;
+        }
+      },
+    );
+  }
+
+  static Future<String?> topUp(int amount, String currency) async {
+    await FirebaseFirestore.instance
+        .collection("wallet")
+        .doc(auth.currentUser!.uid)
+        .get()
+        .then(
+      (value) async {
+        if (value.data() != null) {
+          await FirebaseFirestore.instance
+              .collection("wallet")
+              .doc(auth.currentUser!.uid)
+              .update({"balance": amount + value.data()!["balance"]});
+        } else {
+          await FirebaseFirestore.instance
+              .collection("wallet")
+              .doc(auth.currentUser!.uid)
+              .set({"balance": amount});
+        }
+      },
+    );
+    await FirebaseFirestore.instance
+        .collection("wallet")
+        .doc(auth.currentUser!.uid)
+        .collection("history")
+        .doc()
+        .set({
+      "amount": "+\$$amount",
+      "date": DateTime.now(),
+      "name": "Top Up Wallet",
+      "order": DateTime.now().microsecondsSinceEpoch,
+      "method": "Stripe",
+      "status": "success"
+    });
+    return null;
   }
 
   static Future<String?> createPaymentIntent(

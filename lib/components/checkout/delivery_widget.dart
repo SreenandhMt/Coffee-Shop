@@ -553,10 +553,13 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                   return;
                 }
                 if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {
-                  ref
-                      .read(checkoutViewModelProvider.notifier)
-                      .deliveryOrderConform();
-                  NavigationUtils.searchingDriverPage(context, widget.shopId);
+                  ref.read(paymentViewModelProvider.notifier).pay(
+                      context,
+                      checkoutViewModel.totalPrice.toInt(),
+                      "inr",
+                      checkoutViewModel.shopModel!,
+                      checkoutViewModel.paymentMethod!,
+                      true);
                   return;
                 }
                 ref.read(paymentViewModelProvider.notifier).pay(
@@ -564,7 +567,8 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                     checkoutViewModel.totalPrice.toInt(),
                     "inr",
                     checkoutViewModel.shopModel!,
-                    checkoutViewModel.paymentMethod!);
+                    checkoutViewModel.paymentMethod!,
+                    false);
               })
       ],
     );
