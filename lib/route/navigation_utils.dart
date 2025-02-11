@@ -36,15 +36,15 @@ class NavigationUtils {
   //*
 
   //*orders
-  static cancelOrderPage(BuildContext context) =>
-      context.push("/orders/cancel");
+  static cancelOrderPage(BuildContext context, bool isFormCheckout) =>
+      context.push("/orders/cancel/$isFormCheckout");
   static orderDetailsPagePickup(BuildContext context) =>
       context.push("/orderDetails/true");
   static orderDetailsPageDelivery(BuildContext context) =>
       context.push("/orderDetails/false");
   //*orders -> conformation
-  static driverProfilePage(BuildContext context) =>
-      context.push("/orders/driver-profile");
+  static driverProfilePage(BuildContext context, bool isFormOrderDetails) =>
+      context.push("/orders/driver-profile/$isFormOrderDetails");
   static chatDriverPage(BuildContext context) =>
       context.push("/orders/chat-driver");
   static videoCallDriverPage(BuildContext context) =>

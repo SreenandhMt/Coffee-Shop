@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_app/features/address/models/address_model.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
@@ -14,6 +12,7 @@ import '../../orders/models/order_model.dart';
 
 class CheckoutService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   static Future<void> removeCheckout(String id) async {
     try {
@@ -23,11 +22,19 @@ class CheckoutService {
     }
   }
 
-  static Future<Either<String, AddressModel>> getInitAddress() async {
+  static Future<Either<String, AddressModel?>> getInitAddress() async {
     try {
-      return await _firestore.collection("address").get().then(
-        //TODO: .where("uid", isEqualTo: _auth.currentUser!.uid) add this to find only user address
+      return await _firestore
+          .collection("users")
+          .doc(_auth.currentUser!.uid)
+          .collection("address")
+          .where("", isEqualTo: true)
+          .get()
+          .then(
         (value) {
+          if (value.docs.isEmpty) {
+            return right(null);
+          }
           AddressModel address = AddressModel.fromJson(value.docs.first.data());
           return right(address);
         },
@@ -45,10 +52,10 @@ class CheckoutService {
     required Map paymentMethod,
     required Map deliveryService,
     required Map address,
+    required String id,
   }) async {
     try {
       final fee = deliveryService["price"];
-      final id = DateTime.now().microsecondsSinceEpoch.toString();
       await _firestore.collection('orders').doc(id).set({
         "id": id,
         "type": "Delivery",
@@ -141,9 +148,9 @@ class CheckoutService {
     required List<OfferModel> offers,
     required bool isUsePoint,
     required Map paymentMethod,
+    required id,
   }) async {
     try {
-      final id = DateTime.now().microsecondsSinceEpoch.toString();
       await _firestore.collection('orders').doc(id).set({
         "id": id,
         "type": "Pickup",
@@ -261,7 +268,6 @@ class CheckoutService {
             BasketProductModel.fromJson(element.data(), coffeeModel);
         orderDetailsList.add(basketProductModel);
       }
-      log(orderDetailsList.toString());
       return right(orderDetailsList);
     } catch (e) {
       return left(e.toString());
@@ -276,7 +282,6 @@ class CheckoutService {
                 (e) => OfferModel.fromJson(e.data()),
               )
               .toList());
-      log(offers.toString());
       return right(offers);
     } catch (e) {
       return left(e.toString());

@@ -8,6 +8,8 @@ import '../../../core/assets.dart';
 import '../../../core/fonts.dart';
 import '../../../core/size.dart';
 
+//TODO add service and viewmodel and add user real value with payment history and balance and also show on the checkout page and if user dont have cash show failed order masssage
+
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
 

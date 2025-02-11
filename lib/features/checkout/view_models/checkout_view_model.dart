@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
@@ -25,7 +24,7 @@ class CheckoutStateModel {
   final List<OfferModel>? offers;
   final ShopModel? shopModel;
   final OrderModel? orderModel;
-  final String? orderId;
+  final List<String>? orderIds;
   CheckoutStateModel({
     required this.isLoading,
     required this.orderModels,
@@ -39,7 +38,7 @@ class CheckoutStateModel {
     this.offers,
     this.shopModel,
     this.orderModel,
-    this.orderId,
+    this.orderIds,
   });
 
   factory CheckoutStateModel.initial() {
@@ -64,7 +63,7 @@ class CheckoutStateModel {
     List<OfferModel>? offers,
     ShopModel? shopModel,
     OrderModel? orderModel,
-    String? orderId,
+    List<String>? orderIds,
   }) {
     return CheckoutStateModel(
         isLoading: isLoading ?? this.isLoading,
@@ -79,7 +78,7 @@ class CheckoutStateModel {
         offers: offers ?? this.offers,
         shopModel: shopModel ?? this.shopModel,
         orderModel: orderModel ?? this.orderModel,
-        orderId: orderId ?? this.orderId);
+        orderIds: orderIds ?? this.orderIds);
   }
 }
 
@@ -93,7 +92,7 @@ class CheckoutViewModel extends _$CheckoutViewModel {
   void loadOrderData(String orderId) async {
     state = state.copyWith(isLoading: true);
     final response = await CheckoutService.getOrderModels(orderId);
-    response.fold((l) => log(l), (r) {
+    response.fold((l) => debugPrint(l), (r) {
       getShopDetails(r.shopId);
       state = state.copyWith(
           orderModel: r,
@@ -111,11 +110,11 @@ class CheckoutViewModel extends _$CheckoutViewModel {
     getOffers();
     getShopDetails(shopID);
     final address = await CheckoutService.getInitAddress();
-    address.fold((l) => log(l), (r) {
+    address.fold((l) => debugPrint(l), (r) {
       state = state.copyWith(selectedAddress: r);
     });
     final response = await CheckoutService.getBasketProducts(shopID);
-    response.fold((l) => log(l), (r) {
+    response.fold((l) => debugPrint(l), (r) {
       double totalPrice = 0;
       for (var element in r) {
         totalPrice += element.totalPrice;
@@ -128,7 +127,7 @@ class CheckoutViewModel extends _$CheckoutViewModel {
   void getShopDetails(String shopID) async {
     state = state.copyWith(isLoading: true);
     final response = await CheckoutService.getShopDetails(shopID);
-    response.fold((l) => log(l), (r) {
+    response.fold((l) => debugPrint(l), (r) {
       state = state.copyWith(shopModel: r);
     });
     state = state.copyWith(isLoading: false);
@@ -136,25 +135,33 @@ class CheckoutViewModel extends _$CheckoutViewModel {
 
   void getOffers() async {
     final response = await CheckoutService.getVouchers();
-    response.fold((l) => log(l), (r) {
+    response.fold((l) => debugPrint(l), (r) {
       state = state.copyWith(offers: r);
     });
   }
 
   void pickupOrderConform() {
+    List<String> orderIds = [];
     for (var element in state.orderModels) {
+      final id = DateTime.now().microsecondsSinceEpoch.toString();
+      orderIds.add(id);
       CheckoutService.pickupOrderConform(
         shop: state.shopModel!,
         product: element,
         offers: state.offers ?? [],
         isUsePoint: true,
         paymentMethod: state.paymentMethod!,
+        id: id,
       );
     }
+    state = state.copyWith(orderIds: orderIds);
   }
 
   void deliveryOrderConform() {
+    List<String> orderIds = [];
     for (var element in state.orderModels) {
+      final id = DateTime.now().microsecondsSinceEpoch.toString();
+      orderIds.add(id);
       CheckoutService.deliveryOrderConform(
           shop: state.shopModel!,
           product: element,
@@ -162,9 +169,12 @@ class CheckoutViewModel extends _$CheckoutViewModel {
           isUsePoint: true,
           paymentMethod: state.paymentMethod!,
           deliveryService: state.selectedDelivery ?? {},
-          address:
-              state.selectedAddress != null ? state.selectedAddress!.map : {});
+          id: id,
+          address: state.selectedAddress != null
+              ? state.selectedAddress!.toJson()
+              : {});
     }
+    state = state.copyWith(orderIds: orderIds);
   }
 
   void addPromos(String value) {
@@ -199,6 +209,5 @@ class CheckoutViewModel extends _$CheckoutViewModel {
 
   void addOrderModel(BasketProductModel value) {
     state = state.copyWith(orderModels: [...state.orderModels, value]);
-    log(state.orderModels.toString());
   }
 }

@@ -31,6 +31,17 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
   }
 
   @override
+  void activate() {
+    final value = ref.read(orderViewModelProvider);
+    if (value.activeOrderModels.isEmpty ||
+        value.completedOrderModels.isEmpty ||
+        value.canceledOrderModels.isEmpty) {
+      ref.read(orderViewModelProvider.notifier).getOrders(loading: false);
+    }
+    super.activate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final orderModel = ref.watch(orderViewModelProvider);
     return DefaultTabController(
@@ -92,27 +103,27 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                           .getOrders(loading: false);
                     },
                     child: orderModel.activeOrderModels.isEmpty
-                        ? Column(
+                        ? const Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              const Center(child: Text("Orders are empty")),
-                              height10,
-                              ElevatedButton(
-                                  style: const ButtonStyle(
-                                      shadowColor: WidgetStateColor.transparent,
-                                      backgroundColor: WidgetStatePropertyAll(
-                                          AppColors.primaryColor)),
-                                  onPressed: () async {
-                                    await ref
-                                        .read(orderViewModelProvider.notifier)
-                                        .getOrders(loading: true);
-                                  },
-                                  child: const Text(
-                                    "Refresh",
-                                    style: TextStyle(color: Colors.white),
-                                  ))
+                              Center(child: Text("Orders are empty")),
+                              // height10,
+                              // ElevatedButton(
+                              //     style: const ButtonStyle(
+                              //         shadowColor: WidgetStateColor.transparent,
+                              //         backgroundColor: WidgetStatePropertyAll(
+                              //             AppColors.primaryColor)),
+                              //     onPressed: () async {
+                              //       await ref
+                              //           .read(orderViewModelProvider.notifier)
+                              //           .getOrders(loading: true);
+                              //     },
+                              //     child: const Text(
+                              //       "Refresh",
+                              //       style: TextStyle(color: Colors.white),
+                              //     ))
                             ],
                           )
                         : SingleChildScrollView(
@@ -120,7 +131,10 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                               spacing: 10,
                               children: List.generate(
                                 orderModel.activeOrderModels.length,
-                                (index) => ActiveOrderWidget(index: index),
+                                (index) => ActiveOrderWidget(
+                                  orderModel:
+                                      orderModel.activeOrderModels[index],
+                                ),
                               ),
                             ),
                           ),
@@ -128,17 +142,39 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                 if (orderModel.isLoading)
                   const OrderLoading()
                 else
-                  ListView.builder(
-                    itemCount: 6,
-                    itemBuilder: (context, index) => OrderWidget(index: index),
-                  ),
+                  orderModel.completedOrderModels.isEmpty
+                      ? const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Center(child: Text("Orders are empty")),
+                          ],
+                        )
+                      : ListView.builder(
+                          itemCount: orderModel.completedOrderModels.length,
+                          itemBuilder: (context, index) => OrderWidget(
+                            orderModel: orderModel.completedOrderModels[index],
+                          ),
+                        ),
                 if (orderModel.isLoading)
                   const OrderLoading()
                 else
-                  ListView.builder(
-                    itemCount: 6,
-                    itemBuilder: (context, index) => OrderWidget(index: index),
-                  ),
+                  orderModel.canceledOrderModels.isEmpty
+                      ? const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Center(child: Text("Orders are empty")),
+                          ],
+                        )
+                      : ListView.builder(
+                          itemCount: orderModel.canceledOrderModels.length,
+                          itemBuilder: (context, index) => OrderWidget(
+                            orderModel: orderModel.canceledOrderModels[index],
+                          ),
+                        ),
               ]),
             )
           ],

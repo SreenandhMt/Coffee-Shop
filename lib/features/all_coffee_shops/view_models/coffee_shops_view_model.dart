@@ -1,6 +1,4 @@
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/all_coffee_shops/services/coffee_shop_service.dart';
@@ -71,11 +69,11 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
   getAllShops() async {
     state = state.copyWith(isLoading: true);
     final favoriteShops = await CoffeeShopsService.getFavoriteCoffeeShops();
-    favoriteShops.fold((l) => log(l), (shops) {
+    favoriteShops.fold((l) => debugPrint(l), (shops) {
       state = state.copyWith(favoriteCoffeeShops: shops);
     });
     final allShops = await CoffeeShopsService.getAllShops();
-    allShops.fold((l) => null, (shops) {
+    allShops.fold((l) => debugPrint(l), (shops) {
       state = state.copyWith(coffeeShops: shops);
     });
     await Future.delayed(const Duration(seconds: 1));
@@ -84,14 +82,14 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
 
   getFavoriteShops() async {
     final favoriteShops = await CoffeeShopsService.getFavoriteCoffeeShops();
-    favoriteShops.fold((l) => log(l), (shops) {
+    favoriteShops.fold((l) => debugPrint(l), (shops) {
       state = state.copyWith(favoriteCoffeeShops: shops);
     });
   }
 
   getShops() async {
     final allShops = await CoffeeShopsService.getAllShops();
-    allShops.fold((l) => null, (shops) {
+    allShops.fold((l) => debugPrint(l), (shops) {
       state = state.copyWith(coffeeShops: shops);
     });
   }

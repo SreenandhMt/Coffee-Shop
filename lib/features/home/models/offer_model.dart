@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class OfferModel {
   final String title;
   final String description;
@@ -24,7 +22,6 @@ class OfferModel {
   });
 
   factory OfferModel.fromJson(Map map) {
-    log(map.toString());
     return OfferModel(
       title: map['title'],
       description: map['subtitle'],

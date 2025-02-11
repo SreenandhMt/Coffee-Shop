@@ -1,3 +1,4 @@
+import 'package:coffee_app/features/orders/view_models/order_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -413,7 +414,12 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
             ),
           ),
           InkWell(
-            onTap: () => NavigationUtils.cancelOrderPage(context),
+            onTap: () {
+              ref
+                  .read(orderViewModelProvider.notifier)
+                  .setOrderIds([checkoutViewModel.orderModel!.id]);
+              NavigationUtils.cancelOrderPage(context, false);
+            },
             child: Container(
               width: double.infinity,
               height: 60,

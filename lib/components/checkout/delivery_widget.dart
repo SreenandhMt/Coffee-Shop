@@ -11,6 +11,7 @@ import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
 import '../../core/size.dart';
 import '../../features/checkout/view_models/checkout_view_model.dart';
+import '../../features/orders/view_models/order_view_model.dart';
 import '../../route/navigation_utils.dart';
 import 'payment_widget.dart';
 import 'product_details_widget.dart';
@@ -127,10 +128,10 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                 TileWidget(
                     onTap: () => NavigationUtils.chooseAddressPage(
                         context, widget.shopId),
+                    border: isValidate ? Border.all(color: Colors.red) : null,
                     startIcon: Icons.location_on_rounded,
-                    title: "Home",
-                    subtitle:
-                        "701 7th Ave, New York, NY 10036, USA \n 5  minutes estimate arrived",
+                    title: "Choose Address",
+                    subtitle: "Choose your Address",
                     endIcon: Icons.arrow_forward_ios_rounded),
             ],
           ),
@@ -478,7 +479,7 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                 ],
               )),
           InkWell(
-            onTap: () => NavigationUtils.driverProfilePage(context),
+            onTap: () => NavigationUtils.driverProfilePage(context, true),
             child: Container(
               width: double.infinity,
               height: 60,
@@ -498,7 +499,12 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
             ),
           ),
           InkWell(
-            onTap: () => NavigationUtils.cancelOrderPage(context),
+            onTap: () {
+              ref
+                  .read(orderViewModelProvider.notifier)
+                  .setOrderIds([checkoutViewModel.orderModel!.id]);
+              NavigationUtils.cancelOrderPage(context, false);
+            },
             child: Container(
               width: double.infinity,
               height: 60,
@@ -537,6 +543,13 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                   setState(() {});
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Please select delivery method")));
+                  return;
+                }
+                if (checkoutViewModel.selectedAddress == null) {
+                  isValidate = true;
+                  setState(() {});
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please select address")));
                   return;
                 }
                 if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {

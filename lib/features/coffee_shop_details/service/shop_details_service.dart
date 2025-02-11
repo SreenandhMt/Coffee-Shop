@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:coffee_app/features/home/models/coffee_model.dart';
@@ -95,7 +93,6 @@ class ShopDetailsService {
             BasketProductModel.fromJson(element.data(), coffeeModel);
         orderDetailsList.add(basketProductModel);
       }
-      log(orderDetailsList.toString());
       return right(orderDetailsList);
     } catch (e) {
       return left(e.toString());

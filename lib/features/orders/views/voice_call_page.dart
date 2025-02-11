@@ -10,13 +10,15 @@ class VoiceCallPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Colors.blueAccent,
-        Color.fromARGB(255, 53, 101, 184),
-        Color.fromARGB(255, 53, 101, 184),
-        Color.fromARGB(255, 109, 57, 102),
-        Color.fromARGB(255, 205, 79, 40)
-      ], begin: Alignment.topCenter)),
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF6A11CB), // Purple
+            Color(0xFFFF6F61), // Reddish-orange
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

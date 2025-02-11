@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:coffee_app/features/orders/view_models/order_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,12 +10,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
+import 'package:coffee_app/features/orders/view_models/order_view_model.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
 
 import '../../../components/auth/dialog_box.dart';
 
 class DriverProfilePage extends ConsumerStatefulWidget {
-  const DriverProfilePage({super.key});
+  const DriverProfilePage({
+    super.key,
+    required this.isFormOrderDetails,
+  });
+  final bool isFormOrderDetails;
 
   @override
   ConsumerState<DriverProfilePage> createState() => _DriverProfilePageState();
@@ -35,7 +39,7 @@ class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
           ref.read(orderViewModelProvider.notifier).initOrderDetails(),
     );
     Future.delayed(const Duration(seconds: 25), () {
-      if (!mounted || shopDialog) return;
+      if (!mounted || shopDialog || widget.isFormOrderDetails) return;
       showDialog(
         context: context,
         builder: (context) => DialogBox(
@@ -86,7 +90,6 @@ class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       key: scaffoldState,
-      // appBar: AppBar(),
       backgroundColor: Colors.black,
       body: Stack(
         children: [
@@ -154,7 +157,7 @@ class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
                           Draggable(
                               feedback: Container(
                                 width: profileSize <= 350
-                                    ? size.width * 0.9
+                                    ? size.width * 0.95
                                     : size.width * 0.7,
                                 height: 50,
                                 color: Colors.transparent,
@@ -420,7 +423,7 @@ class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
       children: [
         InkWell(
           onTap: () {
-            NavigationUtils.cancelOrderPage(context);
+            NavigationUtils.cancelOrderPage(context, true);
             shopDialog = true;
           },
           child: Container(

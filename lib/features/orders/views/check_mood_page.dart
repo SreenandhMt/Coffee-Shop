@@ -6,9 +6,15 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 
-class CheckUserMoodPage extends StatelessWidget {
+class CheckUserMoodPage extends StatefulWidget {
   const CheckUserMoodPage({super.key});
 
+  @override
+  State<CheckUserMoodPage> createState() => _CheckUserMoodPageState();
+}
+
+class _CheckUserMoodPageState extends State<CheckUserMoodPage> {
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -32,16 +38,22 @@ class CheckUserMoodPage extends StatelessWidget {
                   12,
                   (index) => Padding(
                     padding: const EdgeInsets.only(bottom: 15, top: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          border: index != 1
-                              ? null
-                              : Border.all(
-                                  width: 4, color: AppColors.primaryColor),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Image.asset(AppAssets.emoji(context, index + 1),
-                          width: (size.width / 2) * 0.5),
+                    child: InkWell(
+                      onTap: () {
+                        _selectedIndex = index;
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border: index != _selectedIndex
+                                ? null
+                                : Border.all(
+                                    width: 4, color: AppColors.primaryColor),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Image.asset(AppAssets.emoji(context, index + 1),
+                            width: (size.width / 2) * 0.5),
+                      ),
                     ),
                   ),
                 ),

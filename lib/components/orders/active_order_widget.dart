@@ -1,3 +1,4 @@
+import 'package:coffee_app/features/orders/models/order_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -13,13 +14,12 @@ import '../../route/navigation_utils.dart';
 class ActiveOrderWidget extends ConsumerWidget {
   const ActiveOrderWidget({
     super.key,
-    required this.index,
+    required this.orderModel,
   });
-  final int index;
+  final OrderModel orderModel;
 
   @override
   Widget build(BuildContext context, ref) {
-    final orderModel = ref.watch(orderViewModelProvider);
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -35,8 +35,8 @@ class ActiveOrderWidget extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(orderViewModelProvider.notifier)
-                    .selectOrderModel(orderModel.activeOrderModels[index]);
-                if (orderModel.activeOrderModels[index].type == "Pickup") {
+                    .selectOrderModel(orderModel);
+                if (orderModel.type == "Pickup") {
                   NavigationUtils.orderDetailsPagePickup(context);
                 } else {
                   NavigationUtils.orderDetailsPageDelivery(context);
@@ -53,8 +53,7 @@ class ActiveOrderWidget extends ConsumerWidget {
                       color: AppColors.secondaryColor(context),
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: NetworkImage(
-                            orderModel.activeOrderModels[index].productImage),
+                        image: NetworkImage(orderModel.productImage),
                       ),
                     ),
                   ),
@@ -66,7 +65,7 @@ class ActiveOrderWidget extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          orderModel.activeOrderModels[index].productName,
+                          orderModel.productName,
                           maxLines: 1,
                           style: titleFonts(
                               fontSize: 18, fontWeight: FontWeight.w700),
@@ -76,9 +75,7 @@ class ActiveOrderWidget extends ConsumerWidget {
                           children: [
                             const Icon(Icons.add_business_rounded, size: 17),
                             Expanded(
-                              child: Text(
-                                  orderModel.activeOrderModels[index].shopName,
-                                  maxLines: 1),
+                              child: Text(orderModel.shopName, maxLines: 1),
                             )
                           ],
                         ),
@@ -90,7 +87,7 @@ class ActiveOrderWidget extends ConsumerWidget {
                                   color: AppColors.primaryColor, width: 2),
                               borderRadius: BorderRadius.circular(5)),
                           child: Text(
-                            orderModel.activeOrderModels[index].type == "Pickup"
+                            orderModel.type == "Pickup"
                                 ? "Pick Up"
                                 : "Delivery",
                             style:
@@ -107,7 +104,7 @@ class ActiveOrderWidget extends ConsumerWidget {
             ),
           ),
           //
-          if (orderModel.activeOrderModels[index].type == "Pickup") ...[
+          if (orderModel.type == "Pickup") ...[
             height5,
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),

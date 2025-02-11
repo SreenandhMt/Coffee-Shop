@@ -191,6 +191,7 @@ class _PhoneNumberInputBoxState extends State<PhoneNumberInputBox> {
                     }
                     return null;
                   },
+              autovalidateMode: AutovalidateMode.always,
               initialCountryCode: "IN",
               controller: widget.controller,
               disableLengthCheck: true,

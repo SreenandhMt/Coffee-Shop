@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:coffee_app/features/notification/services/notification_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
@@ -49,7 +46,7 @@ class NotificationViewModel extends _$NotificationViewModel {
     Map<String, List<NotificationModel>>? groupNotifications;
     final response = await NotificationService.getNotifications();
     response.fold(
-      (l) => log(l),
+      (l) => debugPrint(l),
       (r) {
         final notifications =
             r.map((e) => NotificationModel.formJson(e)).toList();

@@ -1,3 +1,4 @@
+import 'package:coffee_app/features/orders/models/order_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
@@ -7,9 +8,9 @@ import '../../core/size.dart';
 class OrderWidget extends StatelessWidget {
   const OrderWidget({
     super.key,
-    required this.index,
+    required this.orderModel,
   });
-  final int index;
+  final OrderModel orderModel;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class OrderWidget extends StatelessWidget {
               color: AppColors.secondaryColor(context),
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: AssetImage("assets/image${6 - index}.png"),
+                image: NetworkImage(orderModel.productImage),
               ),
             ),
           ),
@@ -37,15 +38,15 @@ class OrderWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Classic Brew",
+                orderModel.productName,
                 maxLines: 1,
                 style: titleFonts(fontSize: 18, fontWeight: FontWeight.w700),
               ),
-              const Row(
+              Row(
                 spacing: 4,
                 children: [
-                  Icon(Icons.add_business_rounded, size: 17),
-                  Text("Caffely Astoria Aromas")
+                  const Icon(Icons.add_business_rounded, size: 17),
+                  Text(orderModel.shopName)
                 ],
               ),
               Container(
@@ -53,9 +54,9 @@ class OrderWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                     border: Border.all(color: AppColors.primaryColor, width: 2),
                     borderRadius: BorderRadius.circular(5)),
-                child: const Text(
-                  "Pick Up",
-                  style: TextStyle(color: AppColors.primaryColor),
+                child: Text(
+                  orderModel.type,
+                  style: const TextStyle(color: AppColors.primaryColor),
                 ),
               )
             ],

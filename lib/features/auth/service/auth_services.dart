@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
@@ -82,7 +80,6 @@ class AuthServices {
 
       return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     } catch (e) {
-      log(e.toString());
       rethrow;
     }
   }
@@ -99,7 +96,6 @@ class AuthServices {
       return await FirebaseAuth.instance
           .signInWithCredential(twitterAuthCredential);
     } catch (e) {
-      log(e.toString());
       rethrow;
     }
   }
@@ -118,7 +114,6 @@ class AuthServices {
       return await FirebaseAuth.instance
           .signInWithCredential(githubAuthCredential);
     } catch (e) {
-      log(e.toString());
       rethrow;
     }
   }

@@ -26,7 +26,7 @@ class _SearchingDriverPageState extends State<SearchingDriverPage>
     Future.delayed(const Duration(seconds: 5), () {
       if (!mounted) return;
       context.pop();
-      NavigationUtils.driverProfilePage(context);
+      NavigationUtils.driverProfilePage(context, false);
     });
     super.initState();
   }

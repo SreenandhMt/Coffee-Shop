@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dartz/dartz.dart';
 
 import 'package:coffee_app/features/auth/service/auth_services.dart';
@@ -47,7 +46,6 @@ class AuthViewModel extends _$AuthViewModel {
           name: name, phoneNumber: phoneNumber, birthDate: birthDate);
       state = left(AuthState.profileDetailsSuccess);
     } catch (e) {
-      log(e.toString());
       state = right(e.toString());
     }
   }

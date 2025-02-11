@@ -6,9 +6,15 @@ import '../../../core/app_colors.dart';
 import '../../../core/size.dart';
 import '../../../route/navigation_utils.dart';
 
-class TipDriver extends StatelessWidget {
+class TipDriver extends StatefulWidget {
   const TipDriver({super.key});
 
+  @override
+  State<TipDriver> createState() => _TipDriverState();
+}
+
+class _TipDriverState extends State<TipDriver> {
+  int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,21 +51,30 @@ class TipDriver extends StatelessWidget {
               runSpacing: 10,
               children: List.generate(
                   10,
-                  (index) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 20),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: index == 1 ? AppColors.primaryColor : null,
-                            border: Border.all(
-                                width: 1,
-                                color: AppColors.secondaryColor(context))),
-                        child: Text(
-                          "\$${index + 1}",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: index == 1 ? Colors.white : null),
+                  (index) => InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedIndex = index;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: index == _selectedIndex
+                                  ? AppColors.primaryColor
+                                  : null,
+                              border: Border.all(
+                                  width: 1,
+                                  color: AppColors.secondaryColor(context))),
+                          child: Text(
+                            "\$${index + 1}",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: index == 1 ? Colors.white : null),
+                          ),
                         ),
                       )),
             ),

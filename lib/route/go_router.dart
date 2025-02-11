@@ -335,8 +335,12 @@ class AppRouter {
               builder: (context, state) => const SizedBox(),
               routes: [
                 GoRoute(
-                  path: "/driver-profile",
-                  builder: (context, state) => const DriverProfilePage(),
+                  path: "/driver-profile/:isFormOrderDetails",
+                  builder: (context, state) => DriverProfilePage(
+                      isFormOrderDetails: bool.tryParse(
+                              state.pathParameters["isFormOrderDetails"] ??
+                                  "") ??
+                          false),
                 ),
                 GoRoute(
                   path: "/chat-driver",
@@ -371,8 +375,12 @@ class AppRouter {
                   builder: (context, state) => const RatingShopPage(),
                 ),
                 GoRoute(
-                  path: "/cancel",
-                  builder: (context, state) => const CancelOrderPage(),
+                  path: "/cancel/:isFormCheckout",
+                  builder: (context, state) => CancelOrderPage(
+                      isFromCheckout: (bool.tryParse(state
+                              .pathParameters["isFormCheckout"]
+                              .toString()) ??
+                          false)),
                 ),
               ]),
           GoRoute(

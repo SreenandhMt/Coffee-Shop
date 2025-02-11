@@ -8,11 +8,6 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:coffee_app/core/app_colors.dart';
 
 PageController controller = PageController();
-final List<Map<String, String>> contents = [
-  {"title": LocaleData.intro1Title, "description": LocaleData.intro1SubTitle},
-  {"title": LocaleData.intro2Title, "description": LocaleData.intro2SubTitle},
-  {"title": LocaleData.intro3Title, "description": LocaleData.intro3SubTitle}
-];
 
 class IntroductionPage extends StatefulWidget {
   const IntroductionPage({super.key});
@@ -22,8 +17,23 @@ class IntroductionPage extends StatefulWidget {
 }
 
 class _IntroductionPageState extends State<IntroductionPage> {
+  late List<Map<String, String>> contents;
   @override
   Widget build(BuildContext context) {
+    contents = [
+      {
+        "title": LocaleData.intro1Title.getString(context),
+        "description": LocaleData.intro1SubTitle.getString(context)
+      },
+      {
+        "title": LocaleData.intro2Title.getString(context),
+        "description": LocaleData.intro2SubTitle.getString(context)
+      },
+      {
+        "title": LocaleData.intro3Title.getString(context),
+        "description": LocaleData.intro3SubTitle.getString(context)
+      }
+    ];
     return Scaffold(
       body: PageView(
           controller: controller,

@@ -10,12 +10,59 @@ import '../../home/models/coffee_model.dart';
 class OrderService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static Future<Either<String, List<OrderModel>>> getOrderModels() async {
+  static Future<Either<String, List<OrderModel>>> getActiveOrderModels() async {
     try {
       final user = _auth.currentUser!;
       return _firestore
           .collection("orders")
           .where("user-id", isEqualTo: user.uid)
+          .where("status", isEqualTo: "Conformed")
+          .get()
+          .then((value) async {
+        List<OrderModel> orders = [];
+        for (var element in value.docs) {
+          final orderDetails =
+              await _getBasketModel(element.data()["order-details"]);
+          orders.add(OrderModel.fromJson(element.data(), orderDetails));
+        }
+        return right(orders);
+      });
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  static Future<Either<String, List<OrderModel>>>
+      getCompletedOrderModels() async {
+    try {
+      final user = _auth.currentUser!;
+      return _firestore
+          .collection("orders")
+          .where("user-id", isEqualTo: user.uid)
+          .where("status", isEqualTo: "completed")
+          .get()
+          .then((value) async {
+        List<OrderModel> orders = [];
+        for (var element in value.docs) {
+          final orderDetails =
+              await _getBasketModel(element.data()["order-details"]);
+          orders.add(OrderModel.fromJson(element.data(), orderDetails));
+        }
+        return right(orders);
+      });
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
+  static Future<Either<String, List<OrderModel>>>
+      getCanceledOrderModels() async {
+    try {
+      final user = _auth.currentUser!;
+      return _firestore
+          .collection("orders")
+          .where("user-id", isEqualTo: user.uid)
+          .where("status", isEqualTo: "canceled")
           .get()
           .then((value) async {
         List<OrderModel> orders = [];
@@ -83,5 +130,18 @@ class OrderService {
   static double _updateRating(
       double currentAverage, int totalRatings, double newRating) {
     return ((currentAverage * totalRatings) + newRating) / (totalRatings + 1);
+  }
+
+  static Future<Either<String, bool>> cancelOrder(List<String> orderIds) async {
+    try {
+      for (var orderId in orderIds) {
+        await _firestore.collection("orders").doc(orderId).update({
+          "status": "canceled",
+        });
+      }
+      return right(true);
+    } catch (e) {
+      return left(e.toString());
+    }
   }
 }

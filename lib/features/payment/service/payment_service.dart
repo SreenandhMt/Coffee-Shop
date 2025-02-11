@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:coffee_app/core/secrets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,7 +11,7 @@ class PaymentService {
     try {
       final secretClient = await createPaymentIntent(amount, currency);
       if (secretClient == null) {
-        log("client secret is null");
+        debugPrint("client secret is null");
         return false;
       }
       await Stripe.instance.initPaymentSheet(
@@ -22,7 +22,7 @@ class PaymentService {
       await Stripe.instance.presentPaymentSheet();
       return true;
     } catch (e) {
-      log(e.toString());
+      debugPrint(e.toString());
       return false;
     }
   }
@@ -40,7 +40,7 @@ class PaymentService {
         'Content-Type': 'application/x-www-form-urlencoded'
       });
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      log(responseBody.toString());
+      debugPrint(responseBody.toString());
       return responseBody["client_secret"];
     } catch (err) {
       print('err charging user: ${err.toString()}');

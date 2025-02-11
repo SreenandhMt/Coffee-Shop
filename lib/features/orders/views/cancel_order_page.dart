@@ -1,20 +1,28 @@
+import 'package:coffee_app/features/checkout/view_models/checkout_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:coffee_app/core/app_colors.dart';
 import 'package:coffee_app/core/fonts.dart';
 import 'package:coffee_app/core/size.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../components/auth/dialog_box.dart';
+import '../view_models/order_view_model.dart';
 
-class CancelOrderPage extends StatefulWidget {
-  const CancelOrderPage({super.key});
+class CancelOrderPage extends ConsumerStatefulWidget {
+  const CancelOrderPage({
+    super.key,
+    required this.isFromCheckout,
+  });
+  final bool isFromCheckout;
 
   @override
-  State<CancelOrderPage> createState() => _CancelOrderPageState();
+  ConsumerState<CancelOrderPage> createState() => _CancelOrderPageState();
 }
 
-class _CancelOrderPageState extends State<CancelOrderPage> {
+class _CancelOrderPageState extends ConsumerState<CancelOrderPage> {
   List<String> reasons = [
     "Change of Mind",
     "Long Wait Time",
@@ -158,6 +166,15 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
                     Size((MediaQuery.sizeOf(context).width / 2) * 0.9, 60),
               ),
               onPressed: () {
+                if (widget.isFromCheckout) {
+                  final ids = ref.read(checkoutViewModelProvider).orderIds;
+                  if (ids == null) return;
+                  ref
+                      .read(orderViewModelProvider.notifier)
+                      .cancelOrder(orderIds: ids);
+                } else {
+                  ref.read(orderViewModelProvider.notifier).cancelOrder();
+                }
                 showDialog(
                   context: context,
                   builder: (context) => DialogBox(

@@ -1,9 +1,5 @@
-import 'dart:developer';
-
 import 'package:coffee_app/features/buying/models/order_details_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/buying/service/buying_service.dart';
@@ -133,7 +129,6 @@ class BuyingViewModel extends _$BuyingViewModel {
     } else {
       currentList = [...state.selectedOption, value];
     }
-    log("$price $oldPrice");
     if (oldPrice != null) {
       state = state = state.copyWith(
           selectedOption: currentList,
@@ -171,11 +166,8 @@ class BuyingViewModel extends _$BuyingViewModel {
     final coffeeDetails = await BuyingService.getCoffeeDetails(id);
     clearValues();
     coffeeDetails.fold(
-      (left) {
-        log(left.toString());
-      },
+      (left) {},
       (right) {
-        log(right.optionList.toString());
         state = state.copyWith(
             coffeeModel: right,
             isLoading: false,

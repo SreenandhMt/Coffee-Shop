@@ -1,7 +1,4 @@
-import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:coffee_app/features/home/models/shop_model.dart';
@@ -67,9 +64,7 @@ class HomeViewModel extends _$HomeViewModel {
 
   Future<void> getNearbyShops() async {
     final response = await HomeService.getNearbyShops();
-    response.fold((left) {
-      log(left);
-    }, (right) {
+    response.fold((left) {}, (right) {
       final List<ShopModel> shops = [];
       for (var shop in right) {
         shops.add(shop);
@@ -80,9 +75,7 @@ class HomeViewModel extends _$HomeViewModel {
 
   void getBanners() async {
     final response = await HomeService.getBanners();
-    response.fold((left) {
-      log(left);
-    }, (right) {
+    response.fold((left) {}, (right) {
       state = state.copyWith(banners: right);
     });
   }
@@ -525,7 +518,7 @@ class HomeViewModel extends _$HomeViewModel {
       }
     ];
     final response = await HomeService.getPopularMenu();
-    response.fold((l) => null, (r) {
+    response.fold((l) => debugPrint(l), (r) {
       state = state.copyWith(popularCoffees: r);
     });
     // final popularCoffeeList = productFullData;
