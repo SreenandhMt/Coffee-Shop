@@ -65,7 +65,7 @@ class _AllCoffeeShopsPageState extends ConsumerState<AllCoffeeShopsPage> {
                       style: titleFonts(
                           fontWeight: FontWeight.w600, fontSize: 19)),
                   const Spacer(),
-                  Text("New York",
+                  Text(viewModel.userLocation ?? "New York",
                       style: titleFonts(
                           fontWeight: FontWeight.w700, fontSize: 19)),
                   const Icon(

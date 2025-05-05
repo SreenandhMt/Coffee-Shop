@@ -47,6 +47,7 @@ class _DialogBoxState extends State<DialogBox> {
               child: Icon(
                 widget.icon,
                 size: 60,
+                color: Colors.white,
               ),
             ),
             height30,
@@ -67,7 +68,8 @@ class _DialogBoxState extends State<DialogBox> {
               child: Text(
                 widget.subtitle,
                 textAlign: TextAlign.center,
-                style: subtitleFont(fontSize: 16),
+                style: subtitleFont(
+                    fontSize: 16, color: AppColors.themeTextColor(context)),
               ),
             ),
             if (widget.child != null) ...[

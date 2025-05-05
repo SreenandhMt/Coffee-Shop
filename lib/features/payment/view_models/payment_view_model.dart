@@ -65,16 +65,19 @@ class PaymentViewModel extends _$PaymentViewModel {
       }
       ref.read(walletViewModelProvider.notifier).initWallets();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.primaryColor,
-          content: Text('Payment Successful'),
-        ),
-      );
-      await Future.delayed(const Duration(seconds: 1));
-      ref.read(checkoutViewModelProvider.notifier).pickupOrderConform();
-      showDialog(
-          context: context, builder: (context) => const PickUpSuccessDialog());
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: AppColors.primaryColor,
+            content: Text('Payment Successful'),
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 1));
+        ref.read(checkoutViewModelProvider.notifier).pickupOrderConform();
+        showDialog(
+            context: context,
+            builder: (context) => const PickUpSuccessDialog());
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -92,33 +95,35 @@ class PaymentViewModel extends _$PaymentViewModel {
     if (response) {
       await PaymentService.topUp(amount, "USD");
       ref.read(walletViewModelProvider.notifier).initWallets();
-      showDialog(
-        context: context,
-        builder: (context) => DialogBox(
-          icon: Icons.check_box_rounded,
-          title: "Top Up Successful!",
-          subtitle: "The amount of \$100 hs been added to your wallet",
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    fixedSize: const Size(double.infinity, 60),
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => DialogBox(
+            icon: Icons.check_box_rounded,
+            title: "Top Up Successful!",
+            subtitle: "The amount of \$$amount hs been added to your wallet",
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      fixedSize: const Size(double.infinity, 60),
+                    ),
+                    onPressed: () {
+                      if (context.canPop()) context.pop();
+                      if (context.canPop()) context.pop();
+                      if (context.canPop()) context.pop();
+                    },
+                    child: const Text("OK",
+                        style: TextStyle(color: Colors.white, fontSize: 17)),
                   ),
-                  onPressed: () {
-                    if (context.canPop()) context.pop();
-                    if (context.canPop()) context.pop();
-                    if (context.canPop()) context.pop();
-                  },
-                  child: const Text("OK",
-                      style: TextStyle(color: Colors.white, fontSize: 17)),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -139,7 +144,8 @@ class PaymentViewModel extends _$PaymentViewModel {
       response =
           await PaymentService.payWithWallet(amount, currency, shopModel.name);
     } else {
-      await PaymentService.makePayment(amount, "usd", shopModel.name);
+      response =
+          await PaymentService.makePayment(amount, "usd", shopModel.name);
     }
     if (response) {
       if (!isWallet) {
@@ -147,22 +153,26 @@ class PaymentViewModel extends _$PaymentViewModel {
             amount, currency, shopModel.name, "Stripe");
       }
       ref.read(walletViewModelProvider.notifier).initWallets();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.primaryColor,
-          content: Text('Payment Successful'),
-        ),
-      );
-      await Future.delayed(const Duration(seconds: 1));
-      ref.read(checkoutViewModelProvider.notifier).deliveryOrderConform();
-      NavigationUtils.searchingDriverPage(context, shopModel.id);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: AppColors.primaryColor,
+            content: Text('Payment Successful'),
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 1));
+        ref.read(checkoutViewModelProvider.notifier).deliveryOrderConform();
+        NavigationUtils.searchingDriverPage(context, shopModel.id);
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Payment Failed'),
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Payment Failed'),
+          ),
+        );
+      }
     }
   }
 }

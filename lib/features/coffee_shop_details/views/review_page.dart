@@ -37,6 +37,7 @@ class RatingAndReviews extends ConsumerWidget {
                   TotalRateWidget(
                     reviewsLength: viewModel.reviews!.length,
                     shopModel: viewModel.shopModel!,
+                    averageRating: viewModel.averageRating ?? [0, 0, 0, 0, 0],
                   ),
                   //*sorting
                   height20,

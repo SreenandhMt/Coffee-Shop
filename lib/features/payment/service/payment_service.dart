@@ -40,7 +40,7 @@ class PaymentService {
         .doc()
         .set({
       "amount": "-\$$amount",
-      "date": DateTime.now(),
+      "date": DateTime.now().toString(),
       "name": shopName,
       "order": DateTime.now().microsecondsSinceEpoch,
       "method": method,
@@ -57,6 +57,7 @@ class PaymentService {
         .then(
       (value) async {
         if (value.data() != null) {
+          if (value.data()!["balance"] <= 0) return false;
           await FirebaseFirestore.instance
               .collection("wallet")
               .doc(auth.currentUser!.uid)
@@ -68,10 +69,10 @@ class PaymentService {
               .doc()
               .set({
             "amount": "-\$$amount",
-            "date": DateTime.now(),
-            "name": "Top Up Wallet",
+            "date": DateTime.now().toString(),
+            "name": shopName,
             "order": DateTime.now().microsecondsSinceEpoch,
-            "method": "Stripe",
+            "method": "Wallet",
             "status": "success"
           });
           return true;
@@ -109,7 +110,7 @@ class PaymentService {
         .doc()
         .set({
       "amount": "+\$$amount",
-      "date": DateTime.now(),
+      "date": DateTime.now().toString(),
       "name": "Top Up Wallet",
       "order": DateTime.now().microsecondsSinceEpoch,
       "method": "Stripe",

@@ -5,6 +5,7 @@ import 'package:coffee_app/features/home/models/offer_model.dart';
 import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 import '../models/review_model.dart';
 
@@ -140,10 +141,13 @@ class ShopDetailsService {
       return await _firestore
           .collection('reviews')
           .where("shop-id", isEqualTo: shopId)
+          .orderBy("order")
           .get()
           .then((value) {
-        final reviewsList =
-            value.docs.map((e) => ReviewModel.fromJson(e.data())).toList();
+        final reviewsList = value.docs
+            .map((e) => ReviewModel.fromJson(
+                e.data(), _calculateDifference(e.data()["date"])))
+            .toList();
         return right(reviewsList);
       });
     } catch (e) {
@@ -165,6 +169,35 @@ class ShopDetailsService {
     } catch (e) {
       return left(e.toString());
     }
+  }
+
+  static String _calculateDifference(String stringDate) {
+    var now = DateTime.now();
+    var format = DateFormat('HH:mm a');
+    var date = DateTime.parse(stringDate);
+    var diff = now.difference(date);
+    var time = '';
+
+    if (diff.inSeconds <= 0 ||
+        diff.inSeconds > 0 && diff.inMinutes == 0 ||
+        diff.inMinutes > 0 && diff.inHours == 0 ||
+        diff.inHours > 0 && diff.inDays == 0) {
+      time = format.format(date);
+    } else if (diff.inDays > 0 && diff.inDays < 7) {
+      if (diff.inDays == 1) {
+        time = '${diff.inDays} DAY AGO';
+      } else {
+        time = '${diff.inDays} DAYS AGO';
+      }
+    } else {
+      if (diff.inDays == 7) {
+        time = '${(diff.inDays / 7).floor()} WEEK AGO';
+      } else {
+        time = '${(diff.inDays / 7).floor()} WEEKS AGO';
+      }
+    }
+
+    return time;
   }
 
   static void addOffers(String shopid) {

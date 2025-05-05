@@ -79,7 +79,7 @@ class AddressViewModel extends _$AddressViewModel {
     removeSelectedValues(id: id);
   }
 
-  void saveAddress(
+  Future<void> saveAddress(
       {required String title,
       required String name,
       String? note,

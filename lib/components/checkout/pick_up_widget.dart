@@ -8,6 +8,7 @@ import 'package:coffee_app/components/checkout/product_details_widget.dart';
 import 'package:coffee_app/components/checkout/promo_widget.dart';
 import 'package:coffee_app/components/checkout/tile_widget.dart';
 import 'package:coffee_app/components/checkout/title_widget.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
@@ -73,6 +74,9 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                           context: context,
                           builder: (context) => const ChoosePickUpWidget(),
                         ),
+                  border: isValidate
+                      ? Border.all(color: Colors.red, width: 1.5)
+                      : null,
                   startIcon: Icons.timer_sharp,
                   title: checkoutViewModel.pickUpTime ?? "Choose pick up time",
                   subtitle: checkoutViewModel.pickUpDate ??
@@ -230,7 +234,9 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                     child: SelectedPaymentWidget(
                         paymentMethod: checkoutViewModel.paymentMethod!))
                 : TileWidget(
-                    border: isValidate ? Border.all(color: Colors.red) : null,
+                    border: isValidate
+                        ? Border.all(color: Colors.red, width: 1.5)
+                        : null,
                     onTap: () => NavigationUtils.choosePaymentPage(
                         context, widget.shopId),
                     startIcon: Icons.payment,
@@ -454,6 +460,14 @@ class _PickupWidgetsState extends ConsumerState<PickupWidgets> {
                       content: Text("Please choose payment method")));
                   return;
                 }
+                if (checkoutViewModel.pickUpTime == null) {
+                  setState(() {
+                    isValidate = true;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Please choose pickup time")));
+                  return;
+                }
                 if (checkoutViewModel.paymentMethod!["name"] == "Wallet") {
                   ref.read(paymentViewModelProvider.notifier).pickUpPayment(
                       context,
@@ -639,6 +653,7 @@ class PickUptimePicker extends ConsumerStatefulWidget {
 }
 
 class _PickUptimePickerState extends ConsumerState<PickUptimePicker> {
+  Duration duration = const Duration(hours: 12, minutes: 0);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -653,26 +668,32 @@ class _PickUptimePickerState extends ConsumerState<PickUptimePicker> {
         Text("Set your pick up time",
             style: subtitleFont(fontSize: 19, fontWeight: FontWeight.bold)),
         height35,
-        const Text("Today, Dec 22 2023",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+        Text("Today, ${DateFormat.yMMMd('en_US').format(DateTime.now())}",
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
         height20,
-        const Text("11    :    59",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.w700, color: Colors.grey)),
-        height5,
-        const Text("12    :    00",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700)),
-        height5,
-        const Text("13    :    0.1",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.w700, color: Colors.grey)),
+        CupertinoTimerPicker(
+          onTimerDurationChanged: (value) => duration = value,
+          mode: CupertinoTimerPickerMode.hm,
+          initialTimerDuration: const Duration(hours: 12, minutes: 0),
+          alignment: Alignment.center,
+          minuteInterval: 1,
+          backgroundColor: Colors.transparent,
+          itemExtent: 50,
+          selectionOverlayBuilder: (context,
+                  {required columnCount, required selectedIndex}) =>
+              Container(
+            decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
         height20,
         AuthButton(
             text: "Set Time",
             onPressed: () {
-              ref
-                  .read(checkoutViewModelProvider.notifier)
-                  .setPickUpTime("Pick up at 12:00 PM", "Today, Dec 22 2023");
+              ref.read(checkoutViewModelProvider.notifier).setPickUpTime(
+                  "Pick up at ${duration.inHours}:${duration.inMinutes} Hours",
+                  "Today, ${DateFormat.yMMMd('en_US').format(DateTime.now())}");
               context.pop();
             })
       ],

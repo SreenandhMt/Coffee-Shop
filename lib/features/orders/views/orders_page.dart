@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,11 +24,18 @@ class OrdersPage extends ConsumerStatefulWidget {
 }
 
 class _OrdersPageState extends ConsumerState<OrdersPage> {
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) => ref.read(orderViewModelProvider.notifier).getOrders(),
     );
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        ref.read(orderViewModelProvider.notifier).loadActiveOrders();
+      }
+    });
     super.initState();
   }
 
@@ -127,6 +136,7 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                             ],
                           )
                         : SingleChildScrollView(
+                            controller: _scrollController,
                             child: Column(
                               spacing: 10,
                               children: List.generate(

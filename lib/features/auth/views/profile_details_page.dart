@@ -113,7 +113,6 @@ class _ProfileDetailsPageState extends ConsumerState<ProfileDetailsPage> {
                                 if (value == null || value.number.isEmpty) {
                                   return 'Please enter your mobile number';
                                 }
-                                //TODO: Regular expression for mobile number validation
                                 if (!RegExp(r'^[0-9]{10}$')
                                     .hasMatch(value.number)) {
                                   return 'Please enter a valid 10-digit mobile number';

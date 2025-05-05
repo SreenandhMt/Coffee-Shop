@@ -10,6 +10,7 @@ class ShopModel {
   final List<dynamic> types;
   final Map<dynamic, dynamic>? address;
   final Map<String, dynamic> map;
+  final List<dynamic> allRating;
 
   ShopModel({
     required this.name,
@@ -21,6 +22,7 @@ class ShopModel {
     required this.types,
     this.address,
     required this.map,
+    required this.allRating,
   });
 
   factory ShopModel.fromJson(Map<String, dynamic> map) {
@@ -35,6 +37,7 @@ class ShopModel {
       about: map["about"],
       address: map["address"],
       map: map,
+      allRating: map["all-rating"],
     );
   }
 }

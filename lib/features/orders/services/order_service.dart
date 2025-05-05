@@ -10,6 +10,8 @@ import '../../home/models/coffee_model.dart';
 class OrderService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static DocumentSnapshot? _lastDocument;
+  static bool activeOrderHasData = true;
   static Future<Either<String, List<OrderModel>>> getActiveOrderModels() async {
     try {
       final user = _auth.currentUser!;
@@ -17,8 +19,16 @@ class OrderService {
           .collection("orders")
           .where("user-id", isEqualTo: user.uid)
           .where("status", isEqualTo: "Conformed")
+          .limit(10)
+          .orderBy("order", descending: true)
           .get()
           .then((value) async {
+        if (value.docs.isNotEmpty) {
+          _lastDocument = value.docs.last;
+          activeOrderHasData = true;
+        } else {
+          activeOrderHasData = false;
+        }
         List<OrderModel> orders = [];
         for (var element in value.docs) {
           final orderDetails =
@@ -32,6 +42,41 @@ class OrderService {
     }
   }
 
+  static Future<Either<String, List<OrderModel>>> loadMoreActiveData() async {
+    try {
+      if (!activeOrderHasData) {
+        return left("Data done");
+      }
+      final user = _auth.currentUser!;
+      if (_lastDocument != null) {
+        return _firestore
+            .collection("orders")
+            .where("user-id", isEqualTo: user.uid)
+            .where("status", isEqualTo: "Conformed")
+            .startAfterDocument(_lastDocument!)
+            .limit(10)
+            .get()
+            .then((value) async {
+          if (value.docs.isNotEmpty) {
+            _lastDocument = value.docs.last;
+          } else {
+            activeOrderHasData = false;
+          }
+          List<OrderModel> orders = [];
+          for (var element in value.docs) {
+            final orderDetails =
+                await _getBasketModel(element.data()["order-details"]);
+            orders.add(OrderModel.fromJson(element.data(), orderDetails));
+          }
+          return right(orders);
+        });
+      }
+      return left("No data found");
+    } catch (e) {
+      return left(e.toString());
+    }
+  }
+
   static Future<Either<String, List<OrderModel>>>
       getCompletedOrderModels() async {
     try {
@@ -40,6 +85,7 @@ class OrderService {
           .collection("orders")
           .where("user-id", isEqualTo: user.uid)
           .where("status", isEqualTo: "completed")
+          .limit(10)
           .get()
           .then((value) async {
         List<OrderModel> orders = [];
@@ -63,6 +109,7 @@ class OrderService {
           .collection("orders")
           .where("user-id", isEqualTo: user.uid)
           .where("status", isEqualTo: "canceled")
+          .limit(10)
           .get()
           .then((value) async {
         List<OrderModel> orders = [];
@@ -92,6 +139,7 @@ class OrderService {
 
     await _firestore.collection("shops").doc(shopId).update({
       "rating": updateRating,
+      "all-rating": FieldValue.arrayUnion([rating]),
       "rate-count": ((int.tryParse(response["rate-count"].toString()) ?? 0) + 1)
     });
     if (review.isEmpty) return;
@@ -101,6 +149,7 @@ class OrderService {
       "user-id": user.uid,
       "shop-id": shopId,
       "date": DateTime.now().toString(),
+      "order": DateTime.now().millisecondsSinceEpoch,
       "username": user.displayName,
       "image": user.photoURL
     });

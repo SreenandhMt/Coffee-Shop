@@ -15,8 +15,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../components/auth/continue_button.dart';
 
-bool _snackBarOpened = false;
-
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
@@ -24,14 +22,16 @@ class WelcomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final size = MediaQuery.sizeOf(context);
     ref.listen(authViewModelProvider, (previous, next) {
+      log(next.toString());
       next.fold((left) {
         if (left == AuthState.success) {
+          log("init");
           checkAuthStatus(context, true);
         }
       }, (right) {
-        if (_snackBarOpened) return;
-        _snackBarOpened = true;
-        final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.clearSnackBars();
+        messenger.showSnackBar(
           SnackBar(
             content: Text(right),
             showCloseIcon: true,
@@ -39,7 +39,6 @@ class WelcomeScreen extends ConsumerWidget {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        snackBar.closed.then((value) => _snackBarOpened = false);
       });
     });
     return Scaffold(

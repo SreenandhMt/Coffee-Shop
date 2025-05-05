@@ -5,7 +5,8 @@ import '../../address/models/address_model.dart';
 class OrderModel {
   final String id;
   final String type; // "Pickup" or "Delivery"
-  final DateTime? pickupTime; // Optional for "Pickup"
+  final String? pickupTime; // Optional for "Pickup"
+  final String? pickUpDate;
   final String status;
   final String shopId;
   final String shopName;
@@ -47,6 +48,7 @@ class OrderModel {
       required this.paymentDetails,
       required this.orderDate,
       required this.orderDetails,
+      required this.pickUpDate,
       required this.transactionDetails,
       this.deliveryService, // Optional
       this.address, // Optional
@@ -59,7 +61,7 @@ class OrderModel {
         type: json['type'],
         pickupTime:
             json['pickup-time'] != null && json['pickup-time'].isNotEmpty
-                ? DateTime.parse(json['pickup-time'])
+                ? json['pickup-time']
                 : null,
         status: json['status'],
         shopId: json['shop-id'],
@@ -83,6 +85,7 @@ class OrderModel {
             .map((e) => TransactionDetail.fromJson(e))
             .toList(),
         deliveryService: json['delivery-service'],
+        pickUpDate: json["pickup-date"],
         address: json['address'] == null
             ? null
             : AddressModel.fromJson(json['address']),

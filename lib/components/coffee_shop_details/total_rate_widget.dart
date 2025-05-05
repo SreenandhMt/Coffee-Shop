@@ -9,9 +9,11 @@ class TotalRateWidget extends StatelessWidget {
     super.key,
     required this.shopModel,
     required this.reviewsLength,
+    required this.averageRating,
   });
   final ShopModel shopModel;
   final int reviewsLength;
+  final List<double> averageRating;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,7 @@ class TotalRateWidget extends StatelessWidget {
                   LimitedBox(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                     child: LinearProgressIndicator(
-                      value: 0.5,
+                      value: (averageRating[4] * 1),
                       backgroundColor: AppColors.secondaryColor(context),
                       minHeight: 8,
                       borderRadius: BorderRadius.circular(10),
@@ -102,7 +104,7 @@ class TotalRateWidget extends StatelessWidget {
                   LimitedBox(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                     child: LinearProgressIndicator(
-                      value: 0.5,
+                      value: (averageRating[3] * 1),
                       backgroundColor: AppColors.secondaryColor(context),
                       minHeight: 8,
                       borderRadius: BorderRadius.circular(10),
@@ -122,7 +124,7 @@ class TotalRateWidget extends StatelessWidget {
                   LimitedBox(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                     child: LinearProgressIndicator(
-                      value: 0.5,
+                      value: (averageRating[2] * 1),
                       backgroundColor: AppColors.secondaryColor(context),
                       minHeight: 8,
                       borderRadius: BorderRadius.circular(10),
@@ -142,7 +144,7 @@ class TotalRateWidget extends StatelessWidget {
                   LimitedBox(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                     child: LinearProgressIndicator(
-                      value: 0.5,
+                      value: (averageRating[1] * 1),
                       backgroundColor: AppColors.secondaryColor(context),
                       minHeight: 8,
                       borderRadius: BorderRadius.circular(10),
@@ -162,7 +164,7 @@ class TotalRateWidget extends StatelessWidget {
                   LimitedBox(
                     maxWidth: MediaQuery.sizeOf(context).width * 0.5,
                     child: LinearProgressIndicator(
-                      value: 0.5,
+                      value: (averageRating[0] * 1),
                       backgroundColor: AppColors.secondaryColor(context),
                       minHeight: 8,
                       borderRadius: BorderRadius.circular(10),

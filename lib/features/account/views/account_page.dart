@@ -29,6 +29,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         leading: Container(
@@ -43,17 +44,21 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       ),
       body: ListView(
         children: [
-          const ListTile(
+          ListTile(
             leading: CircleAvatar(
               radius: 35,
               backgroundColor: Colors.black,
+              backgroundImage:
+                  user!.photoURL == null ? null : NetworkImage(user.photoURL!),
             ),
             title: Text(
-              "Andrew Ainsley",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              user.displayName ?? "",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            subtitle: Text("andrew.ainsley@yourdomain.com"),
-            trailing: Icon(Icons.qr_code_rounded),
+            subtitle: Text(user.email != null && user.email!.isNotEmpty
+                ? user.email!
+                : "example@yourdomain.com"),
+            trailing: const Icon(Icons.qr_code_rounded),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),

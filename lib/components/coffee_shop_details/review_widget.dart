@@ -35,7 +35,7 @@ class ReviewWidget extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 17, fontWeight: FontWeight.w700),
                   ),
-                  const Text("5 days ago"),
+                  Text(review.date),
                 ],
               ),
               const Spacer(),

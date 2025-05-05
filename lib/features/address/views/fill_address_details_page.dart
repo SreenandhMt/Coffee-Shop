@@ -122,7 +122,9 @@ class _FillUpAddressDetailsPageState
                 onPressed: () async {
                   if (!_key.currentState!.validate()) return;
                   if (viewModel.selectedAddress != null) {
-                    ref.read(addressViewModelProvider.notifier).saveAddress(
+                    await ref
+                        .read(addressViewModelProvider.notifier)
+                        .saveAddress(
                           name: nameController.text,
                           number: number.text,
                           title: labelController.text,
@@ -142,7 +144,6 @@ class _FillUpAddressDetailsPageState
                   }
                   if (mounted) {
                     context.pop();
-                    if (context.canPop()) context.pop();
                   }
                 })
           ],

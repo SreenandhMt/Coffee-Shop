@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCRPrISLfQ6X-rJwc8wAoH5In-B3H9PDSE',
-    appId: '1:803825756441:android:c0770859042f3d06a57d88',
+    appId: '1:803825756441:android:e4bbdcd502008030a57d88',
     messagingSenderId: '803825756441',
     projectId: 'flipshopdata',
     storageBucket: 'flipshopdata.appspot.com',

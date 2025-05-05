@@ -27,6 +27,7 @@ class AddressService {
           .collection("users")
           .doc(_auth.currentUser!.uid)
           .collection("address")
+          .limit(5)
           .get()
           .then(
         (value) {

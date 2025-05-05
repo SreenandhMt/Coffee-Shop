@@ -12,6 +12,7 @@ class CoffeeShopsStateModel {
   final List<ShopModel> favoriteCoffeeShops;
   final List<ShopModel> searchedShops;
   final List<String> searchHistory;
+  final String? userLocation;
 
   CoffeeShopsStateModel({
     required this.isLoading,
@@ -19,6 +20,7 @@ class CoffeeShopsStateModel {
     required this.favoriteCoffeeShops,
     required this.searchedShops,
     required this.searchHistory,
+    this.userLocation,
   });
 
   factory CoffeeShopsStateModel.initial() {
@@ -29,12 +31,14 @@ class CoffeeShopsStateModel {
       searchHistory: [],
     );
   }
+
   CoffeeShopsStateModel copyWith({
     bool? isLoading,
     List<ShopModel>? coffeeShops,
     List<ShopModel>? favoriteCoffeeShops,
     List<ShopModel>? searchedShops,
     List<String>? searchHistory,
+    String? userLocation,
   }) {
     return CoffeeShopsStateModel(
       isLoading: isLoading ?? this.isLoading,
@@ -42,6 +46,7 @@ class CoffeeShopsStateModel {
       favoriteCoffeeShops: favoriteCoffeeShops ?? this.favoriteCoffeeShops,
       searchedShops: searchedShops ?? this.searchedShops,
       searchHistory: searchHistory ?? this.searchHistory,
+      userLocation: userLocation ?? this.userLocation,
     );
   }
 }
@@ -66,6 +71,12 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
     return "";
   }
 
+  void getUserCurrentLocation() {
+    CoffeeShopsService.getCurrentAddress().then((value) {
+      state = state.copyWith(userLocation: value);
+    });
+  }
+
   getAllShops() async {
     state = state.copyWith(isLoading: true);
     final favoriteShops = await CoffeeShopsService.getFavoriteCoffeeShops();
@@ -76,7 +87,7 @@ class CoffeeShopsViewModel extends _$CoffeeShopsViewModel {
     allShops.fold((l) => debugPrint(l), (shops) {
       state = state.copyWith(coffeeShops: shops);
     });
-    await Future.delayed(const Duration(seconds: 1));
+    getUserCurrentLocation();
     state = state.copyWith(isLoading: false);
   }
 

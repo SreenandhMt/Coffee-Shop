@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:coffee_app/components/checkout/promo_widget.dart';
 import 'package:coffee_app/components/checkout/title_widget.dart';
 import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/fonts.dart';
@@ -128,7 +129,9 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                 TileWidget(
                     onTap: () => NavigationUtils.chooseAddressPage(
                         context, widget.shopId),
-                    border: isValidate ? Border.all(color: Colors.red) : null,
+                    border: isValidate
+                        ? Border.all(color: Colors.red, width: 1.5)
+                        : null,
                     startIcon: Icons.location_on_rounded,
                     title: "Choose Address",
                     subtitle: "Choose your Address",
@@ -220,7 +223,9 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                   )
                 else
                   TileWidget(
-                    border: isValidate ? Border.all(color: Colors.red) : null,
+                    border: isValidate
+                        ? Border.all(color: Colors.red, width: 1.5)
+                        : null,
                     onTap: () => NavigationUtils.chooseDeliveryPage(
                         context, widget.shopId),
                     startIcon: Icons.delivery_dining_outlined,
@@ -292,7 +297,9 @@ class _DeliveryWidgetsState extends ConsumerState<DeliveryWidgets> {
                     child: SelectedPaymentWidget(
                         paymentMethod: checkoutViewModel.paymentMethod!))
                 : TileWidget(
-                    border: isValidate ? Border.all(color: Colors.red) : null,
+                    border: isValidate
+                        ? Border.all(color: Colors.red, width: 1.5)
+                        : null,
                     onTap: () => NavigationUtils.choosePaymentPage(
                         context, widget.shopId),
                     startIcon: Icons.payment,

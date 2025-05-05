@@ -13,11 +13,25 @@ import '../../../route/navigation_utils.dart';
 double _ratingValue = 0.5;
 TextEditingController _reviewText = TextEditingController();
 
-class RatingShopPage extends ConsumerWidget {
+class RatingShopPage extends ConsumerStatefulWidget {
   const RatingShopPage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  ConsumerState<RatingShopPage> createState() => _RatingShopPageState();
+}
+
+class _RatingShopPageState extends ConsumerState<RatingShopPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) =>
+          ref.read(orderViewModelProvider.notifier).initOrderDetails(),
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final orderViewModel = ref.watch(orderViewModelProvider);
     return Scaffold(
@@ -38,7 +52,9 @@ class RatingShopPage extends ConsumerWidget {
                           color: Colors.black,
                           image: DecorationImage(
                               image: NetworkImage(
-                                  orderViewModel.shopModel!.images.first),
+                                  orderViewModel.shopModel == null
+                                      ? ""
+                                      : orderViewModel.shopModel!.images.first),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.circular(15)),
                     ),

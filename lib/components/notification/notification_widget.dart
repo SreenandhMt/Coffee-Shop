@@ -87,10 +87,7 @@ class NotificationWidget extends ConsumerWidget {
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.secondaryColor(context)),
-                      child: Icon(
-                          IconData(int.parse(notifications[index].infoIcon!),
-                              fontFamily: 'MaterialIcons'),
-                          size: 30),
+                      child: const Icon(Icons.settings, size: 30),
                     )
                   : Container(
                       width: 60,

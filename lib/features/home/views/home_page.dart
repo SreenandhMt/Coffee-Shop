@@ -1,4 +1,6 @@
+import 'package:coffee_app/components/auth/dialog_box.dart';
 import 'package:coffee_app/components/home/home_loading.dart';
+import 'package:coffee_app/features/auth/views/forgot_password/email_conform_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,8 @@ import 'package:coffee_app/features/home/view_models/home_view_model.dart';
 import 'package:coffee_app/features/introduction/views/introduction_pages.dart';
 import 'package:coffee_app/localization/locales.dart';
 import 'package:coffee_app/route/navigation_utils.dart';
+import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../components/home/coffee_widget.dart';
 import '../../../components/home/home_category_text.dart';
@@ -25,11 +29,83 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  String greeting = "";
   @override
   void initState() {
+    _updateGreeting();
+    requestPermission();
     WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) => ref.read(homeViewModelProvider.notifier).getAllData());
     super.initState();
+  }
+
+  void requestPermission() async {
+    const Permission permission = Permission.location;
+    if (!await permission.isGranted) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => DialogBox(
+          icon: Icons.location_on_rounded,
+          title: "Enable Location",
+          subtitle:
+              "Please activate the location to get coffee shop information around you",
+          child: Column(
+            spacing: 10,
+            children: [
+              height5,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  width5,
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        fixedSize: const Size(double.infinity, 60),
+                      ),
+                      onPressed: () async {
+                        final response = await permission.request();
+                        if (response.isGranted) {
+                          context.pop();
+                        }
+                      },
+                      child: const Text("Turn on Location",
+                          style: TextStyle(color: Colors.white, fontSize: 17)),
+                    ),
+                  ),
+                  width10,
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  width5,
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
+                        backgroundColor:
+                            AppColors.primaryColor.withOpacity(0.2),
+                        fixedSize: const Size(double.infinity, 60),
+                      ),
+                      onPressed: () {
+                        context.pop();
+                      },
+                      child: const Text("Later",
+                          style: TextStyle(
+                              color: AppColors.primaryColor, fontSize: 17)),
+                    ),
+                  ),
+                  width10,
+                ],
+              ),
+              height5
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -126,23 +202,34 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   _appBar() {
+    final user = FirebaseAuth.instance.currentUser!;
     return AppBar(
       surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: CircleAvatar(backgroundColor: AppColors.themeColor(context)),
-      ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      // leading:
+      title: Row(
         children: [
-          Text(
-            "Good Morning 🌤️",
-            style: subtitleFont(fontSize: 15),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: CircleAvatar(
+              backgroundColor: AppColors.themeColor(context),
+              backgroundImage:
+                  user.photoURL == null ? null : NetworkImage(user.photoURL!),
+            ),
           ),
-          Text(
-            FirebaseAuth.instance.currentUser!.displayName ?? "",
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-          )
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting,
+                style: subtitleFont(fontSize: 15),
+              ),
+              Text(
+                user.displayName ?? "",
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+              )
+            ],
+          ),
         ],
       ),
       actions: [
@@ -173,5 +260,26 @@ class _HomePageState extends ConsumerState<HomePage> {
         )
       ],
     );
+  }
+
+  void _updateGreeting() {
+    final hour = DateTime.now().hour;
+    String newGreeting;
+
+    if (hour >= 5 && hour < 12) {
+      newGreeting = "Good Morning ⛅";
+    } else if (hour >= 12 && hour < 17) {
+      newGreeting = "Good Afternoon 🌤️";
+    } else if (hour >= 17 && hour < 21) {
+      newGreeting = "Good Evening 🌆";
+    } else {
+      newGreeting = "Good Night 🌙";
+    }
+
+    if (greeting != newGreeting) {
+      setState(() {
+        greeting = newGreeting;
+      });
+    }
   }
 }

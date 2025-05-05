@@ -59,7 +59,6 @@ class _DriverProfilePageState extends ConsumerState<DriverProfilePage> {
                       onPressed: () {
                         if (!mounted) return;
                         if (context.canPop()) context.pop();
-                        if (context.canPop()) context.pop();
                         NavigationUtils.rewardPintDriverPage(context);
                         isDriverArrived = true;
                       },
@@ -787,7 +786,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           zoomControlsEnabled: false,
           zoomGesturesEnabled: false,
           myLocationButtonEnabled: false,
-          myLocationEnabled: true,
+          myLocationEnabled: false,
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             final marker = Marker(
@@ -801,7 +800,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
                 snippet: 'address',
               ),
             );
-
+            if (!mounted) return;
             setState(() {
               markers[const MarkerId('place_name')] = marker;
             });

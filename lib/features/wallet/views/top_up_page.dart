@@ -5,19 +5,23 @@ import 'package:coffee_app/features/auth/views/forgot_password/email_conform_pag
 import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../view_models/wallet_view_model.dart';
 
 TextEditingController topUpAmount = TextEditingController();
 
-class TopUpPage extends StatefulWidget {
+class TopUpPage extends ConsumerStatefulWidget {
   const TopUpPage({super.key});
 
   @override
-  State<TopUpPage> createState() => _TopUpPageState();
+  ConsumerState<TopUpPage> createState() => _TopUpPageState();
 }
 
-class _TopUpPageState extends State<TopUpPage> {
+class _TopUpPageState extends ConsumerState<TopUpPage> {
   @override
   Widget build(BuildContext context) {
+    final walletModel = ref.watch(walletViewModelProvider);
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: AppColors.primaryColor,
@@ -72,9 +76,9 @@ class _TopUpPageState extends State<TopUpPage> {
                       color: Colors.white,
                     ),
                   ),
-                  const Text(
-                    "Available balance: \$948.50",
-                    style: TextStyle(
+                  Text(
+                    "Available balance: \$${walletModel.balance}",
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.w500),
                   )
                 ],

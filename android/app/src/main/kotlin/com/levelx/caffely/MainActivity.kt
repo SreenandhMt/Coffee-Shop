@@ -1,4 +1,4 @@
-package com.example.coffee_app
+package com.levelx.caffely
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

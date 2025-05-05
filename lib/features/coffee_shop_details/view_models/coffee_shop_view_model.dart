@@ -23,6 +23,7 @@ class ShopStateModel {
   final List<OfferModel>? offers;
   final List<OfferModel>? selectedOffers;
   final double? selectedFilter;
+  final List<double>? averageRating;
   final bool isFavorite;
 
   ShopStateModel({
@@ -36,6 +37,7 @@ class ShopStateModel {
     this.offers,
     this.selectedOffers,
     this.selectedFilter,
+    this.averageRating,
     required this.isFavorite,
   });
 
@@ -58,6 +60,7 @@ class ShopStateModel {
     double? selectedFilter,
     List<OfferModel>? offers,
     List<OfferModel>? selectedOffers,
+    final List<double>? averageRating,
     bool? isFavorite,
   }) {
     return ShopStateModel(
@@ -72,6 +75,7 @@ class ShopStateModel {
       offers: offers ?? this.offers,
       selectedOffers: selectedOffers ?? this.selectedOffers,
       isFavorite: isFavorite ?? this.isFavorite,
+      averageRating: averageRating ?? this.averageRating,
     );
   }
 }
@@ -125,18 +129,51 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     state = state.copyWith(isFavorite: true);
   }
 
-  getFavoriteStatus(String shopId) async {
+  void getAverageRating() {
+    final List<double> ratingCounts = [0, 0, 0, 0, 0];
+    for (var rate in state.shopModel!.allRating) {
+      if (rate >= 0.5 && rate <= 1) {
+        ratingCounts[0] += 1;
+      }
+      if (rate >= 1.5 && rate <= 2) {
+        ratingCounts[1] += 1;
+      }
+      if (rate >= 2.5 && rate <= 3) {
+        ratingCounts[2] += 1;
+      }
+      if (rate >= 3.5 && rate <= 4) {
+        ratingCounts[3] += 1;
+      }
+      if (rate >= 4.4 && rate <= 5) {
+        ratingCounts[4] += 1;
+      }
+    }
+    ratingCounts[0] = ratingCounts[0] / state.shopModel!.rating;
+    ratingCounts[1] = ratingCounts[1] / state.shopModel!.rating;
+    ratingCounts[2] = ratingCounts[2] / state.shopModel!.rating;
+    ratingCounts[3] = ratingCounts[3] / state.shopModel!.rating;
+    ratingCounts[4] = ratingCounts[4] / state.shopModel!.rating;
+    state = state.copyWith(averageRating: ratingCounts);
+  }
+
+  Future<void> getFavoriteStatus(String shopId) async {
     final response = await ShopDetailsService.getFavoriteStatus(shopId);
     state = state.copyWith(isFavorite: response);
   }
 
   Future<void> getAllData(String shopId, {bool loading = true}) async {
     state = state.copyWith(isLoading: loading);
+    // log("shop loading");
     await getShopDetails(shopId);
-    await getBasket(shopId);
-    await getReviews(shopId);
+    // log("shop loaded");
+    getBasket(shopId);
+    // log("basket loaded");
     await getFavoriteStatus(shopId);
-    await getOffers(shopId);
+    // log("favorite status loaded");
+    getOffers(shopId);
+    // log("offers loaded");
+    getReviews(shopId);
+    // log("reviews loaded");
     state = state.copyWith(isLoading: false);
   }
 
@@ -162,6 +199,7 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
     final response = await ShopDetailsService.getReviews(shopid);
     response.fold((l) => log(l),
         (r) => state = state.copyWith(reviews: r, sortedReview: r));
+    getAverageRating();
   }
 
   void reviewSort(double rating) {
@@ -181,282 +219,19 @@ class ShopDetailsViewModel extends _$ShopDetailsViewModel {
   }
 
   Future<void> getShopDetails(String shopId) async {
-    final images = [
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage1.png?alt=media&token=be657265-9a71-4fde-82bd-af6f48e17bce",
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage2.png?alt=media&token=e39eedac-0ba6-494d-9f0e-3b04f7a9a653",
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage3.png?alt=media&token=302c21e3-ae3b-4a13-beee-5a2e9a6e5d60",
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage4.png?alt=media&token=b61f4334-1da6-4cfe-bd7e-751c17c96acf",
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage5.png?alt=media&token=6de1f9b7-2090-461e-b6c4-6411005de00d",
-      "https://firebasestorage.googleapis.com/v0/b/flipshopdata.appspot.com/o/products%2Fimage6.png?alt=media&token=f1c0c965-4b11-4fc2-8b42-1d5a3bcbda8a",
-    ];
-    final productFullData = [
-      {
-        "name": "Classic Brew",
-        "price": "3.50",
-        "image-url": images[0],
-        "id": "111",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Minty Fresh Brew",
-        "price": "4.30",
-        "image-url": images[1],
-        "id": "222",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Sunshine Brew",
-        "price": "5.50",
-        "image-url": images[2],
-        "id": "333",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-        ]
-      },
-      {
-        "name": "Blueberry Brew",
-        "price": "4.00",
-        "image-url": images[3],
-        "id": "444",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Choco Brew",
-        "price": "5.50",
-        "image-url": images[4],
-        "id": "555",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "name": "Vanilla Brew",
-        "price": "6.00",
-        "image-url": images[5],
-        "id": "666",
-        "shop-id": "11",
-        "Type": "Coffee",
-        "custom-size": true,
-        "custom-coffee": true,
-        "options": [
-          {
-            "name": "Milk",
-            "options": [
-              {
-                "name": "Almond Milk",
-                "price": "0.50",
-                "id": "111",
-              },
-              {
-                "name": "Soya Milk",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          },
-          {
-            "name": "Toppings",
-            "options": [
-              {
-                "name": "Cinnamon",
-                "price": "0.10",
-                "id": "111",
-              },
-              {
-                "name": "Cocoa Powder",
-                "price": "0.30",
-                "id": "111",
-              }
-            ]
-          }
-        ]
-      }
-    ];
     final response = await ShopDetailsService.getShopDetails(shopId);
     response.fold((left) {
       log(left);
     }, (right) {
       state = state.copyWith(shopModel: right);
     });
+    // log("shop details loading");
     final productResponse = await ShopDetailsService.getProducts(shopId);
     productResponse.fold((left) {
       log(left);
     }, (right) {
       state = state.copyWith(coffeeModel: right);
     });
-    // final coffeeModels =
-    //     productFullData.map((e) => CoffeeModel.fromJson(e)).toList();
-    // state = state.copyWith(coffeeModel: coffeeModels, isLoading: false);
+    // log("shop details loaded");
   }
 }

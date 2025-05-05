@@ -96,6 +96,8 @@ class CheckoutViewModel extends _$CheckoutViewModel {
       getShopDetails(r.shopId);
       state = state.copyWith(
           orderModel: r,
+          pickUpDate: r.pickUpDate,
+          pickUpTime: r.pickupTime,
           selectedAddress: r.address,
           selectedDelivery: r.deliveryService,
           paymentMethod: r.paymentMethod,
@@ -149,6 +151,8 @@ class CheckoutViewModel extends _$CheckoutViewModel {
         shop: state.shopModel!,
         product: element,
         offers: state.offers ?? [],
+        pickupDate: state.pickUpDate ?? "",
+        pickupTime: state.pickUpTime ?? "",
         isUsePoint: true,
         paymentMethod: state.paymentMethod!,
         id: id,

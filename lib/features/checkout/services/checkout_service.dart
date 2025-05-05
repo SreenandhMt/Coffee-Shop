@@ -6,6 +6,7 @@ import 'package:coffee_app/features/home/models/shop_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../buying/models/order_details_model.dart';
 import '../../orders/models/order_model.dart';
@@ -71,6 +72,7 @@ class CheckoutService {
         "discount": offers.map((e) => e.code).toList(),
         "use-point": isUsePoint,
         "payment-method": paymentMethod,
+        "order": DateTime.now().millisecondsSinceEpoch,
         "payment-status": "Paid",
         "payment-details": [
           {
@@ -116,11 +118,11 @@ class CheckoutService {
           },
           {
             "type": "Date",
-            "value": DateTime.now().toString(),
+            "value": DateFormat.yMMMd('en_US').format(DateTime.now()),
           },
           {
             "type": "Time",
-            "value": TimeOfDay.now().toString(),
+            "value": DateFormat.jm('en_US').format(DateTime.now()),
           },
           {
             "type": "Order ID",
@@ -148,13 +150,16 @@ class CheckoutService {
     required List<OfferModel> offers,
     required bool isUsePoint,
     required Map paymentMethod,
+    required String pickupTime,
+    required String pickupDate,
     required id,
   }) async {
     try {
       await _firestore.collection('orders').doc(id).set({
         "id": id,
         "type": "Pickup",
-        "pickup-time": "", //TODO: add pickup time here
+        "pickup-time": pickupTime,
+        "pickup-date": pickupDate,
         "status": "Conformed",
         "shop-id": shop.id,
         "shop-name": shop.name,
@@ -166,6 +171,7 @@ class CheckoutService {
         "user-id": FirebaseAuth.instance.currentUser!.uid,
         "discount": offers.map((e) => e.code).toList(),
         "use-point": isUsePoint,
+        "order": DateTime.now().millisecondsSinceEpoch,
         "payment-method": paymentMethod,
         "payment-status": "Paid",
         "payment-details": [
@@ -207,11 +213,11 @@ class CheckoutService {
           },
           {
             "type": "Date",
-            "value": DateTime.now().toString(),
+            "value": DateFormat.yMMMd('en_US').format(DateTime.now()),
           },
           {
             "type": "Time",
-            "value": TimeOfDay.now().toString(),
+            "value": DateFormat.jm('en_US').format(DateTime.now()),
           },
           {
             "type": "Order ID",

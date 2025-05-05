@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class ReviewModel {
   final String name;
   final String imageUrl;
@@ -15,13 +17,13 @@ class ReviewModel {
     required this.shopID,
   });
 
-  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+  factory ReviewModel.fromJson(Map<String, dynamic> json, date) {
     return ReviewModel(
       name: json['username'],
       imageUrl: json['image'] ?? "",
       review: json['review'],
       rating: json['rating'],
-      date: json['date'],
+      date: date,
       shopID: json["shop-id"],
     );
   }

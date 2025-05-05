@@ -10,6 +10,7 @@ import 'package:coffee_app/route/navigation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/google_map_style.dart';
@@ -86,7 +87,7 @@ class _AddNewAddressPageState extends ConsumerState<AddNewAddressPage> {
                                   viewModel.userAddress.isEmpty) {
                                 return;
                               }
-
+                              context.pop();
                               NavigationUtils.fillUpAddressPage(context);
                             },
                             child: const Text(
@@ -126,6 +127,7 @@ class _GoogleMapWidgetState extends ConsumerState<GoogleMapWidget> {
 
   Future<void> getUserCurrentLocation() async {
     try {
+      final GoogleMapController GoogleMapcontroller = await _controller.future;
       await Geolocator.requestPermission()
           .then((value) {})
           .onError((error, stackTrace) async {
@@ -134,6 +136,12 @@ class _GoogleMapWidgetState extends ConsumerState<GoogleMapWidget> {
       });
       final position = await Geolocator.getCurrentPosition();
       userLocation = LatLng(position.latitude, position.longitude);
+      final cameraPosition = CameraPosition(
+        target: userLocation,
+        zoom: 14,
+      );
+      GoogleMapcontroller.animateCamera(
+          CameraUpdate.newCameraPosition(cameraPosition));
       createMarker();
       await getAddress(userLocation);
     } catch (e) {
@@ -153,14 +161,13 @@ class _GoogleMapWidgetState extends ConsumerState<GoogleMapWidget> {
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
       infoWindow: const InfoWindow(),
     );
-
+    if (!mounted) return;
     setState(() {
       markers[const MarkerId('place_name')] = marker;
     });
   }
 
   Future<void> getAddress(LatLng latLng) async {
-    log("init");
     List<Placemark> placeMarks =
         await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
     // log("${placeMarks.first.street}, ${placeMarks.first.subLocality} ${placeMarks.first.locality}, ${placeMarks.first.administrativeArea} ${placeMarks.first.postalCode}, ${placeMarks.first.country}");

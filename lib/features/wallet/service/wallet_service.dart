@@ -20,7 +20,7 @@ class WalletService {
         .collection("wallet")
         .doc(auth.currentUser!.uid)
         .collection("history")
-        .orderBy("order")
+        .orderBy("order", descending: true)
         .get()
         .then((value) => value.docs
             .map((e) => TransactionHistoryModel.fromJson(e.data()))

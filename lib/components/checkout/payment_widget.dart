@@ -1,20 +1,18 @@
 import 'package:coffee_app/core/size.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_colors.dart';
+import '../../features/payment/view_models/payment_view_model.dart';
 
-class SelectedPaymentWidget extends StatefulWidget {
+class SelectedPaymentWidget extends ConsumerWidget {
   const SelectedPaymentWidget({super.key, required this.paymentMethod});
   final Map<String, dynamic> paymentMethod;
 
   @override
-  State<SelectedPaymentWidget> createState() => _SelectedPaymentWidgetState();
-}
-
-class _SelectedPaymentWidgetState extends State<SelectedPaymentWidget> {
-  @override
-  Widget build(BuildContext context) {
-    if (widget.paymentMethod["name"] == "Wallet") {
+  Widget build(BuildContext context, ref) {
+    if (paymentMethod["name"] == "Wallet") {
+      final walletBalance = ref.watch(paymentViewModelProvider).walletBalance;
       return Container(
         margin: const EdgeInsets.all(4),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -35,8 +33,9 @@ class _SelectedPaymentWidgetState extends State<SelectedPaymentWidget> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             const Spacer(),
-            const Text("\$948.50",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            Text("\$$walletBalance",
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             width5,
             Icon(Icons.arrow_forward_ios_rounded, color: Colors.grey.shade500)
           ],
@@ -54,11 +53,11 @@ class _SelectedPaymentWidgetState extends State<SelectedPaymentWidget> {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundImage: AssetImage(widget.paymentMethod["image"]!),
+              backgroundImage: AssetImage(paymentMethod["image"]!),
             ),
             width20,
             Text(
-              widget.paymentMethod["name"]!,
+              paymentMethod["name"]!,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             const Spacer(),

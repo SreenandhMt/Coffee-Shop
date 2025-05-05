@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -69,11 +71,11 @@ class OrderViewModel extends _$OrderViewModel {
     state = state.copyWith(selectedOrder: orderModel);
   }
 
-  void rateAndReviewShop(double rating, String review) {
+  void rateAndReviewShop(double rating, String review) async {
     OrderService.rateAndReviewShop(
       rating,
       review,
-      state.selectedOrder!.shopId,
+      state.shopModel!.id,
     );
   }
 
@@ -87,8 +89,9 @@ class OrderViewModel extends _$OrderViewModel {
     state = state.copyWith(orderIds: orderIds);
   }
 
-  void getShopModel() async {
+  Future<void> getShopModel() async {
     final response = ref.read(checkoutViewModelProvider).shopModel!;
+    log(response.toString());
     state = state.copyWith(
       shopModel: response,
     );
@@ -108,26 +111,28 @@ class OrderViewModel extends _$OrderViewModel {
     state = state.copyWith(isLoading: false);
   }
 
+  Future<void> loadActiveOrders() async {
+    final activeOrderRes = await OrderService.loadMoreActiveData();
+    activeOrderRes.fold((l) => debugPrint(l), (r) {
+      state = state.copyWith(
+          activeOrderModels: [...state.activeOrderModels, ...r],
+          isLoading: false);
+    });
+  }
+
   Future<void> getOrders({bool loading = true}) async {
     state = state.copyWith(isLoading: loading);
     final activeOrderRes = await OrderService.getActiveOrderModels();
-    final completedOrderRes = await OrderService.getCompletedOrderModels();
-    final canceledOrderRes = await OrderService.getCanceledOrderModels();
     activeOrderRes.fold((l) => debugPrint(l), (r) {
-      state = state.copyWith(
-        activeOrderModels: r,
-      );
+      state = state.copyWith(activeOrderModels: r, isLoading: false);
     });
+    final completedOrderRes = await OrderService.getCompletedOrderModels();
     completedOrderRes.fold((l) => debugPrint(l), (r) {
-      state = state.copyWith(
-        completedOrderModels: r,
-      );
+      state = state.copyWith(completedOrderModels: r, isLoading: false);
     });
+    final canceledOrderRes = await OrderService.getCanceledOrderModels();
     canceledOrderRes.fold((l) => debugPrint(l), (r) {
-      state = state.copyWith(
-        canceledOrderModels: r,
-      );
+      state = state.copyWith(canceledOrderModels: r, isLoading: false);
     });
-    state = state.copyWith(isLoading: false);
   }
 }
